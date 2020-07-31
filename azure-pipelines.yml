@@ -18,6 +18,11 @@ steps:
       restoreSolution: '**/*.sln'
       feedsToUse: 'select'
 
+  - task: update-net-core-package-info@0
+    inputs:
+      projectFiles: '**\BricklinkSharp.Client.csproj'
+      requireLicenseAcceptance: 'false'
+
   - task: VSBuild@1
     inputs:
       solution: '$(solution)'
