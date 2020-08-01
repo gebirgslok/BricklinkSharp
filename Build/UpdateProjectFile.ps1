@@ -33,8 +33,8 @@ function Edit-XmlNodes {
 }
 
 Write-Host "Updating .csproj file versions with build ID"
-Write-Host "File: " $PathToCsprojFile
-Write-Host "Build ID: " $BuildId
+Write-Host "File: $PathToCsprojFile"
+Write-Host "Build ID: $BuildId"
 
 $xml = New-Object XML
 $xml.Load($PathToCsprojFile)
@@ -44,29 +44,28 @@ $majorMinorPatchBuild = $version.Split('.')
 $major = $majorMinorPatchBuild[0]
 $minor = $majorMinorPatchBuild[1]
 $patch = $majorMinorPatchBuild[2]
-Write-Host "major = "$major
-Write-Host "minor = "$minor
-Write-Host "patch = "$patch
+Write-Host "major = $major"
+Write-Host "minor = $minor"
+Write-Host "patch = $patch"
 
-$majorMinorPatch = $major+"."+$minor+"."+$patch
-$updatedVersion = $majorMinorPatch+"."+$BuildId
-Write-Host "updated version = "$updatedVersion
-Write-Host "File version = "$majorMinorPatch
-Write-Host "package version = "$majorMinorPatch
+$majorMinorPatch = "$major.$minor.$patch"
+$updatedVersion = "$majorMinorPatch.$BuildId"
+Write-Host "updated version = $updatedVersion"
+Write-Host "File version = $majorMinorPatch"
+Write-Host "package version = $majorMinorPatch"
 
 Edit-XmlNodes -doc $xml -xpath 'Project/PropertyGroup/Version' -value $updatedVersion
 Edit-XmlNodes -doc $xml -xpath 'Project/PropertyGroup/FileVersion' -value $majorMinorPatch
 Edit-XmlNodes -doc $xml -xpath 'Project/PropertyGroup/PackageVersion' -value $majorMinorPatch
 Edit-XmlNodes -doc $xml -xpath 'Project/PropertyGroup/GeneratePackageOnBuild' -value "true"
-Write-Host "Set Version to "$xml.Project.PropertyGroup.Version
-Write-Host "Set FileVersion to "$xml.Project.PropertyGroup.FileVersion
-Write-Host "Set PackageVersion to "$xml.Project.PropertyGroup.PackageVersion
+Write-Host "Set Version to $xml.Project.PropertyGroup.Version"
+Write-Host "Set FileVersion to $xml.Project.PropertyGroup.FileVersion"
+Write-Host "Set PackageVersion to $xml.Project.PropertyGroup.PackageVersion"
 Write-Host "Set GeneratePackageOnBuild to true"
 
-Write-Host "Saving " $PathToCsprojFile "..."
+Write-Host "Saving "$PathToCsprojFile "..."
 $xml.Save($PathToCsprojFile)
 
-Write-Host ""
 Write-Host "##vso[task.setvariable variable=UpdatedVersion;]$updatedVersion"
 Write-Host "Set environment variable to ($env:UpdatedVersion)"
 
