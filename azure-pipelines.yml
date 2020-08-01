@@ -4,7 +4,7 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-name: $(Build.Reason)_commit-$(Build.SourceVersion)_$(Date:yyyyMMdd_HHmmss)
+name: $(Build.Reason)_commit-$(Build.SourceVersion)_$(Date:yyyy/MM/dd_HH:mm:ss)
 
 variables:
   solution: '**/*.sln'
@@ -36,3 +36,15 @@ steps:
     inputs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
+      
+  - task: CopyFiles@2
+    inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)'
+        Contents: BricklinkSharp.Client\bin\$(BuildConfiguration)\**
+        TargetFolder: '$(build.artifactstagingdirectory)'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'

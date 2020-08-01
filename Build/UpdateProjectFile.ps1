@@ -66,8 +66,10 @@ Write-Host "Set GeneratePackageOnBuild to true"
 Write-Host "Saving "$PathToCsprojFile "..."
 $xml.Save($PathToCsprojFile)
 
-Write-Host "##vso[task.setvariable variable=UpdatedVersion;]$updatedVersion"
-Write-Host "Set environment variable to ($env:UpdatedVersion)"
+[string]$buildNumber = $env:BUILD_BUILDNUMBER
+[string]$newBuildNumber = $updatedVersion-$buildNumber
+
+Write-Host "##vso[build.updatebuildnumber]$newBuildNumber"
 
 
 
