@@ -18,10 +18,11 @@ steps:
       restoreSolution: '**/*.sln'
       feedsToUse: 'select'
 
-  - task: update-net-core-package-info@0
+  - task: PowerShell@2
+    displayName: Update Project File
     inputs:
-      projectFiles: '**\BricklinkSharp.Client.csproj'
-      requireLicenseAcceptance: 'false'
+      filePath: '$(system.defaultworkingdirectory)\Build\UpdateProjectFile.ps1'
+      arguments: '-PathToCsprojFile $(system.defaultworkingdirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(Build.BuildId)'
 
   - task: VSBuild@1
     inputs:
