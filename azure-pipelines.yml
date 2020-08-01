@@ -4,6 +4,8 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+name: $(Build.Build.Reason)_commit-$(Build.SourceVersion)_$(Date:yyyyMMdd_HHmmss)
+
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
