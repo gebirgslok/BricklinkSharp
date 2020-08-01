@@ -22,7 +22,7 @@ steps:
     displayName: Update Project File
     inputs:
       filePath: '$(system.defaultworkingdirectory)\Build\UpdateProjectFile.ps1'
-      arguments: '-PathToCsprojFile $(system.defaultworkingdirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(Build.BuildId))'
+      arguments: '-PathToCsprojFile $(system.defaultworkingdirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(Build.BuildId)'
 
   - task: VSBuild@1
     inputs:
