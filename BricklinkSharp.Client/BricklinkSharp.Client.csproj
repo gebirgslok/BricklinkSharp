@@ -2,8 +2,10 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <!-- version numbers will be updated by build -->
+    <Version>0.1.0.0</Version>
     <FileVersion>0.1.0</FileVersion>
+    <PackageVersion>0.1.0</PackageVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BricklinkSharp</Product>
     <Description>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Description>
@@ -17,7 +19,7 @@
     <RootNamespace>BricklinkSharp.Client</RootNamespace>
     <AssemblyName>BricklinkSharp.Client</AssemblyName>
     <Nullable>disable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <AssemblyTitle>BricklinkSharp .Net Standard 2.0</AssemblyTitle>
@@ -31,5 +33,4 @@
   <ItemGroup>
     <PackageReference Include="NullGuard.Fody" Version="3.0.0" PrivateAssets="all" />
   </ItemGroup>
-
 </Project>
