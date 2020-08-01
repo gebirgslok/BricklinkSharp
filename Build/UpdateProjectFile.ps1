@@ -67,7 +67,7 @@ Write-Host "Saving "$PathToCsprojFile "..."
 $xml.Save($PathToCsprojFile)
 
 [string]$buildNumber = $env:BUILD_BUILDNUMBER
-[string]$newBuildNumber = $updatedVersion-$buildNumber
+[string]$newBuildNumber = "$updatedVersion-$buildNumber"
 
 Write-Host "##vso[build.updatebuildnumber]$newBuildNumber"
 
