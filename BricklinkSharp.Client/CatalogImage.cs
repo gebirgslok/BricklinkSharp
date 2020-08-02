@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -30,9 +31,20 @@ using System.Text.Json.Serialization;
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class CatalogImage : ItemBase
     {
         [JsonPropertyName("thumbnail_url")]
         public string? ThumbnailUrl { get; set; }
+
+        public override string ToString()
+        {
+            if (ThumbnailUrl == null)
+            {
+                return base.ToString();
+            }
+
+            return $"{base.ToString()}: {ThumbnailUrl}";
+        }
     }
 }

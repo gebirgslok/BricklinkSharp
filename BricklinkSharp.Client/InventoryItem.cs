@@ -23,11 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class InventoryItem : ItemBase
     {
         [JsonPropertyName("name")]

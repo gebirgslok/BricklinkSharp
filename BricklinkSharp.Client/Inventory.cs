@@ -29,6 +29,7 @@ using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class Inventory
     {
         [JsonPropertyName("inventory_id")]

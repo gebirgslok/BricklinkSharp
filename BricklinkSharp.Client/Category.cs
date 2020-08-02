@@ -23,12 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-// ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class Category
     {
         [JsonPropertyName("category_id")]
@@ -41,6 +43,17 @@ namespace BricklinkSharp.Client
         public int ParentId { get; set; }
 
         [JsonIgnore]
+        [IgnoreDataMember]
         public bool IsRoot => ParentId == 0;
+
+        public override string ToString()
+        {
+            if (IsRoot)
+            {
+                return $"{CategoryId}-{Name} (root)";
+            }
+
+            return $"{CategoryId}-{Name} (parent ID {ParentId})";
+        }
     }
 }

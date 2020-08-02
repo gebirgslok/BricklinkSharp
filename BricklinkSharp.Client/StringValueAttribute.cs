@@ -28,6 +28,7 @@ using System;
 namespace BricklinkSharp.Client
 {
     [AttributeUsage(AttributeTargets.Field)]
+    [Serializable]
     internal class StringValueAttribute : Attribute
     {
         public string Value { get; }

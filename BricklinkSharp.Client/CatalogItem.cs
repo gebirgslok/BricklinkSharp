@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
@@ -31,6 +32,7 @@ using BricklinkSharp.Client.Json;
 #pragma warning disable 8618
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class CatalogItem : ItemBase
     {
         [JsonPropertyName("name")]
@@ -68,5 +70,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("is_obsolete")]
         public bool IsObsolete { get; set; }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}: {Name}";
+        }
     }
 }

@@ -25,6 +25,8 @@
 
 using System;
 using System.Net.Http;
+using System.Runtime.Serialization;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -51,6 +53,10 @@ namespace BricklinkSharp.Client
             ReceivedCode = receivedCode;
             Description = description;
             RawMessage = message;
+        }
+
+        public BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }

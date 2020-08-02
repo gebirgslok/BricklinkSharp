@@ -23,15 +23,21 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class SupersetEntry : SuperSubSetEntryBase
     {
         [JsonPropertyName("appears_as"), JsonConverter(typeof(AppearsAsStringConverter))]
         public AppearsAs AppearsAs { get; set; }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}, appears as: {AppearsAs}";
+        }
     }
 }

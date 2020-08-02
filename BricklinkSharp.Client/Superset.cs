@@ -23,12 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using NullGuard;
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class Superset
     {
         [JsonPropertyName("entries"), AllowNull]

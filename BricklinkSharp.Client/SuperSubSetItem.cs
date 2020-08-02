@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
@@ -30,6 +31,7 @@ using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class SuperSubSetItem
     {
         [JsonPropertyName("no")]
@@ -43,5 +45,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("category_id")]
         public int CategoryId { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Type}, {Number}, {Name}";
+        }
     }
 }

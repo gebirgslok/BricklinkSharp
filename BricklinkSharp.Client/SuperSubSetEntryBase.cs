@@ -24,6 +24,8 @@
 #endregion
 
 using System.Text.Json.Serialization;
+// ReSharper disable MemberCanBeProtected.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BricklinkSharp.Client
 {
@@ -34,5 +36,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("quantity")]
         public int Quantity { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Quantity}x({Item})";
+        }
     }
 }

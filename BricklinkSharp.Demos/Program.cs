@@ -36,12 +36,12 @@ namespace BricklinkSharp.Demos
             BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
             BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
             BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
-            BricklinkClientConfiguration.Instance.ConsumerSecret = "<YOur Consumer Secret>";
+            BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 
             //await CatalogDemos.GetItemImageDemo();
-            //await CatalogDemos.GetItemDemo();
+            await CatalogDemos.GetItemDemo();
             //await CatalogDemos.GetSupersetsDemo();
-            //await CatalogDemos.GetSubsetsDemo();
+            await CatalogDemos.GetSubsetsDemo();
             //await CatalogDemos.GetPriceGuideDemo();
             //await CatalogDemos.GetKnownColorsDemo();
 

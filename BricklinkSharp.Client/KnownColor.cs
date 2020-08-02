@@ -23,10 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class KnownColor
     {
         [JsonPropertyName("color_id")]
@@ -34,5 +36,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("quantity")]
         public int Quantity { get; set; }
+
+        public override string ToString()
+        {
+            return $"Color ID: {ColorId}, quantity: {Quantity}";
+        }
     }
 }

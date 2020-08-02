@@ -24,6 +24,7 @@
 #endregion
 
 using System.Net.Http;
+using System.Runtime.Serialization;
 
 namespace BricklinkSharp.Client
 {
@@ -31,6 +32,10 @@ namespace BricklinkSharp.Client
     {
         internal BricklinkNoDataReceivedException(string url, HttpMethod httpMethod) : 
             base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
+        {
+        }
+
+        public BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

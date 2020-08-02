@@ -30,6 +30,7 @@ using NullGuard;
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class PriceDetail
     {
         [JsonPropertyName("quantity")]
@@ -49,5 +50,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("date_ordered")]
         public DateTime? OrderDate { get; set; }
+
+        public override string ToString()
+        {
+            return $"Quantity: {Quantity}, unit price: {UnitPrice}";
+        }
     }
 }

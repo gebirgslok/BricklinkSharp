@@ -23,11 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
-// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class SubsetEntry : SuperSubSetEntryBase
     {
         [JsonPropertyName("color_id")]
@@ -38,5 +39,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("is_alternate")]
         public bool IsAlternate { get; set; }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}, color ID: {ColorId}";
+        }
     }
 }

@@ -23,12 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class PriceGuide
     {
         [JsonPropertyName("item")]
@@ -60,5 +61,11 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("price_detail")]
         public PriceDetail[] PriceDetails { get; set; }
+
+        public override string ToString()
+        {
+            return $"({Item.Type}, {Item.Number}): {Condition}, {CurrencyCode}, min: {MinPrice}, " + 
+                   $"max: {MaxPrice}, avg: {AveragePrice}, qty_avg: {QuantityAveragePrice}";
+        }
     }
 }

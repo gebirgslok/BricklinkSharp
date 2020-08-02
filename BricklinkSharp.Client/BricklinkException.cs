@@ -25,6 +25,8 @@
 
 using System;
 using System.Net.Http;
+using System.Runtime.Serialization;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -40,6 +42,11 @@ namespace BricklinkSharp.Client
         {
             RequestUrl = url;
             HttpMethod = httpMethod;
+        }
+
+        protected internal BricklinkException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+
         }
     }
 }

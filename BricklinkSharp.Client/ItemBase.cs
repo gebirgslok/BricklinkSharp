@@ -23,11 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client
 {
+    [Serializable]
     public class ItemBase
     {
         [JsonPropertyName("no")]
@@ -35,5 +37,10 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
         public ItemType Type { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Type} - {Number}";
+        }
     }
 }
