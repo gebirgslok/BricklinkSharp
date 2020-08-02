@@ -50,9 +50,9 @@ namespace BricklinkSharp.Demos
         public static async Task GetSubsetsDemo()
         {
             var client = BricklinkClientFactory.Build();
-            var supersets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
+            var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
 
-            PrintHelper.PrintAsJson(supersets);
+            PrintHelper.PrintAsJson(subsets);
         }
 
         public static async Task GetSupersetsDemo()

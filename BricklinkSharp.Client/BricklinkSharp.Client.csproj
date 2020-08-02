@@ -18,6 +18,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RootNamespace>BricklinkSharp.Client</RootNamespace>
     <AssemblyName>BricklinkSharp.Client</AssemblyName>
+    <RepositoryUrl>https://github.com/gebirgslok/BricklinkSharp</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
     <Nullable>disable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -28,7 +30,7 @@
     <AssemblyTitle>BricklinkSharp .Net Core 3.0</AssemblyTitle>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+    <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NullGuard.Fody" Version="3.0.0" PrivateAssets="all" />
