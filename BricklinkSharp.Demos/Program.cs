@@ -33,14 +33,10 @@ namespace BricklinkSharp.Demos
     {
         static async Task Main()
         {
-            BricklinkClientConfiguration.Instance.TokenValue = "2EBD09FD75BE4A3BBA9E556B297D0CAF";
-            BricklinkClientConfiguration.Instance.TokenSecret = "95F3584C389340CBB20965839D1B737D";
-            BricklinkClientConfiguration.Instance.ConsumerKey = "67BD8A6AD39E441D855DBDA9613DBE0B";
-            BricklinkClientConfiguration.Instance.ConsumerSecret = "E36EADA87AC342D2AFD345E2769FD31A";
-            //BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
-            //BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
-            //BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
-            //BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
+            BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
+            BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
+            BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
+            BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 
             //await CatalogDemos.GetItemImageDemo();
             //await CatalogDemos.GetItemDemo();

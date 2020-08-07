@@ -119,4 +119,4 @@ In applications using a IoC container you may register the *IBricklinkClient* as
  
     var newInventories = new NewInventory[] { //fill with inventories... };
     //Note that there will be no response data.
-    await client.CreateInventoriesAsync(newInventories );
+    await client.CreateInventoriesAsync(newInventories);
