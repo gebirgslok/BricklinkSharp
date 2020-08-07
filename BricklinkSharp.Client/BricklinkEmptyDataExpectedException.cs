@@ -25,17 +25,20 @@
 
 using System.Net.Http;
 using System.Runtime.Serialization;
+using System.Text.Json;
 
 namespace BricklinkSharp.Client
 {
-    public class BricklinkNoDataReceivedException : BricklinkException
+    public class BricklinkEmptyDataExpectedException : BricklinkException
     {
-        internal BricklinkNoDataReceivedException(string url, HttpMethod httpMethod) : 
-            base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
+        internal BricklinkEmptyDataExpectedException(JsonElement json, 
+            string url, 
+            HttpMethod httpMethod) : 
+            base($"Expected to receive an empty data JSON object but received '{json}'.", url, httpMethod)
         {
         }
 
-        private BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private BricklinkEmptyDataExpectedException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

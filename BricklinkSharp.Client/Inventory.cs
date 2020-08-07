@@ -30,7 +30,7 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client
 {
     [Serializable]
-    public class Inventory
+    public class Inventory : InventoryBase
     {
         [JsonPropertyName("inventory_id")]
         public int InventoryId { get; set; }
@@ -38,71 +38,17 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("item")]
         public InventoryItem Item { get; set; }
 
-        [JsonPropertyName("color_id")]
-        public int ColorId { get; set; }
-
         [JsonPropertyName("color_name")]
         public string ColorName { get; set; }
-
-        [JsonPropertyName("quantity")]
-        public int Quantity { get; set; }
-
-        [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
-        public Condition Condition { get; set; }
-
-        [JsonPropertyName("completeness"), JsonConverter(typeof(CompletenessStringConverter))]
-        public Completeness Completeness { get; set; }
-
-        [JsonPropertyName("unit_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal UnitPrice { get; set; }
 
         [JsonPropertyName("bind_id")]
         public int BindId { get; set; }
 
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
-
-        [JsonPropertyName("remarks")]
-        public string Remarks { get; set; }
-
-        [JsonPropertyName("bulk")]
-        public int Bulk { get; set; }
-
-        [JsonPropertyName("is_retain")]
-        public bool IsRetain { get; set; }
-
-        [JsonPropertyName("is_stock_room")]
-        public bool IsStockRoom { get; set; }
-
-        [JsonPropertyName("stock_room_id")]
-        public string StockRoomId { get; set; }
-
         [JsonPropertyName("date_created")]
         public DateTime CreatedOn { get; set; }
 
-        [JsonPropertyName("my_cost"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal MyCost { get; set; }
-
         [JsonPropertyName("sale_rate")]
         public int SaleRate { get; set; }
-
-        [JsonPropertyName("tier_quantity1")]
-        public int TierQuantity1 { get; set; }
-
-        [JsonPropertyName("tier_quantity2")]
-        public int TierQuantity2 { get; set; }
-
-        [JsonPropertyName("tier_quantity3")]
-        public int TierQuantity3 { get; set; }
-
-        [JsonPropertyName("tier_price1"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal TierPrice1 { get; set; }
-
-        [JsonPropertyName("tier_price2"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal TierPrice2 { get; set; }
-
-        [JsonPropertyName("tier_price3"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal TierPrice3 { get; set; }
 
         [JsonPropertyName("my_weight"), JsonConverter(typeof(DoubleStringConverter))]
         public double MyWeight { get; set; }

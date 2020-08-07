@@ -60,5 +60,11 @@ namespace BricklinkSharp.Client
             IEnumerable<int> excludedCategoryIds = null,
             IEnumerable<int> includedColorIds = null,
             IEnumerable<int> excludedColorIds = null);
+
+        Task<Inventory> GetInventoryAsync(int inventoryId);
+
+        Task<Inventory> CreateInventoryAsync(NewInventory newInventory);
+
+        Task CreateInventoriesAsync(NewInventory[] newInventories);
     }
 }

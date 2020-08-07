@@ -27,11 +27,22 @@ namespace BricklinkSharp.Client
 {
     public enum InventoryStatusType
     {
+        [StringValue("Y")]
         Available = 0,
+
+        [StringValue("S")]
         InStockRoomA = 1,
+
+        [StringValue("B")]
         InStockRoomB = 2,
+
+        [StringValue("C")]
         InStockRoomC = 3,
+
+        [StringValue("N")]
         Unavailable = 4,
+
+        [StringValue("R")]
         Reserved = 5
     }
 }

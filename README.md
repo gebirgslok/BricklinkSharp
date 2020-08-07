@@ -1,3 +1,4 @@
+
 # BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
@@ -88,3 +89,34 @@ In applications using a IoC container you may register the *IBricklinkClient* as
 #### Get category
     
 	var category = await client.GetCategoryAsync(1);
+
+#### Get inventory list
+
+	//Include only parts and minifigs.
+	var includedTypes = new List<ItemType> { ItemType.Part, ItemType.Minifig };
+	//Exclude all inventories which are unavailable.
+	var excludedStatusFlags = new List<InventoryStatusType> { Unavailable };
+	var inventories = await client.GetInventoryListAsync(includedTypes, excludedStatusFlags: excludedStatusFlags);
+
+#### Create inventory
+
+    var newInventory = new NewInventory
+	{
+		ColorId = 1,
+		Condition = Condition.Used,
+		Item = new ItemBase
+		{
+			Number = "3003",
+            Type = ItemType.Part
+         },
+         Quantity = 5,
+         UnitPrice = 0.01M,
+         Remarks = "Good used condition"
+    };
+    var inventory = await client.CreateInventoryAsync(newInventory);
+    
+ #### Create inventories
+ 
+    var newInventories = new NewInventory[] { //fill with inventories... };
+    //Note that there will be no response data.
+    await client.CreateInventoriesAsync(newInventories );

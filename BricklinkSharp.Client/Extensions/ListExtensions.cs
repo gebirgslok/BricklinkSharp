@@ -23,20 +23,30 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Net.Http;
-using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Text;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Extensions
 {
-    public class BricklinkNoDataReceivedException : BricklinkException
+    internal static class ListExtensions
     {
-        internal BricklinkNoDataReceivedException(string url, HttpMethod httpMethod) : 
-            base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
+        internal static string ToConcatenatedString(this List<string> listOfStrings, char separator = ',')
         {
-        }
+            var builder = new StringBuilder();
 
-        private BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
+            for (var i = 0; i < listOfStrings.Count; i++)
+            {
+                var s = listOfStrings[i];
+
+                builder.Append(s);
+
+                if (i < listOfStrings.Count - 1)
+                {
+                    builder.Append(separator);
+                }
+            }
+
+            return builder.ToString();
         }
     }
 }

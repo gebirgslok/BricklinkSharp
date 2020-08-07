@@ -23,19 +23,31 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BricklinkSharp.Client
 {
-    public class BricklinkNoDataReceivedException : BricklinkException
+    public class BricklinkUnexpectedDataKindException : BricklinkException
     {
-        internal BricklinkNoDataReceivedException(string url, HttpMethod httpMethod) : 
-            base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
+        public string ExpectedDataKind { get; }
+
+        public string ReceivedDataKind { get; }
+
+        internal BricklinkUnexpectedDataKindException(string expectedDataKind, string receivedDataKind,
+            string url, HttpMethod httpMethod) : 
+            base($"Received unexpected JSON data kind for request '{httpMethod}' {url}:" +
+                 Environment.NewLine +
+                 $"Expected = {expectedDataKind}, received = {receivedDataKind}.", url, httpMethod)
         {
+            ExpectedDataKind = expectedDataKind;
+            ReceivedDataKind = receivedDataKind;
         }
 
-        private BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private BricklinkUnexpectedDataKindException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

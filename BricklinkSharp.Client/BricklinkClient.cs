@@ -25,8 +25,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
@@ -54,6 +56,44 @@ namespace BricklinkSharp.Client
             parameter = schemeParameter[1];
         }
 
+        private string BuildIncludeExcludeParameter<T>(IEnumerable<T> includes, IEnumerable<T> excludes,
+            Func<T, string> toStringFunc)
+        {
+            var allParameters = new List<string>();
+
+            if (includes != null)
+            {
+                allParameters.AddRange(includes.Select(toStringFunc.Invoke));
+            }
+
+            if (excludes != null)
+            {
+                allParameters.AddRange(excludes.Select(excl => $"-{toStringFunc.Invoke(excl)}"));
+            }
+
+            if (allParameters.Any())
+            {
+                return allParameters.ToConcatenatedString();
+            }
+
+            return null;
+        }
+
+        private async Task<string> ExecutePostRequest<TBody>(string url, TBody body)
+        {
+            var method = HttpMethod.Post;
+            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
+
+            using var client = new HttpClient();
+            using var content = new StringContent(JsonSerializer.Serialize(body), Encoding.Default, "application/json");
+            content.Headers.ContentType.CharSet = string.Empty;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+
+            var response = await client.PostAsync(url, content);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+            return contentAsString;
+        }
+
         private async Task<string> ExecuteGetRequest(string url)
         {
             var method = HttpMethod.Get;
@@ -63,20 +103,61 @@ namespace BricklinkSharp.Client
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
             var response = await client.GetAsync(url);
-            return await response.Content.ReadAsStringAsync();
+            var contentAsString = await response.Content.ReadAsStringAsync();
+            return contentAsString;
         }
 
-        private TData ParseResponse<TData>(string responseBody, int expectedCode, string url, HttpMethod httpMethod)
+        private JsonElement GetData(JsonDocument document, int expectedCode, string url, HttpMethod httpMethod)
         {
-            using var json = JsonDocument.Parse(responseBody);
-            var meta = json.RootElement.GetProperty("meta").ToObject<ResponseMeta>();
+            var meta = document.RootElement.GetProperty("meta").ToObject<ResponseMeta>();
 
             if (meta.Code != expectedCode)
             {
                 throw new BricklinkHttpErrorException(meta.Code, expectedCode, meta.Description, meta.Message, url, httpMethod);
             }
 
-            var dataElement = json.RootElement.GetProperty("data");
+            document.RootElement.TryGetProperty("data", out var dataElement);
+            return dataElement;
+        }
+
+        private TData[] ParseResponseArrayAllowEmpty<TData>(string responseBody, int expectedCode, string url,
+            HttpMethod httpMethod)
+        {
+            using var document = JsonDocument.Parse(responseBody);
+            var dataElement = GetData(document, expectedCode, url, httpMethod);
+
+            if (dataElement.ValueKind != JsonValueKind.Array)
+            {
+                throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(), dataElement.ValueKind.ToString(),
+                    url, httpMethod);
+            }
+
+            var dataArray = dataElement.ToObject<TData[]>();
+            return dataArray;
+        }
+
+        private void ParseResponseNoData(string responseBody, int expectedCode, string url,
+            HttpMethod httpMethod)
+        {
+            using var document = JsonDocument.Parse(responseBody);
+            var dataElement = GetData(document, expectedCode, url, httpMethod);
+
+            if (!(dataElement.ValueKind == JsonValueKind.Object || dataElement.ValueKind == JsonValueKind.Undefined))
+            {
+                throw new BricklinkUnexpectedDataKindException(JsonValueKind.Object.ToString(), dataElement.ValueKind.ToString(),
+                    url, httpMethod);
+            }
+
+            if (!dataElement.IsEmpty())
+            {
+                throw new BricklinkEmptyDataExpectedException(dataElement, url, httpMethod);
+            }
+        }
+
+        private TData ParseResponse<TData>(string responseBody, int expectedCode, string url, HttpMethod httpMethod)
+        {
+            using var document = JsonDocument.Parse(responseBody);
+            var dataElement = GetData(document, expectedCode, url, httpMethod);
 
             if (dataElement.IsEmpty())
             {
@@ -203,16 +284,57 @@ namespace BricklinkSharp.Client
             return data;
         }
 
-        public Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType> includedItemTypes = null, 
+        public async Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType> includedItemTypes = null,
             IEnumerable<ItemType> excludedItemTypes = null,
-            IEnumerable<InventoryStatusType> includedStatusFlags = null, 
+            IEnumerable<InventoryStatusType> includedStatusFlags = null,
             IEnumerable<InventoryStatusType> excludedStatusFlags = null,
-            IEnumerable<int> includedCategoryIds = null, 
-            IEnumerable<int> excludedCategoryIds = null, 
+            IEnumerable<int> includedCategoryIds = null,
+            IEnumerable<int> excludedCategoryIds = null,
             IEnumerable<int> includedColorIds = null,
             IEnumerable<int> excludedColorIds = null)
         {
-            throw new NotImplementedException();
+            var builder = new UriBuilder(new Uri(_baseUri, "inventories"));
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.AddIfNotNull("item_type", BuildIncludeExcludeParameter(includedItemTypes, excludedItemTypes, t => t.GetStringValueOrDefault()));
+            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.GetStringValueOrDefault()));
+            query.AddIfNotNull("category_id", BuildIncludeExcludeParameter(includedCategoryIds, excludedCategoryIds, categoryId => categoryId.ToString()));
+            query.AddIfNotNull("color_id", BuildIncludeExcludeParameter(includedColorIds, excludedColorIds, colorId => colorId.ToString()));
+            builder.Query = query.ToString();
+            var url = builder.ToString();
+
+            var responseBody = await ExecuteGetRequest(url);
+            var dataArray = ParseResponseArrayAllowEmpty<Inventory>(responseBody, 200, url, HttpMethod.Get);
+            return dataArray;
+        }
+
+        public async Task<Inventory> GetInventoryAsync(int inventoryId)
+        {
+            var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponse<Inventory>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory)
+        {
+            newInventory.ValidateThrowException();
+            var url = new Uri(_baseUri, "inventories").ToString();
+            var responseBody = await ExecutePostRequest(url, newInventory);
+
+            var data = ParseResponse<Inventory>(responseBody, 201, url, HttpMethod.Post);
+            return data;
+        }
+
+        public async Task CreateInventoriesAsync(NewInventory[] newInventories)
+        {
+            foreach (var newInventory in newInventories)
+            {
+                newInventory.ValidateThrowException();
+            }
+
+            var url = new Uri(_baseUri, "inventories").ToString();
+            var responseBody = await ExecutePostRequest(url, newInventories);
+            ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
     }
 }

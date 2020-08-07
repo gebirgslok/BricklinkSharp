@@ -32,6 +32,11 @@ namespace BricklinkSharp.Client.Extensions
     {
         internal static bool IsEmpty(this JsonElement element)
         {
+            if (element.ValueKind == JsonValueKind.Undefined)
+            {
+                return true;
+            }
+
             if (element.ValueKind == JsonValueKind.Array)
             {
                 return !element.EnumerateArray().Any();

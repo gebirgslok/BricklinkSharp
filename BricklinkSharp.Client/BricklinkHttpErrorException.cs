@@ -55,7 +55,7 @@ namespace BricklinkSharp.Client
             RawMessage = message;
         }
 
-        public BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

@@ -66,7 +66,7 @@ namespace BricklinkSharp.Demos
         public static async Task GetItemDemo()
         {
             var client = BricklinkClientFactory.Build();
-            var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
+            var catalogItem = await client.GetItemAsync(ItemType.Minifig, "sw0693");
 
             PrintHelper.PrintAsJson(catalogItem);
         }
