@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
@@ -31,6 +32,21 @@ namespace BricklinkSharp.Demos
 {
     internal static class InventoryDemos
     {
+        public static async Task UpdatedInventoryDemo(int id)
+        {
+            var client = BricklinkClientFactory.Build();
+            var inventory = await client.UpdateInventoryAsync(id, new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
+            
+            PrintHelper.PrintAsJson(inventory);
+        }
+
+        public static async Task DeleteInventoryDemo(int id)
+        {
+            var client = BricklinkClientFactory.Build();
+            await client.DeleteInventoryAsync(id);
+            Console.WriteLine($"Successfully deleted inventory with ID = {id}.");
+        }
+
         public static async Task CreateInventoriesDemo()
         {
             var client = BricklinkClientFactory.Build();
@@ -68,7 +84,7 @@ namespace BricklinkSharp.Demos
             await client.CreateInventoriesAsync(newInventories);
         }
 
-        public static async Task CreateInventoryDemo()
+        public static async Task<Inventory> CreateInventoryDemo()
         {
             var client = BricklinkClientFactory.Build();
             var newInventory = new NewInventory
@@ -82,13 +98,12 @@ namespace BricklinkSharp.Demos
                 },
                 Quantity = 5,
                 UnitPrice = 0.01M,
-                Remarks = "Good used condition"
-
+                Description = "Good used condition"
             };
 
             var inventory = await client.CreateInventoryAsync(newInventory);
-
             PrintHelper.PrintAsJson(inventory);
+            return inventory;
         }
 
         public static async Task GetInventoryDemo()

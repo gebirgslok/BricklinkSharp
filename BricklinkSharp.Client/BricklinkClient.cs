@@ -79,6 +79,22 @@ namespace BricklinkSharp.Client
             return null;
         }
 
+        private async Task<string> ExecutePutRequest<TBody>(string url, TBody body, JsonSerializerOptions options = null)
+        {
+            var method = HttpMethod.Put;
+            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
+
+            using var client = new HttpClient();
+            var json = JsonSerializer.Serialize(body, options);
+            using var content = new StringContent(json, Encoding.Default, "application/json");
+            content.Headers.ContentType.CharSet = string.Empty;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+
+            var response = await client.PutAsync(url, content);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+            return contentAsString;
+        }
+
         private async Task<string> ExecutePostRequest<TBody>(string url, TBody body)
         {
             var method = HttpMethod.Post;
@@ -103,6 +119,19 @@ namespace BricklinkSharp.Client
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
             var response = await client.GetAsync(url);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+            return contentAsString;
+        }
+
+        private async Task<string> ExecuteDeleteRequest(string url)
+        {
+            var method = HttpMethod.Delete;
+            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+
+            var response = await client.DeleteAsync(url);
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
@@ -335,6 +364,26 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, "inventories").ToString();
             var responseBody = await ExecutePostRequest(url, newInventories);
             ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
+        }
+
+        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdatedInventory updatedInventory)
+        {
+            updatedInventory.ValidateThrowException();
+            var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
+            var responseBody = await ExecutePutRequest(url, updatedInventory, new JsonSerializerOptions
+            {
+                IgnoreNullValues = true
+            });
+
+            var data = ParseResponse<Inventory>(responseBody, 200, url, HttpMethod.Put);
+            return data;
+        }
+
+        public async Task DeleteInventoryAsync(int inventoryId)
+        {
+            var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
+            var responseBody = await ExecuteDeleteRequest(url);
+            ParseResponseNoData(responseBody, 204, url, HttpMethod.Delete);
         }
     }
 }

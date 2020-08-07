@@ -66,5 +66,9 @@ namespace BricklinkSharp.Client
         Task<Inventory> CreateInventoryAsync(NewInventory newInventory);
 
         Task CreateInventoriesAsync(NewInventory[] newInventories);
+
+        Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdatedInventory updatedInventory);
+
+        Task DeleteInventoryAsync(int inventoryId);
     }
 }

@@ -1,4 +1,3 @@
-
 # BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
@@ -10,6 +9,9 @@ BricklinkSharp is a stronly-typed, easy-to-use C# client for the [bricklink](htt
 It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 
 ## Changelog
+
+### 0.2.0
+ - User Inventory
 
 ### 0.1.0
  - OAuth1 handling
@@ -115,8 +117,21 @@ In applications using a IoC container you may register the *IBricklinkClient* as
     };
     var inventory = await client.CreateInventoryAsync(newInventory);
     
- #### Create inventories
+#### Create inventories
  
     var newInventories = new NewInventory[] { //fill with inventories... };
     //Note that there will be no response data.
     await client.CreateInventoriesAsync(newInventories);
+	
+#### Update inventory
+	
+	var inventoryList = await client.GetInventoryListAsync();
+	var id = inventoryList.First().InventoryId;
+	var updatedInventory = new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
+	var inventory = await client.UpdatedInventoryAsync(id, updatedInventory);
+	
+#### Delete inventory
+	
+	var inventoryList = await client.GetInventoryListAsync();
+	var id = inventoryList.First().InventoryId;
+	await client.DeleteInventoryAsync(inventoryId);
