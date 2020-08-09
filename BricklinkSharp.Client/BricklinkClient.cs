@@ -349,7 +349,6 @@ namespace BricklinkSharp.Client
             newInventory.ValidateThrowException();
             var url = new Uri(_baseUri, "inventories").ToString();
             var responseBody = await ExecutePostRequest(url, newInventory);
-
             var data = ParseResponse<Inventory>(responseBody, 201, url, HttpMethod.Post);
             return data;
         }
@@ -370,6 +369,7 @@ namespace BricklinkSharp.Client
         {
             updatedInventory.ValidateThrowException();
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
+            
             var responseBody = await ExecutePutRequest(url, updatedInventory, new JsonSerializerOptions
             {
                 IgnoreNullValues = true
@@ -384,6 +384,26 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
             var responseBody = await ExecuteDeleteRequest(url);
             ParseResponseNoData(responseBody, 204, url, HttpMethod.Delete);
+        }
+
+        public async Task<ItemMapping[]> GetElementId(string partNo, int? colorId)
+        {
+            var builder = new UriBuilder(new Uri(_baseUri, $"item_mapping/PART/{partNo}"));
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.AddIfNotNull("color_id", colorId);
+            builder.Query = query.ToString();
+            var url = builder.ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, HttpMethod.Get);
+            return itemMappings;
+        }
+
+        public async Task<ItemMapping[]> GetItemNumber(string elementId)
+        {
+            var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, HttpMethod.Get);
+            return itemMappings;
         }
     }
 }

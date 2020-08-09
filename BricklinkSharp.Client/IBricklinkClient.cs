@@ -70,5 +70,9 @@ namespace BricklinkSharp.Client
         Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdatedInventory updatedInventory);
 
         Task DeleteInventoryAsync(int inventoryId);
+
+        Task<ItemMapping[]> GetElementId(string partNo, int? colorId);
+
+        Task<ItemMapping[]> GetItemNumber(string elementId);
     }
 }

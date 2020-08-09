@@ -55,7 +55,10 @@ namespace BricklinkSharp.Demos
             //var inventory = await InventoryDemos.CreateInventoryDemo();
             //await InventoryDemos.UpdatedInventoryDemo(inventory.InventoryId);
             //await InventoryDemos.DeleteInventoryDemo(inventory.InventoryId);
-            await InventoryDemos.GetInventoryListDemo();
+            //await InventoryDemos.GetInventoryListDemo();
+
+            //await ItemMappingDemos.GetElementIdDemo();
+            await ItemMappingDemos.GetItemNumberDemo();
 
             Console.ReadKey(true);
         }

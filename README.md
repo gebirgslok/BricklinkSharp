@@ -1,3 +1,5 @@
+
+
 # BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
@@ -12,6 +14,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 
 ### 0.2.0
  - User Inventory
+ - Item Mapping
 
 ### 0.1.0
  - OAuth1 handling
@@ -51,7 +54,11 @@ You need to be registered on [bricklink](https://www.bricklink.com/v2/main.page)
 	var client = BricklinkClientFactory.Build();
 	
 In applications using a IoC container you may register the *IBricklinkClient* as a service and inject it into consuming instances (e.g. controllers).
-  
+
+##### [Autofac](https://autofac.org/) example
+
+    containerBuilder.Register(c => BricklinkClientFactory.Build()).As<IBricklinkClient>();
+
 ####  Get item
     
 	var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
@@ -110,10 +117,10 @@ In applications using a IoC container you may register the *IBricklinkClient* as
 		{
 			Number = "3003",
             Type = ItemType.Part
-         },
-         Quantity = 5,
-         UnitPrice = 0.01M,
-         Remarks = "Good used condition"
+        },
+		Quantity = 5,
+		UnitPrice = 0.01M,
+		Description = "Good used condition"
     };
     var inventory = await client.CreateInventoryAsync(newInventory);
     
@@ -134,4 +141,14 @@ In applications using a IoC container you may register the *IBricklinkClient* as
 	
 	var inventoryList = await client.GetInventoryListAsync();
 	var id = inventoryList.First().InventoryId;
-	await client.DeleteInventoryAsync(inventoryId);
+	await client.DeleteInventoryAsync(id);
+
+#### Get ElementID
+
+The method returns an array of *ItemMapping* objects. If a color ID is specified the array will contain just one element. Otherwise the array will contain mappings for every available color.
+
+    var itemMappings = await client.GetElementId("3003", 1);
+	
+#### Get Item Number 
+
+    var itemMapping = await client.GetItemNumber("300301");
