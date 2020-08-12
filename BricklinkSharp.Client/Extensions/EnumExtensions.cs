@@ -24,11 +24,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace BricklinkSharp.Client.Extensions
 {
     internal static class EnumExtensions
     {
+        private static readonly Dictionary<Enum, string> _stringValueCache = new Dictionary<Enum, string>();
+
         private static T GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
         {
             var type = enumVal.GetType();
@@ -39,8 +42,15 @@ namespace BricklinkSharp.Client.Extensions
 
         internal static string GetStringValueOrDefault(this Enum e)
         {
+            if (_stringValueCache.ContainsKey(e))
+            {
+                return _stringValueCache[e];
+            }
+
             var attribute = GetAttributeOfType<StringValueAttribute>(e);
-            return attribute?.Value ?? e.ToString();
+            var stringValue = attribute?.Value ?? e.ToString();
+            _stringValueCache.Add(e, stringValue);
+            return stringValue;
         }
     }
 }

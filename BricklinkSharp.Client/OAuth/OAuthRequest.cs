@@ -57,13 +57,13 @@ namespace BricklinkSharp.Client.OAuth
         {
             var builder = new StringBuilder();
             builder.Append("OAuth ");
-            builder.AppendFormat($"oauth_consumer_key=\"{ConsumerKey}\",");
-            builder.AppendFormat($"oauth_nonce=\"{nonce}\",");
-            builder.AppendFormat($"oauth_signature=\"{signature}\",");
-            builder.AppendFormat("oauth_signature_method=\"HMAC-SHA1\",");
-            builder.AppendFormat($"oauth_timestamp=\"{timestamp}\",");
-            builder.AppendFormat($"oauth_token=\"{Token}\",");
-            builder.AppendFormat("oauth_version=\"1.0\"");
+            builder.Append($"oauth_consumer_key=\"{ConsumerKey}\",");
+            builder.Append($"oauth_nonce=\"{nonce}\",");
+            builder.Append($"oauth_signature=\"{signature}\",");
+            builder.Append("oauth_signature_method=\"HMAC-SHA1\",");
+            builder.Append($"oauth_timestamp=\"{timestamp}\",");
+            builder.Append($"oauth_token=\"{Token}\",");
+            builder.Append("oauth_version=\"1.0\"");
             return builder.ToString();
         }
 

@@ -33,16 +33,12 @@ namespace BricklinkSharp.Client.OAuth
 {
     internal static class OAuthUtilities
     {
+        private static readonly DateTime _jan011970 = new DateTime(1970, 1, 1);
         private static readonly object _randomLock = new object();
         private static readonly Random _random = new Random();
 
         private static string ConstructRequestUrl(Uri url)
         {
-            if (url == null)
-            {
-                throw new ArgumentNullException(nameof(url));
-            }
-
             var builder = new StringBuilder();
             var requestUrl = $"{url.Scheme}://{url.Host}";
             var qualified = $":{url.Port}";
@@ -171,7 +167,7 @@ namespace BricklinkSharp.Client.OAuth
 
         internal static string GetTimestamp()
         {
-            var timeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1));
+            var timeSpan = DateTime.UtcNow - _jan011970;
             var timestamp = (long)timeSpan.TotalSeconds;
             return timestamp.ToString();
         }

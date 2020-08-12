@@ -38,26 +38,26 @@ namespace BricklinkSharp.Demos
             BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
             BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 
-            //await CatalogDemos.GetItemImageDemo();
-            //await CatalogDemos.GetItemDemo();
-            //await CatalogDemos.GetSupersetsDemo();
-            //await CatalogDemos.GetSubsetsDemo();
-            //await CatalogDemos.GetPriceGuideDemo();
-            //await CatalogDemos.GetKnownColorsDemo();
+            await CatalogDemos.GetItemImageDemo();
+            await CatalogDemos.GetItemDemo();
+            await CatalogDemos.GetSupersetsDemo();
+            await CatalogDemos.GetSubsetsDemo();
+            await CatalogDemos.GetPriceGuideDemo();
+            await CatalogDemos.GetKnownColorsDemo();
 
-            //await ColorDemos.GetColorListDemo();
-            //await ColorDemos.GetColorDemo();
+            await ColorDemos.GetColorListDemo();
+            await ColorDemos.GetColorDemo();
 
-            //await CategoryDemos.GetCategoryListDemo();
-            //await CategoryDemos.GetCategoryDemo();
+            await CategoryDemos.GetCategoryListDemo();
+            await CategoryDemos.GetCategoryDemo();
 
-            //await InventoryDemos.CreateInventoriesDemo();
-            //var inventory = await InventoryDemos.CreateInventoryDemo();
-            //await InventoryDemos.UpdatedInventoryDemo(inventory.InventoryId);
-            //await InventoryDemos.DeleteInventoryDemo(inventory.InventoryId);
-            //await InventoryDemos.GetInventoryListDemo();
+            await InventoryDemos.CreateInventoriesDemo();
+            var inventory = await InventoryDemos.CreateInventoryDemo();
+            await InventoryDemos.UpdatedInventoryDemo(inventory.InventoryId);
+            await InventoryDemos.DeleteInventoryDemo(inventory.InventoryId);
+            await InventoryDemos.GetInventoryListDemo();
 
-            //await ItemMappingDemos.GetElementIdDemo();
+            await ItemMappingDemos.GetElementIdDemo();
             await ItemMappingDemos.GetItemNumberDemo();
 
             Console.ReadKey(true);

@@ -1,5 +1,3 @@
-
-
 # BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
@@ -35,120 +33,125 @@ You need to be registered on [bricklink](https://www.bricklink.com/v2/main.page)
 ### Install NuGet package 
 
 #### Package Manager Console
-    
-	Install-Package BricklinkSharp
-	
+ ```
+Install-Package BricklinkSharp
+```
 #### Command Line
-    
-	nuget install BricklinkSharp
-	
+```
+nuget install BricklinkSharp
+```	
 #### Setup credentials
-    
-	BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
-    BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
-    BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
-    BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
+
+```csharp    
+BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
+BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
+BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
+BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
+```
 	
 #### IBricklinkClient
-    
-	var client = BricklinkClientFactory.Build();
+```csharp  
+var client = BricklinkClientFactory.Build();
+```
 	
 In applications using a IoC container you may register the *IBricklinkClient* as a service and inject it into consuming instances (e.g. controllers).
 
 ##### [Autofac](https://autofac.org/) example
-
-    containerBuilder.Register(c => BricklinkClientFactory.Build()).As<IBricklinkClient>();
-
+```csharp
+containerBuilder.Register(c => BricklinkClientFactory.Build()).As<IBricklinkClient>();
+```
 ####  Get item
-    
-	var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
-	
+```csharp 
+var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
+```	
 #### Get item image
-    
-	var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 0);
+```csharp  
+var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 0);
+```
 	
 #### Get supersets
-    
-	var supersets = await client.GetSupersetsAsync(ItemType.Minifig, "aqu004", 0);
-	
+```csharp    
+var supersets = await client.GetSupersetsAsync(ItemType.Minifig, "aqu004", 0);
+```
 #### Get subsets    
-    
-	var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
-	 
+```csharp
+var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
+```
 #### Get price guide
-    
-	var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1, priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
-	
+```csharp 
+var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1, priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
+```	
 #### Get known colors
-    
-	var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
-	
+```csharp
+var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
+```
 #### Get color list
-    
-	var colors = await client.GetColorListAsync();
-	
+```csharp    
+var colors = await client.GetColorListAsync();
+```
 #### Get color
-    
-	var color = await client.GetColorAsync(15);
-	
+```csharp    
+var color = await client.GetColorAsync(15);
+```
 #### Get category list
-    
-	var categories = await client.GetCategoryListAsync();
-	
+```csharp
+var categories = await client.GetCategoryListAsync();
+```
 #### Get category
-    
-	var category = await client.GetCategoryAsync(1);
-
+```csharp    
+var category = await client.GetCategoryAsync(1);
+```
 #### Get inventory list
-
-	//Include only parts and minifigs.
-	var includedTypes = new List<ItemType> { ItemType.Part, ItemType.Minifig };
-	//Exclude all inventories which are unavailable.
-	var excludedStatusFlags = new List<InventoryStatusType> { Unavailable };
-	var inventories = await client.GetInventoryListAsync(includedTypes, excludedStatusFlags: excludedStatusFlags);
-
+```csharp
+//Include only parts and minifigs.
+var includedTypes = new List<ItemType> { ItemType.Part, ItemType.Minifig };
+//Exclude all inventories which are unavailable.
+var excludedStatusFlags = new List<InventoryStatusType> { Unavailable };
+var inventories = await client.GetInventoryListAsync(includedTypes, excludedStatusFlags: excludedStatusFlags);
+```
 #### Create inventory
-
-    var newInventory = new NewInventory
+```csharp
+var newInventory = new NewInventory
+{
+	ColorId = 1,
+	Condition = Condition.Used,
+	Item = new ItemBase
 	{
-		ColorId = 1,
-		Condition = Condition.Used,
-		Item = new ItemBase
-		{
-			Number = "3003",
-            Type = ItemType.Part
-        },
-		Quantity = 5,
-		UnitPrice = 0.01M,
-		Description = "Good used condition"
-    };
-    var inventory = await client.CreateInventoryAsync(newInventory);
-    
+		Number = "3003",
+		Type = ItemType.Part
+	},
+	Quantity = 5,
+	UnitPrice = 0.01M,
+	Description = "Good used condition"
+};
+var inventory = await client.CreateInventoryAsync(newInventory);
+```    
 #### Create inventories
- 
-    var newInventories = new NewInventory[] { //fill with inventories... };
-    //Note that there will be no response data.
-    await client.CreateInventoriesAsync(newInventories);
-	
+```csharp
+var newInventories = new NewInventory[] { //fill with inventories... };
+//Note that there will be no response data.
+await client.CreateInventoriesAsync(newInventories);
+```
 #### Update inventory
-	
-	var inventoryList = await client.GetInventoryListAsync();
-	var id = inventoryList.First().InventoryId;
-	var updatedInventory = new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
-	var inventory = await client.UpdatedInventoryAsync(id, updatedInventory);
-	
+```csharp
+var inventoryList = await client.GetInventoryListAsync();
+var id = inventoryList.First().InventoryId;
+var updatedInventory = new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
+var inventory = await client.UpdatedInventoryAsync(id, updatedInventory);
+```
 #### Delete inventory
-	
-	var inventoryList = await client.GetInventoryListAsync();
-	var id = inventoryList.First().InventoryId;
-	await client.DeleteInventoryAsync(id);
-
+```csharp	
+var inventoryList = await client.GetInventoryListAsync();
+var id = inventoryList.First().InventoryId;
+await client.DeleteInventoryAsync(id);
+```
 #### Get ElementID
 
 The method returns an array of *ItemMapping* objects. If a color ID is specified the array will contain just one element. Otherwise the array will contain mappings for every available color.
-
-    var itemMappings = await client.GetElementId("3003", 1);
-	
+```csharp
+var itemMappings = await client.GetElementId("3003", 1);
+```	
 #### Get Item Number 
-
-    var itemMapping = await client.GetItemNumber("300301");
+```csharp
+var itemMapping = await client.GetItemNumber("300301");
+```
