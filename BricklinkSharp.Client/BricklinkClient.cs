@@ -386,7 +386,7 @@ namespace BricklinkSharp.Client
             ParseResponseNoData(responseBody, 204, url, HttpMethod.Delete);
         }
 
-        public async Task<ItemMapping[]> GetElementId(string partNo, int? colorId)
+        public async Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId)
         {
             var builder = new UriBuilder(new Uri(_baseUri, $"item_mapping/PART/{partNo}"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -398,12 +398,28 @@ namespace BricklinkSharp.Client
             return itemMappings;
         }
 
-        public async Task<ItemMapping[]> GetItemNumber(string elementId)
+        public async Task<ItemMapping[]> GetItemNumberAsync(string elementId)
         {
             var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
             var responseBody = await ExecuteGetRequest(url);
             var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, HttpMethod.Get);
             return itemMappings;
+        }
+
+        public async Task<ShippingMethod[]> GetShippingMethodListAsync()
+        {
+            var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponse<ShippingMethod[]>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<ShippingMethod> GetShippingMethodAsync(int methodId)
+        {
+            var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponse<ShippingMethod>(responseBody, 200, url, HttpMethod.Get);
+            return data;
         }
     }
 }

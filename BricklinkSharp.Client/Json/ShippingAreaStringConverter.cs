@@ -23,27 +23,35 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using BricklinkSharp.Client;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Client.Json
 {
-    internal static class ColorDemos
+    internal class ShippingAreaStringConverter : JsonConverter<ShippingArea>
     {
-        public static async Task GetColorDemo()
+        public override ShippingArea Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var client = BricklinkClientFactory.Build();
-            var color = await client.GetColorAsync(15);
-
-            PrintHelper.PrintAsJson(color);
+            var stringValue = reader.GetString();
+            switch (stringValue)
+            {
+                case "D":
+                    return ShippingArea.Domestic;
+                case "I":
+                    return ShippingArea.International;
+                case "B":
+                    return ShippingArea.Both;
+                default:
+                    return ShippingArea.Domestic;
+            }
         }
 
-        public static async Task GetColorListDemo()
+        public override void Write(Utf8JsonWriter writer, ShippingArea value, JsonSerializerOptions options)
         {
-            var client = BricklinkClientFactory.Build();
-            var colors = await client.GetColorListAsync();
-
-            PrintHelper.PrintAsJson(colors);
+            var typeString = value.GetStringValueOrDefault().ToUpperInvariant();
+            writer.WriteStringValue(typeString);
         }
     }
 }

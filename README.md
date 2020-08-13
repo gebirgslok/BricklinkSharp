@@ -10,6 +10,11 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 
 ## Changelog
 
+### 0.3.0
+ - Setting / Shipping methods
+ - Renamed *IBricklinkClient.GetItemNumber* to *IBricklinkClient.GetItemNumberAsync* (**breaking**)
+ - Renamed *IBricklinkClient.GetElementId* to *IBricklinkClient.GetElementIdAsync* (**breaking**)
+
 ### 0.2.0
  - User Inventory
  - Item Mapping
@@ -28,7 +33,7 @@ Check out the [demo project](https://github.com/gebirgslok/BricklinkSharp/tree/m
 
 ### Prerequisites
 
-You need to be registered on [bricklink](https://www.bricklink.com/v2/main.page) as a **seller**. Then, use this [link](https://www.bricklink.com/v2/api/register_consumer.page) to add an access token. Add your client IP address (if applicable) or *0.0.0.0* for both IP address and mask to be able to make API request from any IP.
+You need to be registered on [bricklink](https://www.bricklink.com/v2/main.page) as a **seller**. Then, use this [link](https://www.bricklink.com/v2/api/register_consumer.page) to add an access token. Add your client IP address (if applicable) or *0.0.0.0* for both IP address and mask to be able to make API requests from any IP.
 
 ### Install NuGet package 
 
@@ -40,7 +45,7 @@ Install-Package BricklinkSharp
 ```
 nuget install BricklinkSharp
 ```	
-#### Setup credentials
+### Setup credentials
 
 ```csharp    
 BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
@@ -49,17 +54,19 @@ BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
 BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 ```
 	
-#### IBricklinkClient
+### IBricklinkClient
 ```csharp  
 var client = BricklinkClientFactory.Build();
 ```
 	
-In applications using a IoC container you may register the *IBricklinkClient* as a service and inject it into consuming instances (e.g. controllers).
+In applications using an IoC container you may register the *IBricklinkClient* as a service and inject it into consuming instances (e.g. controllers).
 
-##### [Autofac](https://autofac.org/) example
+#### [Autofac](https://autofac.org/) example
 ```csharp
 containerBuilder.Register(c => BricklinkClientFactory.Build()).As<IBricklinkClient>();
 ```
+### Item Catalog
+
 ####  Get item
 ```csharp 
 var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
@@ -67,8 +74,7 @@ var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
 #### Get item image
 ```csharp  
 var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 0);
-```
-	
+```	
 #### Get supersets
 ```csharp    
 var supersets = await client.GetSupersetsAsync(ItemType.Minifig, "aqu004", 0);
@@ -85,6 +91,8 @@ var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId:
 ```csharp
 var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
 ```
+### Color
+
 #### Get color list
 ```csharp    
 var colors = await client.GetColorListAsync();
@@ -93,6 +101,8 @@ var colors = await client.GetColorListAsync();
 ```csharp    
 var color = await client.GetColorAsync(15);
 ```
+### Category
+
 #### Get category list
 ```csharp
 var categories = await client.GetCategoryListAsync();
@@ -101,6 +111,9 @@ var categories = await client.GetCategoryListAsync();
 ```csharp    
 var category = await client.GetCategoryAsync(1);
 ```
+
+### User Inventory
+
 #### Get inventory list
 ```csharp
 //Include only parts and minifigs.
@@ -145,13 +158,26 @@ var inventoryList = await client.GetInventoryListAsync();
 var id = inventoryList.First().InventoryId;
 await client.DeleteInventoryAsync(id);
 ```
-#### Get ElementID
 
+### Item Mapping
+
+#### Get ElementID
 The method returns an array of *ItemMapping* objects. If a color ID is specified the array will contain just one element. Otherwise the array will contain mappings for every available color.
 ```csharp
-var itemMappings = await client.GetElementId("3003", 1);
+var itemMappings = await client.GetElementIdAsync("3003", 1);
 ```	
-#### Get Item Number 
+#### Get item number 
 ```csharp
-var itemMapping = await client.GetItemNumber("300301");
+var itemMapping = await client.GetItemNumberAsync("300301");
+```
+
+### Setting
+
+#### Get shipping method list
+```csharp
+var shippingMethods = await client.GetShippingMethodListAsync();
+```
+#### Get shipping method
+```csharp
+var shippingMethod = await client.GetShippingMethodAsync(123);
 ```

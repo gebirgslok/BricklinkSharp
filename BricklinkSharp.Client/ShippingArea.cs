@@ -23,27 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using BricklinkSharp.Client;
-
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Client
 {
-    internal static class ColorDemos
+    public enum ShippingArea
     {
-        public static async Task GetColorDemo()
-        {
-            var client = BricklinkClientFactory.Build();
-            var color = await client.GetColorAsync(15);
+        [StringValue("D")]
+        Domestic = 0,
 
-            PrintHelper.PrintAsJson(color);
-        }
+        [StringValue("I")]
+        International = 1,
 
-        public static async Task GetColorListDemo()
-        {
-            var client = BricklinkClientFactory.Build();
-            var colors = await client.GetColorListAsync();
-
-            PrintHelper.PrintAsJson(colors);
-        }
+        [StringValue("B")]
+        Both = 2
     }
 }

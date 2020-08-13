@@ -23,27 +23,35 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using BricklinkSharp.Client;
+using System;
+using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
+using NullGuard;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Client
 {
-    internal static class ColorDemos
+    [Serializable]
+    public class ShippingMethod
     {
-        public static async Task GetColorDemo()
-        {
-            var client = BricklinkClientFactory.Build();
-            var color = await client.GetColorAsync(15);
+        [JsonPropertyName("method_id")]
+        public int MethodId { get; set; }
 
-            PrintHelper.PrintAsJson(color);
-        }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        public static async Task GetColorListDemo()
-        {
-            var client = BricklinkClientFactory.Build();
-            var colors = await client.GetColorListAsync();
+        [JsonPropertyName("note"), AllowNull]
+        public string Note { get; set; }
 
-            PrintHelper.PrintAsJson(colors);
-        }
+        [JsonPropertyName("insurance")]
+        public bool HasInsurance { get; set; }
+
+        [JsonPropertyName("is_default")]
+        public bool IsDefault { get; set; }
+
+        [JsonPropertyName("area"), JsonConverter(typeof(ShippingAreaStringConverter))]
+        public ShippingArea Area { get; set; }
+
+        [JsonPropertyName("is_available")]
+        public bool IsAvailable { get; set; }
     }
 }

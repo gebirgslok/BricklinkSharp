@@ -28,22 +28,24 @@ using BricklinkSharp.Client;
 
 namespace BricklinkSharp.Demos
 {
-    internal static class ColorDemos
+    internal static class SettingDemos
     {
-        public static async Task GetColorDemo()
+        public static async Task<ShippingMethod[]> GetShippingMethodListDemo()
         {
             var client = BricklinkClientFactory.Build();
-            var color = await client.GetColorAsync(15);
+            var shippingMethods = await client.GetShippingMethodListAsync();
 
-            PrintHelper.PrintAsJson(color);
+            PrintHelper.PrintAsJson(shippingMethods);
+
+            return shippingMethods;
         }
 
-        public static async Task GetColorListDemo()
+        public static async Task GetShippingMethodDemo(int id)
         {
             var client = BricklinkClientFactory.Build();
-            var colors = await client.GetColorListAsync();
+            var shippingMethod = await client.GetShippingMethodAsync(id);
 
-            PrintHelper.PrintAsJson(colors);
+            PrintHelper.PrintAsJson(shippingMethod);
         }
     }
 }

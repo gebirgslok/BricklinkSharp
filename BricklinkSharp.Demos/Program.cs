@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
@@ -59,6 +60,10 @@ namespace BricklinkSharp.Demos
 
             await ItemMappingDemos.GetElementIdDemo();
             await ItemMappingDemos.GetItemNumberDemo();
+
+            var shippingMethods = await SettingDemos.GetShippingMethodListDemo();
+            var id = shippingMethods.First().MethodId;
+            await SettingDemos.GetShippingMethodDemo(id);
 
             Console.ReadKey(true);
         }

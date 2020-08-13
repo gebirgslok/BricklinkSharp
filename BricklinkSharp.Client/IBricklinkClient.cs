@@ -71,8 +71,12 @@ namespace BricklinkSharp.Client
 
         Task DeleteInventoryAsync(int inventoryId);
 
-        Task<ItemMapping[]> GetElementId(string partNo, int? colorId);
+        Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId);
 
-        Task<ItemMapping[]> GetItemNumber(string elementId);
+        Task<ItemMapping[]> GetItemNumberAsync(string elementId);
+
+        Task<ShippingMethod[]> GetShippingMethodListAsync();
+
+        Task<ShippingMethod> GetShippingMethodAsync(int methodId);
     }
 }
