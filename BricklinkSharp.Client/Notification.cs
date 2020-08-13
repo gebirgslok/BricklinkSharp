@@ -26,41 +26,26 @@
 using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
     [Serializable]
-    public class ShippingMethod
+    public class Notification
     {
-        [JsonPropertyName("method_id")]
-        public int MethodId { get; set; }
+        [JsonPropertyName("event_type"), JsonConverter(typeof(EventTypeStringConverter))]
+        public EventType EventType { get; set; }
 
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
+        [JsonPropertyName("resource_id")]
+        public int ResourceId { get; set; }
 
-        [JsonPropertyName("note"), AllowNull]
-        public string Note { get; set; }
-
-        [JsonPropertyName("insurance")]
-        public bool HasInsurance { get; set; }
-
-        [JsonPropertyName("is_default")]
-        public bool IsDefault { get; set; }
-
-        [JsonPropertyName("area"), JsonConverter(typeof(ShippingAreaStringConverter))]
-        public ShippingArea Area { get; set; }
-
-        [JsonPropertyName("is_available")]
-        public bool IsAvailable { get; set; }
+        [JsonPropertyName("timestamp")]
+        public DateTime Timestamp { get; set; }
 
         public override string ToString()
         {
-            return $"{nameof(MethodId)}: {MethodId}, {nameof(ShippingArea)}: {Area}, {nameof(Name)}: {Name}" +
-                   Environment.NewLine +
-                   $"{nameof(Note)}: {Note ?? "null"}" +
-                   Environment.NewLine +
-                   $"{nameof(HasInsurance)}: {HasInsurance}, {nameof(IsDefault)}: {IsDefault}, {nameof(IsAvailable)}: {IsAvailable}";
+            return $"{nameof(EventType)}: {EventType}, " +
+                   $"{nameof(ResourceId)}: {ResourceId}, " +
+                   $"{nameof(Timestamp)}: {Timestamp}";
         }
     }
 }

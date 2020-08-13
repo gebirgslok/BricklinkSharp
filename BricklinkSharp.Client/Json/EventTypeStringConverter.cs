@@ -24,43 +24,28 @@
 #endregion
 
 using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Json;
-using NullGuard;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Json
 {
-    [Serializable]
-    public class ShippingMethod
+    internal class EventTypeStringConverter : JsonConverter<EventType>
     {
-        [JsonPropertyName("method_id")]
-        public int MethodId { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("note"), AllowNull]
-        public string Note { get; set; }
-
-        [JsonPropertyName("insurance")]
-        public bool HasInsurance { get; set; }
-
-        [JsonPropertyName("is_default")]
-        public bool IsDefault { get; set; }
-
-        [JsonPropertyName("area"), JsonConverter(typeof(ShippingAreaStringConverter))]
-        public ShippingArea Area { get; set; }
-
-        [JsonPropertyName("is_available")]
-        public bool IsAvailable { get; set; }
-
-        public override string ToString()
+        public override EventType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return $"{nameof(MethodId)}: {MethodId}, {nameof(ShippingArea)}: {Area}, {nameof(Name)}: {Name}" +
-                   Environment.NewLine +
-                   $"{nameof(Note)}: {Note ?? "null"}" +
-                   Environment.NewLine +
-                   $"{nameof(HasInsurance)}: {HasInsurance}, {nameof(IsDefault)}: {IsDefault}, {nameof(IsAvailable)}: {IsAvailable}";
+            var stringValue = reader.GetString();
+
+            if (Enum.TryParse(stringValue, true, out EventType result))
+            {
+                return result;
+            }
+
+            return 0;
+        }
+
+        public override void Write(Utf8JsonWriter writer, EventType value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString());
         }
     }
 }

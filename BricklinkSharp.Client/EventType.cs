@@ -23,31 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Threading.Tasks;
-using BricklinkSharp.Client;
-
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Client
 {
-    internal static class SettingDemos
+    public enum EventType
     {
-        public static async Task<ShippingMethod[]> GetShippingMethodListDemo()
-        {
-            var client = BricklinkClientFactory.Build();
-            var shippingMethods = await client.GetShippingMethodListAsync();
+        [StringValue("Order")]
+        Order = 0,
 
-            PrintHelper.PrintAsJson(shippingMethods);
+        [StringValue("Message")]
+        Message = 1,
 
-            return shippingMethods;
-        }
-
-        public static async Task GetShippingMethodDemo(int id)
-        {
-            var client = BricklinkClientFactory.Build();
-            var shippingMethod = await client.GetShippingMethodAsync(id);
-
-            PrintHelper.PrintAsJson(shippingMethod);
-            Console.WriteLine(shippingMethod.ToString());
-        }
+        [StringValue("Feedback")]
+        Feedback = 2
     }
 }

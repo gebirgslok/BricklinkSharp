@@ -78,5 +78,7 @@ namespace BricklinkSharp.Client
         Task<ShippingMethod[]> GetShippingMethodListAsync();
 
         Task<ShippingMethod> GetShippingMethodAsync(int methodId);
+
+        Task<Notification[]> GetNotificationsAsync();
     }
 }

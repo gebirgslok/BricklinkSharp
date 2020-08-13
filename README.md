@@ -11,6 +11,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 ## Changelog
 
 ### 0.3.0
+ - Push Notification
  - Setting / Shipping methods
  - Renamed *IBricklinkClient.GetItemNumber* to *IBricklinkClient.GetItemNumberAsync* (**breaking**)
  - Renamed *IBricklinkClient.GetElementId* to *IBricklinkClient.GetElementIdAsync* (**breaking**)
@@ -169,6 +170,13 @@ var itemMappings = await client.GetElementIdAsync("3003", 1);
 #### Get item number 
 ```csharp
 var itemMapping = await client.GetItemNumberAsync("300301");
+```
+
+### Push Notification
+
+#### Get notifications
+```csharp
+var notifications = await client.GetNotificationsAsync();
 ```
 
 ### Setting

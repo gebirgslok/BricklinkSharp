@@ -410,7 +410,7 @@ namespace BricklinkSharp.Client
         {
             var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
             var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<ShippingMethod[]>(responseBody, 200, url, HttpMethod.Get);
+            var data = ParseResponseArrayAllowEmpty<ShippingMethod>(responseBody, 200, url, HttpMethod.Get);
             return data;
         }
 
@@ -419,6 +419,14 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
             var responseBody = await ExecuteGetRequest(url);
             var data = ParseResponse<ShippingMethod>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<Notification[]> GetNotificationsAsync()
+        {
+            var url = new Uri(_baseUri, "notifications").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponseArrayAllowEmpty<Notification>(responseBody, 200, url, HttpMethod.Get);
             return data;
         }
     }
