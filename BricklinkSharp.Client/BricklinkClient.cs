@@ -371,7 +371,7 @@ namespace BricklinkSharp.Client
         {
             updatedInventory.ValidateThrowException();
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-            
+
             var responseBody = await ExecutePutRequest(url, updatedInventory, new JsonSerializerOptions
             {
                 IgnoreNullValues = true
@@ -438,6 +438,51 @@ namespace BricklinkSharp.Client
             var responseBody = await ExecuteGetRequest(url);
             var data = ParseResponse<MemberRating>(responseBody, 200, url, HttpMethod.Get);
             return data;
+        }
+
+        public async Task<Feedback[]> GetFeedbackListAsync(FeedbackDirection? direction = null)
+        {
+            var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.AddIfNotNull("direction", direction, d => d.ToString().ToLowerInvariant());
+            builder.Query = query.ToString();
+            var url = builder.ToString();
+
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<Feedback> GetFeedbackAsync(int feedbackId)
+        {
+            var url = new Uri(_baseUri, $"feedback/{feedbackId}").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponse<Feedback>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<Feedback> PostFeedbackAsync(int orderId, RatingType rating, string comment)
+        {
+            var url = new Uri(_baseUri, "feedback").ToString();
+            var body = new FeedbackBase
+            {
+                Comment = comment,
+                OrderId = orderId,
+                Rating = rating
+            };
+
+            var responseBody = await ExecutePostRequest(url, body);
+            var data = ParseResponse<Feedback>(responseBody, 201, url, HttpMethod.Post);
+            return data;
+        }
+
+        public async Task ReplyFeedbackAsync(int feedbackId, string reply)
+        {
+            var url = new Uri(_baseUri, $"feedback/{feedbackId}/reply").ToString();
+            var body = new { reply };
+
+            var responseBody = await ExecutePostRequest(url, body);
+            ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
     }
 }

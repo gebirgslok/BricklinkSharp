@@ -82,5 +82,13 @@ namespace BricklinkSharp.Client
         Task<Notification[]> GetNotificationsAsync();
 
         Task<MemberRating> GetMemberRatingAsync(string username);
+
+        Task<Feedback[]> GetFeedbackListAsync(FeedbackDirection? direction = null);
+
+        Task<Feedback> GetFeedbackAsync(int feedbackId);
+
+        Task<Feedback> PostFeedbackAsync(int orderId, RatingType rating, string comment);
+
+        Task ReplyFeedbackAsync(int feedbackId, string reply);
     }
 }

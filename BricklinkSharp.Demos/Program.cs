@@ -69,6 +69,13 @@ namespace BricklinkSharp.Demos
 
             await MemberDemos.GetMemberRatingDemo();
 
+            await FeedbackDemos.GetFeedbackListDemo();
+            await FeedbackDemos.GetFeedbackDemo();
+            //var orderId = 123456789; //replace with a valid order ID.
+            //await FeedbackDemos.PostFeedbackDemo(orderId);
+            //var feedbackId = 123456789; //replace with a valid feedback ID.
+            //await FeedbackDemos.ReplyFeedbackDemo(feedbackId);
+
             Console.ReadKey(true);
         }
     }

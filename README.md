@@ -11,6 +11,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 ## Changelog
 
 ### 0.3.0
+ - Feedback
  - Member / Get member rating
  - Push Notification
  - Setting / Shipping methods
@@ -198,3 +199,30 @@ var shippingMethod = await client.GetShippingMethodAsync(123);
 var rating = await client.GetMemberRatingAsync("bluser");
 ```
 
+### Feedback
+
+#### Get feedback list
+```csharp
+var feedbackInList = await client.GetFeedbackListAsync(FeedbackDirection.In);
+var feedbackOutList = await client.GetFeedbackListAsync(FeedbackDirection.Out);
+var feedbackListAll = await client.GetFeedbackListAsync();
+```
+
+#### Get feedback
+```csharp
+var feedbackListAll = await client.GetFeedbackListAsync()
+var id = feedbackListAll.First().FeedbackId;
+var feedback = await client.GetFeedbackAsync(id);
+```
+
+#### Post feedback
+```csharp
+var orderId = 1234567; //Must be a valid order ID.
+var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Awesome transaction, praise!");
+```
+
+#### Reply feedback
+```csharp
+var orderId = 1234567; //Must be a valid feedback ID.
+await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
+```
