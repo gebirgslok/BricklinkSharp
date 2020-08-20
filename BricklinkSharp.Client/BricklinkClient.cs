@@ -43,6 +43,8 @@ namespace BricklinkSharp.Client
 
         private void GetAuthorizationHeader(string url, string method, out string scheme, out string parameter)
         {
+            BricklinkClientConfiguration.Instance.ValidateThrowException();
+
             var request = new OAuthRequest(BricklinkClientConfiguration.Instance.ConsumerKey,
                 BricklinkClientConfiguration.Instance.ConsumerSecret,
                 BricklinkClientConfiguration.Instance.TokenValue,
@@ -427,6 +429,14 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, "notifications").ToString();
             var responseBody = await ExecuteGetRequest(url);
             var data = ParseResponseArrayAllowEmpty<Notification>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<MemberRating> GetMemberRatingAsync(string username)
+        {
+            var url = new Uri(_baseUri, $"members/{username}/ratings").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponse<MemberRating>(responseBody, 200, url, HttpMethod.Get);
             return data;
         }
     }

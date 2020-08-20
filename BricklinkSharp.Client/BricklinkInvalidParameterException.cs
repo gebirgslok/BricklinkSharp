@@ -32,13 +32,13 @@ using System.Text;
 
 namespace BricklinkSharp.Client
 {
-    public class InvalidBricklinkParameterException : Exception
+    public class BricklinkInvalidParameterException : Exception
     {
         public Dictionary<string, object> InvalidParameters { get; }
 
         public Type TypeOfDataObject { get; }
 
-        internal InvalidBricklinkParameterException(Dictionary<string, object> invalidParameters,
+        internal BricklinkInvalidParameterException(Dictionary<string, object> invalidParameters,
             string baseMessage = null,
             Type typeOfDataObject = null) : base(BuildMessage(baseMessage, invalidParameters, typeOfDataObject))
         {
@@ -75,7 +75,7 @@ namespace BricklinkSharp.Client
             return builder.ToString();
         }
 
-        internal InvalidBricklinkParameterException(SerializationInfo info, StreamingContext context) : base(info, context)
+        internal BricklinkInvalidParameterException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

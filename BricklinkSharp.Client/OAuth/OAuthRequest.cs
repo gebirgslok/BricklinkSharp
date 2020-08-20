@@ -30,26 +30,21 @@ namespace BricklinkSharp.Client.OAuth
 {
     internal class OAuthRequest
     {
-        public string ConsumerKey { get; }
-
-        public string ConsumerSecret { get; }
-
-        public string Token { get; }
-
-        public string TokenSecret { get; }
-
-        public string RequestUrl { get; }
-
-        public string Method { get; }
+        private readonly string _consumerKey;
+        private readonly string _consumerSecret;
+        private readonly string _token;
+        private readonly string _tokenSecret;
+        private readonly string _requestUrl;
+        private readonly string _method;
 
         public OAuthRequest(string consumerKey, string consumerSecret, string token, string tokenSecret, string requestUrl, string method)
         {
-            ConsumerKey = consumerKey;
-            ConsumerSecret = consumerSecret;
-            Token = token;
-            TokenSecret = tokenSecret;
-            RequestUrl = requestUrl;
-            Method = method;
+            _consumerKey = consumerKey;
+            _consumerSecret = consumerSecret;
+            _token = token;
+            _tokenSecret = tokenSecret;
+            _requestUrl = requestUrl;
+            _method = method;
         }
 
         private string BuildAuthHeader(string signature, string timestamp,
@@ -57,12 +52,12 @@ namespace BricklinkSharp.Client.OAuth
         {
             var builder = new StringBuilder();
             builder.Append("OAuth ");
-            builder.Append($"oauth_consumer_key=\"{ConsumerKey}\",");
+            builder.Append($"oauth_consumer_key=\"{_consumerKey}\",");
             builder.Append($"oauth_nonce=\"{nonce}\",");
             builder.Append($"oauth_signature=\"{signature}\",");
             builder.Append("oauth_signature_method=\"HMAC-SHA1\",");
             builder.Append($"oauth_timestamp=\"{timestamp}\",");
-            builder.Append($"oauth_token=\"{Token}\",");
+            builder.Append($"oauth_token=\"{_token}\",");
             builder.Append("oauth_version=\"1.0\"");
             return builder.ToString();
         }
@@ -71,8 +66,8 @@ namespace BricklinkSharp.Client.OAuth
         {
             var authParameters = new List<WebParameter>
             {
-                new WebParameter("oauth_consumer_key", ConsumerKey),
-                new WebParameter("oauth_token", Token),
+                new WebParameter("oauth_consumer_key", _consumerKey),
+                new WebParameter("oauth_token", _token),
                 new WebParameter("oauth_signature_method", "HMAC-SHA1"),
                 new WebParameter("oauth_timestamp", timestamp),
                 new WebParameter("oauth_nonce", nonce),
@@ -86,8 +81,8 @@ namespace BricklinkSharp.Client.OAuth
         {
             var parameters = queryParameters ?? new List<WebParameter>();
             AddAuthParamters(parameters, timestamp, nonce);
-            var signatureBase = OAuthUtilities.ConcatenateRequestElements(Method.ToUpperInvariant(), RequestUrl, parameters);
-            var signature = OAuthUtilities.GetSignature(signatureBase, ConsumerSecret, TokenSecret);
+            var signatureBase = OAuthUtilities.ConcatenateRequestElements(_method.ToUpperInvariant(), _requestUrl, parameters);
+            var signature = OAuthUtilities.GetSignature(signatureBase, _consumerSecret, _tokenSecret);
             return signature;
         }
 

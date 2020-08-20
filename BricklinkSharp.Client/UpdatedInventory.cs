@@ -125,7 +125,7 @@ namespace BricklinkSharp.Client
         {
             if (IsStockRoom.HasValue && IsStockRoom.Value && StockRoomId != "A" && StockRoomId != "B" && StockRoomId != "C")
             {
-                throw new InvalidBricklinkParameterException(new Dictionary<string, object>
+                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                     {
                         {nameof(StockRoomId), StockRoomId ?? "null"}
                     },
@@ -136,7 +136,7 @@ namespace BricklinkSharp.Client
             var setCount = GetTieredPricePropertiesSetCount();
             if (setCount > 0 && setCount < 6)
             {
-                throw new InvalidBricklinkParameterException(new Dictionary<string, object>
+                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                     {
                         {nameof(TierQuantity1), TierQuantity1},
                         {nameof(TierQuantity2), TierQuantity2},
@@ -180,7 +180,7 @@ namespace BricklinkSharp.Client
 
                 if (invalidParameters.Any())
                 {
-                    throw new InvalidBricklinkParameterException(invalidParameters,
+                    throw new BricklinkInvalidParameterException(invalidParameters,
                         "Following rules apply for tiered pricing: " + Environment.NewLine +
                         $"{nameof(UnitPrice)} > {nameof(TierPrice1)} > {nameof(TierPrice2)} > {nameof(TierPrice3)}," + Environment.NewLine +
                         $"{nameof(TierQuantity1)} < {nameof(TierQuantity2)} < {nameof(TierQuantity3)}.",
@@ -190,7 +190,7 @@ namespace BricklinkSharp.Client
 
             if (Bulk.HasValue && Bulk.Value < 1)
             {
-                throw new InvalidBricklinkParameterException(new Dictionary<string, object>
+                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                     {
                         {nameof(Bulk), Bulk}
                     },

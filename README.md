@@ -11,6 +11,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 ## Changelog
 
 ### 0.3.0
+ - Member / Get member rating
  - Push Notification
  - Setting / Shipping methods
  - Renamed *IBricklinkClient.GetItemNumber* to *IBricklinkClient.GetItemNumberAsync* (**breaking**)
@@ -189,3 +190,11 @@ var shippingMethods = await client.GetShippingMethodListAsync();
 ```csharp
 var shippingMethod = await client.GetShippingMethodAsync(123);
 ```
+
+### Member
+
+#### Get member rating
+```csharp
+var rating = await client.GetMemberRatingAsync("bluser");
+```
+

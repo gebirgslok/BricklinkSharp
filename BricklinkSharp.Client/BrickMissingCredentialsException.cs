@@ -23,56 +23,37 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+// ReSharper disable UnusedMember.Local
 
 namespace BricklinkSharp.Client
 {
-    public class BricklinkClientConfiguration
+    public class BrickMissingCredentialsException : Exception
     {
-        public string ConsumerKey { get; set; }
-
-        public string ConsumerSecret { get; set; }
-
-        public string TokenValue { get; set; }
-
-        public string TokenSecret { get; set; }
-
-        private static BricklinkClientConfiguration _instance;
-        public static BricklinkClientConfiguration Instance => _instance ??= new BricklinkClientConfiguration();
-
-        private BricklinkClientConfiguration()
+        internal BrickMissingCredentialsException(IReadOnlyList<string> missingParams) : base(BuildMessage(missingParams))
         {
         }
 
-        internal void ValidateThrowException()
+        private static string BuildMessage(IReadOnlyList<string> missingParams)
         {
-            var missingParams = new List<string>();
+            var builder = new StringBuilder();
+            builder.AppendLine("Missing credential parameter(s):");
 
-            if (string.IsNullOrEmpty(ConsumerKey.Trim()))
+            for (var i = 0; i < missingParams.Count; i++)
             {
-                missingParams.Add(nameof(ConsumerKey));
+                var missingParam = missingParams[i];
+                var isLast = i == missingParams.Count - 1;
+                builder.AppendLine($"Parameter = {missingParam}{(isLast ? "." : ", ")}");
             }
 
-            if (string.IsNullOrEmpty(ConsumerSecret.Trim()))
-            {
-                missingParams.Add(nameof(ConsumerSecret));
-            }
+            return builder.ToString();
+        }
 
-            if (string.IsNullOrEmpty(TokenValue.Trim()))
-            {
-                missingParams.Add(nameof(TokenValue));
-            }
-
-            if (string.IsNullOrEmpty(TokenSecret.Trim()))
-            {
-                missingParams.Add(nameof(TokenSecret));
-            }
-
-            if (missingParams.Any())
-            {
-                throw new BrickMissingCredentialsException(missingParams);
-            }
+        private BrickMissingCredentialsException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 }
