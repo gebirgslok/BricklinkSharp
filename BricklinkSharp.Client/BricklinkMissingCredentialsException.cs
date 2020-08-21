@@ -31,9 +31,9 @@ using System.Text;
 
 namespace BricklinkSharp.Client
 {
-    public class BrickMissingCredentialsException : Exception
+    public class BricklinkMissingCredentialsException : Exception
     {
-        internal BrickMissingCredentialsException(IReadOnlyList<string> missingParams) : base(BuildMessage(missingParams))
+        internal BricklinkMissingCredentialsException(IReadOnlyList<string> missingParams) : base(BuildMessage(missingParams))
         {
         }
 
@@ -52,7 +52,7 @@ namespace BricklinkSharp.Client
             return builder.ToString();
         }
 
-        private BrickMissingCredentialsException(SerializationInfo info, StreamingContext context) : base(info, context)
+        private BricklinkMissingCredentialsException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

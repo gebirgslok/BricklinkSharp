@@ -71,7 +71,7 @@ namespace BricklinkSharp.Client
 
             if (missingParams.Any())
             {
-                throw new BrickMissingCredentialsException(missingParams);
+                throw new BricklinkMissingCredentialsException(missingParams);
             }
         }
     }
