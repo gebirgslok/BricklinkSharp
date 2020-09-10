@@ -10,6 +10,9 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 
 ## Changelog
 
+### 0.4.0
+ - Order
+
 ### 0.3.0
  - Feedback
  - Member / Get member rating
@@ -223,6 +226,24 @@ var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Aweso
 
 #### Reply feedback
 ```csharp
-var orderId = 1234567; //Must be a valid feedback ID.
+var feedbackId = 1234567; //Must be a valid feedback ID.
 await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
+```
+
+### Order
+
+#### Get Orders
+```csharp
+//Exclude all purged orders.
+var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+{
+	OrderStatus.Purged
+});
+```
+```csharp
+//Only paid orders that must be shipped.
+var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+{
+	OrderStatus.Paid
+});
 ```

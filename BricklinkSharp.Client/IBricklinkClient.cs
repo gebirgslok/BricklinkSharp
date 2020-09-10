@@ -90,5 +90,10 @@ namespace BricklinkSharp.Client
         Task<Feedback> PostFeedbackAsync(int orderId, RatingType rating, string comment);
 
         Task ReplyFeedbackAsync(int feedbackId, string reply);
+
+        Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+            IEnumerable<OrderStatus> includedStatusFlags = null,
+            IEnumerable<OrderStatus> excludedStatusFlags = null, 
+            bool filed = false);
     }
 }

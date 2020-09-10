@@ -484,5 +484,23 @@ namespace BricklinkSharp.Client
             var responseBody = await ExecutePostRequest(url, body);
             ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
+
+        public async Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+            IEnumerable<OrderStatus> includedStatusFlags = null,
+            IEnumerable<OrderStatus> excludedStatusFlags = null,
+            bool filed = false)
+        {
+            var builder = new UriBuilder(new Uri(_baseUri, "orders"));
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.Add("direction", direction.GetStringValueOrDefault());
+            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.GetStringValueOrDefault()));
+            query.Add("filed", filed.ToString());
+            builder.Query = query.ToString();
+            var url = builder.ToString();
+
+            var responseBody = await ExecuteGetRequest(url);
+            var orders = ParseResponseArrayAllowEmpty<Order>(responseBody, 200, url, HttpMethod.Get);
+            return orders;
+        }
     }
 }
