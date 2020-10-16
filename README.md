@@ -82,9 +82,9 @@ containerBuilder.Register(c => BricklinkClientFactory.Build())
 #### [Microsoft.Extensions.DependencyInjection] example
 ```csharp
 services.AddSingleton(typeof(IBricklinkClient), provider =>
-	{
-		return BricklinkClientFactory.Build();
-    });  
+{
+	return BricklinkClientFactory.Build();
+});  
 ```
 
 ### Item Catalog
