@@ -33,7 +33,7 @@ namespace BricklinkSharp.Demos
     {
         public static async Task<ShippingMethod[]> GetShippingMethodListDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var shippingMethods = await client.GetShippingMethodListAsync();
 
             PrintHelper.PrintAsJson(shippingMethods);
@@ -43,7 +43,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetShippingMethodDemo(int id)
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var shippingMethod = await client.GetShippingMethodAsync(id);
 
             PrintHelper.PrintAsJson(shippingMethod);

@@ -34,7 +34,7 @@ namespace BricklinkSharp.Demos
     {
         public static async Task UpdatedInventoryDemo(int id)
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var inventory = await client.UpdateInventoryAsync(id, new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
             
             PrintHelper.PrintAsJson(inventory);
@@ -42,14 +42,14 @@ namespace BricklinkSharp.Demos
 
         public static async Task DeleteInventoryDemo(int id)
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             await client.DeleteInventoryAsync(id);
             Console.WriteLine($"Successfully deleted inventory with ID = {id}.");
         }
 
         public static async Task CreateInventoriesDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var newInventories = new NewInventory[]
             {
                 new NewInventory
@@ -86,7 +86,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task<Inventory> CreateInventoryDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var newInventory = new NewInventory
             {
                 ColorId = 1,
@@ -108,7 +108,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetInventoryDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var inventory = await client.GetInventoryAsync(1);
 
             PrintHelper.PrintAsJson(inventory);
@@ -116,7 +116,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetInventoryListDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var inventories = await client.GetInventoryListAsync(new List<ItemType> { ItemType.Part, ItemType.Minifig },
                 excludedStatusFlags: new List<InventoryStatusType> { InventoryStatusType.Reserved });
 

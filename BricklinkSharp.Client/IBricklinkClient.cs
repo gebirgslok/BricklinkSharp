@@ -23,12 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BricklinkSharp.Client
 {
-    public interface IBricklinkClient
+    public interface IBricklinkClient : IDisposable
     {
         Task<CatalogItem> GetItemAsync(ItemType type, string no);
 
@@ -103,5 +104,13 @@ namespace BricklinkSharp.Client
         Task<OrderMessage[]> GetOrderMessagesAsync(int orderId);
 
         Task<Feedback[]> GetOrderFeedbackAsync(int orderId);
+
+        Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder);
+
+        Task UpdateOrderStatusAsync(int orderId, OrderStatus status);
+
+        Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status);
+
+        Task SendDriveThruAsync(int orderId, bool mailCcMe);
     }
 }

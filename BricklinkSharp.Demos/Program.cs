@@ -81,6 +81,9 @@ namespace BricklinkSharp.Demos
             await OrderDemos.GetOrderItemsDemo();
             await OrderDemos.GetOrderMessagesDemo();
             await OrderDemos.GetOrderFeedbackDemo();
+            await OrderDemos.UpdateOrderStatusDemo();
+            await OrderDemos.UpdatePaymentStatusDemo();
+            await OrderDemos.UpdateOrderDemo();
             Console.ReadKey(true);
         }
     }

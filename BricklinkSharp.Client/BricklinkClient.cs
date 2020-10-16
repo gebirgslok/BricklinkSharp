@@ -37,9 +37,16 @@ using BricklinkSharp.Client.OAuth;
 
 namespace BricklinkSharp.Client
 {
-    internal class BricklinkClient : IBricklinkClient
+    internal sealed class BricklinkClient : IBricklinkClient
     {
         private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
+        private readonly HttpClient _httpClient = new HttpClient();
+        private bool _isDisposed;
+
+        ~BricklinkClient()
+        {
+            Dispose(false);
+        }
 
         private void GetAuthorizationHeader(string url, string method, out string scheme, out string parameter)
         {
@@ -86,28 +93,27 @@ namespace BricklinkSharp.Client
             var method = HttpMethod.Put;
             GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
 
-            using var client = new HttpClient();
             var json = JsonSerializer.Serialize(body, options);
             using var content = new StringContent(json, Encoding.Default, "application/json");
             content.Headers.ContentType.CharSet = string.Empty;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
-            var response = await client.PutAsync(url, content);
+            var response = await _httpClient.PutAsync(url, content);
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
 
-        private async Task<string> ExecutePostRequest<TBody>(string url, TBody body)
+        private async Task<string> ExecutePostRequest<TBody>(string url, TBody body, JsonSerializerOptions options = null)
         {
             var method = HttpMethod.Post;
             GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
 
-            using var client = new HttpClient();
-            using var content = new StringContent(JsonSerializer.Serialize(body), Encoding.Default, "application/json");
+            var json = JsonSerializer.Serialize(body, options);
+            using var content = new StringContent(json, Encoding.Default, "application/json");
             content.Headers.ContentType.CharSet = string.Empty;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
-            var response = await client.PostAsync(url, content);
+            var response = await _httpClient.PostAsync(url, content);
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
@@ -115,12 +121,23 @@ namespace BricklinkSharp.Client
         private async Task<string> ExecuteGetRequest(string url)
         {
             var method = HttpMethod.Get;
+           
+            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+
+            var response = await _httpClient.GetAsync(url);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+            return contentAsString;
+        }
+
+        private async Task<string> ExecutePostRequest(string url)
+        {
+            var method = HttpMethod.Post;
             GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
-            var response = await client.GetAsync(url);
+            var response = await _httpClient.PostAsync(url, null);
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
@@ -130,10 +147,9 @@ namespace BricklinkSharp.Client
             var method = HttpMethod.Delete;
             GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
-            var response = await client.DeleteAsync(url);
+            var response = await _httpClient.DeleteAsync(url);
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
@@ -197,6 +213,21 @@ namespace BricklinkSharp.Client
 
             var data = dataElement.ToObject<TData>();
             return data;
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _httpClient.Dispose();
+            }
+
+            _isDisposed = true;
         }
 
         public async Task<CatalogItem> GetItemAsync(ItemType type, string no)
@@ -515,9 +546,7 @@ namespace BricklinkSharp.Client
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
             var responseBody = await ExecuteGetRequest(url);
-            //TODO: Handle inner list!
             var itemsBatchList = new List<OrderItem[]>();
-
             using var document = JsonDocument.Parse(responseBody);
             var dataElement = GetData(document, 200, url, HttpMethod.Get);
 
@@ -525,7 +554,7 @@ namespace BricklinkSharp.Client
             {
                 throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(), dataElement.ValueKind.ToString(),
                     url, HttpMethod.Get);
-            }       
+            }
 
             foreach (var innerList in dataElement.EnumerateArray())
             {
@@ -540,7 +569,7 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
             var responseBody = await ExecuteGetRequest(url);
             var messages = ParseResponseArrayAllowEmpty<OrderMessage>(responseBody, 200, url, HttpMethod.Get);
-            return messages ;
+            return messages;
         }
 
         public async Task<Feedback[]> GetOrderFeedbackAsync(int orderId)
@@ -549,6 +578,64 @@ namespace BricklinkSharp.Client
             var responseBody = await ExecuteGetRequest(url);
             var feedbackArray = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, HttpMethod.Get);
             return feedbackArray;
+        }
+
+        public async Task UpdateOrderStatusAsync(int orderId, OrderStatus status)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}/status").ToString();
+            var responseBody = await ExecutePutRequest(url, new
+            {
+                field = "status",
+                value = status.GetStringValueOrDefault()
+            });
+
+            ParseResponseNoData(responseBody, 200, url, HttpMethod.Put);
+            return;
+        }
+
+        public async Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}/payment_status").ToString();
+            var responseBody = await ExecutePutRequest(url, new
+            {
+                field = "payment_status",
+                value = status.ToString()
+            });
+
+            ParseResponseNoData(responseBody, 200, url, HttpMethod.Put);
+            return;
+        }
+
+        public async Task SendDriveThruAsync(int orderId, bool mailCcMe)
+        {
+            var builder = new UriBuilder(new Uri(_baseUri, $"orders/{orderId}/drive_thru"));
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.Add("mail_me", mailCcMe.ToString());
+            builder.Query = query.ToString();
+            var url = builder.ToString();
+
+            var responseBody = await ExecutePostRequest(url);
+
+            ParseResponseNoData(responseBody, 200, url, HttpMethod.Post);
+            return;
+        }
+
+        public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
+            var responseBody = await ExecutePutRequest(url, updateOrder, new JsonSerializerOptions
+            {
+                IgnoreNullValues = true
+            });
+
+            var order = ParseResponse<OrderDetails>(responseBody, 200, url, HttpMethod.Put);
+            return order;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

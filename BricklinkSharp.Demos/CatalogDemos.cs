@@ -32,7 +32,7 @@ namespace BricklinkSharp.Demos
     {
         public static async Task GetKnownColorsDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
 
             PrintHelper.PrintAsJson(knownColors);
@@ -40,7 +40,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetPriceGuideDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1,
                 priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
 
@@ -49,7 +49,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetSubsetsDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
 
             PrintHelper.PrintAsJson(subsets);
@@ -57,7 +57,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetSupersetsDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var supersets = await client.GetSupersetsAsync(ItemType.Minifig, "aqu004", 0);
 
             PrintHelper.PrintAsJson(supersets);
@@ -65,7 +65,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetItemDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var catalogItem = await client.GetItemAsync(ItemType.Minifig, "sw0693");
 
             PrintHelper.PrintAsJson(catalogItem);
@@ -73,7 +73,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetItemImageDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 0);
 
             PrintHelper.PrintAsJson(catalogImage);

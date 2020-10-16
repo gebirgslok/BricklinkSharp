@@ -23,27 +23,37 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using BricklinkSharp.Client;
+using System;
+using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Client
 {
-    internal static class CategoryDemos
+    [Serializable]
+    public class UpdateCost
     {
-        public static async Task GetCategoryDemo()
+        [JsonPropertyName("credit")]
+        public decimal? Credit { get; set; }
+
+        [JsonPropertyName("insurance")]
+        public decimal? Insurance { get; set; }
+
+        [JsonPropertyName("etc1")]
+        public decimal? Etc1 { get; set; }
+
+        [JsonPropertyName("etc2")]
+        public decimal? Etc2 { get; set; }
+
+        [JsonPropertyName("shipping")]
+        public decimal? Shipping { get; set; }
+
+        internal bool AllPropertiesUnset => Credit != null &&
+                                  Insurance != null &&
+                                  Shipping != null &&
+                                  Etc1 != null &&
+                                  Etc2 != null;
+
+        internal UpdateCost()
         {
-            using var client = BricklinkClientFactory.Build();
-            var category = await client.GetCategoryAsync(1);
-
-            PrintHelper.PrintAsJson(category);
-        }
-
-        public static async Task GetCategoryListDemo()
-        {
-           using var client = BricklinkClientFactory.Build();
-            var categories = await client.GetCategoryListAsync();
-
-            PrintHelper.PrintAsJson(categories);
         }
     }
 }

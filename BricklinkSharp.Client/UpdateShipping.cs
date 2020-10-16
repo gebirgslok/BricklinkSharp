@@ -23,27 +23,29 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading.Tasks;
-using BricklinkSharp.Client;
+using NullGuard;
+using System;
+using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Client
 {
-    internal static class CategoryDemos
+    [Serializable]
+    public class UpdateShipping
     {
-        public static async Task GetCategoryDemo()
+        [JsonPropertyName("date_shipped")]
+        public DateTime? DateShipped { get; set; }
+
+        [JsonPropertyName("tracking_no"), AllowNull]
+        public string TrackingNo { get; set; }
+
+        [JsonPropertyName("tracking_link"), AllowNull]
+        public string TrackingLink { get; set; }
+
+        [JsonPropertyName("method_id")]
+        public int? MethodId { get; set; }
+
+        internal UpdateShipping()
         {
-            using var client = BricklinkClientFactory.Build();
-            var category = await client.GetCategoryAsync(1);
-
-            PrintHelper.PrintAsJson(category);
-        }
-
-        public static async Task GetCategoryListDemo()
-        {
-           using var client = BricklinkClientFactory.Build();
-            var categories = await client.GetCategoryListAsync();
-
-            PrintHelper.PrintAsJson(categories);
         }
     }
 }

@@ -32,7 +32,7 @@ namespace BricklinkSharp.Demos
     {
         public static async Task GetItemNumberDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var itemMapping = await client.GetItemNumberAsync("300301");
 
             PrintHelper.PrintAsJson(itemMapping);
@@ -40,7 +40,7 @@ namespace BricklinkSharp.Demos
 
         public static async Task GetElementIdDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var itemMapping = await client.GetElementIdAsync("3003", 1);
 
             PrintHelper.PrintAsJson(itemMapping);

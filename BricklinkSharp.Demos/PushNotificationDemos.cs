@@ -32,7 +32,7 @@ namespace BricklinkSharp.Demos
     {
         public static async Task GetNotificationsDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var notifications = await client.GetNotificationsAsync();
 
             PrintHelper.PrintAsJson(notifications);

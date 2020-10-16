@@ -12,6 +12,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 
 ### 0.4.0
  - Order
+ - *IBricklinkClient* implements *IDisposable* and manages one instance of *HttpClient*
 
 ### 0.3.0
  - Feedback
@@ -64,13 +65,28 @@ BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 ```csharp  
 var client = BricklinkClientFactory.Build();
 ```
-	
-In applications using an IoC container you may register the *IBricklinkClient* as a service and inject it into consuming instances (e.g. controllers).
 
+#### Usage recommendation
+It's recommended to create and use one *IBricklinkClient* client throughout  the lifetime of your application.
+
+In applications using an IoC container you may register the *IBricklinkClient* as a service and inject it into consuming instances (e.g. controllers).
+See the below examples to register the *IBricklinkClient* as single instance (Singleton).
+	
 #### [Autofac](https://autofac.org/) example
 ```csharp
-containerBuilder.Register(c => BricklinkClientFactory.Build()).As<IBricklinkClient>();
+containerBuilder.Register(c => BricklinkClientFactory.Build())
+	.As<IBricklinkClient>()
+	.SingleInstance();
 ```
+
+#### [Microsoft.Extensions.DependencyInjection] example
+```csharp
+services.AddSingleton(typeof(IBricklinkClient), provider =>
+	{
+		return BricklinkClientFactory.Build();
+    });  
+```
+
 ### Item Catalog
 
 ####  Get item
@@ -278,4 +294,60 @@ var messages = await client.GetOrderMessagesAsync(orderId);
 ```csharp
 var orderId = 123456789; //Must be a valid order ID.
 var feedbacks = await client.GetOrderFeedbackAsync(orderId);
+```
+
+#### Update Order
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+
+//Note: you must only set properties which should be updated. Leave all others Null.
+var updateOrder = new UpdateOrder();
+updateOrder.Remarks = "Add remark";
+updateOrder.IsFiled = true;
+updateOrder.Cost.Insurance = 2.5m;
+updateOrder.Cost.Etc1 = 1.0m;
+updateOrder.Shipping.TrackingNo = "1234567892;
+updateOrder.Shipping.TrackingLink = "www.foo.bar/123456789";
+await client.UpdateOrder(orderId, updateOrder);
+```
+
+#### Update Order Status
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+try
+{
+	//Note that the order must be outgoing in order to be able to set it to 'Shipped'.
+	await client.UpdateOrderStatusAsync(orderId, OrderStatus.Shipped);
+}
+catch (Exception exception)
+{
+	//Handle invalid operation.
+}
+```
+
+#### Update Payment Status
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+try
+{
+	//Note that the order must be outgoing in order to be able to set it to 'Received'.
+	await client.UpdatePaymentStatusAsync(orderId, PaymentStatus.Received);
+}
+catch (Exception exception)
+{
+	//Handle invalid operation.
+}
+```
+
+#### Send Drive Thru
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+try
+{
+	await client.SendDriveThruAsync(orderId, true);
+}
+catch (Exception exception)
+{
+	//Handle invalid operation.
+}
 ```

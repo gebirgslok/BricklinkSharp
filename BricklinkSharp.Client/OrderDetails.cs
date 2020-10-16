@@ -26,34 +26,50 @@
 using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
+using NullGuard;
 
 namespace BricklinkSharp.Client
 {
     [Serializable]
-    public abstract class OrderBase
+    public class OrderDetails : OrderBase
     {
-        [JsonPropertyName("order_id")]
-        public int OrderId { get; set; }
+        [JsonPropertyName("store_name")]
+        public string StoreName { get; set; }
 
-        [JsonPropertyName("date_ordered")]
-        public DateTime OrderDate { get; set; }
+        [JsonPropertyName("buyer_email")]
+        public string BuyerEmail { get; set; }
 
-        [JsonPropertyName("seller_name")]
-        public string SellerName { get; set; }
+        [JsonPropertyName("buyer_order_count")]
+        public int BuyerOrderCount { get; set; }
 
-        [JsonPropertyName("buyer_name")]
-        public string BuyerName { get; set; }
+        [JsonPropertyName("require_insurance")]
+        public bool RequireInsurance { get; set; }
 
-        [JsonPropertyName("total_count")]
-        public int TotalCount { get; set; }
+        [JsonPropertyName("is_invoiced")]
+        public bool IsInvoiced { get; set; }
 
-        [JsonPropertyName("unique_count")]
-        public int UniqueCount { get; set; }
+        [JsonPropertyName("is_filed")]
+        public bool IsFiled { get; set; }
 
-        [JsonPropertyName("status"), JsonConverter(typeof(OrderStatusStringConverter))]
-        public OrderStatus Status { get; set; }
+        [JsonPropertyName("drive_thru_sent")]
+        public bool WasDriveThruSent { get; set; }
 
-        [JsonPropertyName("payment")]
-        public Payment Payment { get; set; }
+        [JsonPropertyName("salesTax_collected_by_bl")]
+        public bool WasSalesTaxCollectedByBricklink { get; set; }
+
+        [JsonPropertyName("remarks"), AllowNull]
+        public string Remarks { get; set; }
+
+        [JsonPropertyName("total_weight"), JsonConverter(typeof(DoubleStringConverter))]
+        public double TotalWeight { get; set; }
+
+        [JsonPropertyName("shipping")]
+        public Shipping Shipping { get; set; }
+
+        [JsonPropertyName("cost")]
+        public Cost Cost { get; set; }
+
+        [JsonPropertyName("disp_cost")]
+        public Cost DisplayCost { get; set; }
     }
 }

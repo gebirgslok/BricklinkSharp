@@ -32,7 +32,7 @@ namespace BricklinkSharp.Demos
     {
         public static async Task GetMemberRatingDemo()
         {
-            var client = BricklinkClientFactory.Build();
+            using var client = BricklinkClientFactory.Build();
             var rating = await client.GetMemberRatingAsync("bluser");
 
             PrintHelper.PrintAsJson(rating);
