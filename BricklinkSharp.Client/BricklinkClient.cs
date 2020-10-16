@@ -502,5 +502,53 @@ namespace BricklinkSharp.Client
             var orders = ParseResponseArrayAllowEmpty<Order>(responseBody, 200, url, HttpMethod.Get);
             return orders;
         }
+
+        public async Task<OrderDetails> GetOrderAsync(int orderId)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var data = ParseResponse<OrderDetails>(responseBody, 200, url, HttpMethod.Get);
+            return data;
+        }
+
+        public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            //TODO: Handle inner list!
+            var itemsBatchList = new List<OrderItem[]>();
+
+            using var document = JsonDocument.Parse(responseBody);
+            var dataElement = GetData(document, 200, url, HttpMethod.Get);
+
+            if (dataElement.ValueKind != JsonValueKind.Array)
+            {
+                throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(), dataElement.ValueKind.ToString(),
+                    url, HttpMethod.Get);
+            }       
+
+            foreach (var innerList in dataElement.EnumerateArray())
+            {
+                itemsBatchList.Add(innerList.ToObject<OrderItem[]>());
+            }
+
+            return itemsBatchList;
+        }
+
+        public async Task<OrderMessage[]> GetOrderMessagesAsync(int orderId)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var messages = ParseResponseArrayAllowEmpty<OrderMessage>(responseBody, 200, url, HttpMethod.Get);
+            return messages ;
+        }
+
+        public async Task<Feedback[]> GetOrderFeedbackAsync(int orderId)
+        {
+            var url = new Uri(_baseUri, $"orders/{orderId}/feedback").ToString();
+            var responseBody = await ExecuteGetRequest(url);
+            var feedbackArray = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, HttpMethod.Get);
+            return feedbackArray;
+        }
     }
 }

@@ -247,3 +247,35 @@ var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags
 	OrderStatus.Paid
 });
 ```
+
+#### Get Order
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+var order = await client.GetOrderAsync(orderId);
+```
+
+#### Get Order Items
+```csharp
+var orderId = 1234566789; //Must be a valid order ID.
+var itemsBatchList = await client.GetOrderItemsAsync(orderId);
+
+foreach (var itemsBatch in itemsBatchList)
+{
+	foreach (var item in itemsBatch)
+	{
+		//Process item...
+	}
+}
+```
+
+#### Get Order Messages
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+var messages = await client.GetOrderMessagesAsync(orderId);
+```
+
+#### Get Order Feedback
+```csharp
+var orderId = 123456789; //Must be a valid order ID.
+var feedbacks = await client.GetOrderFeedbackAsync(orderId);
+```

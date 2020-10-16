@@ -25,16 +25,29 @@
 
 using System;
 using System.Text.Json.Serialization;
+using NullGuard;
 
 namespace BricklinkSharp.Client
 {
-
-    public class Order : OrderBase
+    [Serializable]
+    public class Shipping
     {
-        [JsonPropertyName("cost")]
-        public CostBase Cost { get; set; }
+        [JsonPropertyName("method")]
+        public string Method { get; set; }
 
-        [JsonPropertyName("disp_cost")]
-        public CostBase DisplayCost { get; set; }
+        [JsonPropertyName("method_id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("tracking_no"), AllowNull]
+        public string TrackingNo { get; set; }
+
+        [JsonPropertyName("tracking_link")]
+        public string TrackingLink { get; set; }
+
+        [JsonPropertyName("date_shipped")]
+        public DateTime ShipmentDate { get; set; }
+
+        [JsonPropertyName("address")]
+        public Address Address { get; set; }
     }
 }

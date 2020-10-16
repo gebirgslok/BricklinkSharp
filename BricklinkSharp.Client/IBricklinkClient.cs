@@ -95,5 +95,13 @@ namespace BricklinkSharp.Client
             IEnumerable<OrderStatus> includedStatusFlags = null,
             IEnumerable<OrderStatus> excludedStatusFlags = null, 
             bool filed = false);
+
+        Task<OrderDetails> GetOrderAsync(int orderId);
+
+        Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId);
+
+        Task<OrderMessage[]> GetOrderMessagesAsync(int orderId);
+
+        Task<Feedback[]> GetOrderFeedbackAsync(int orderId);
     }
 }

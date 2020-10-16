@@ -31,6 +31,58 @@ namespace BricklinkSharp.Demos
 {
     internal static class OrderDemos
     {
+        public static async Task GetOrderDemo()
+        {
+            var client = BricklinkClientFactory.Build();
+            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+                {
+                    OrderStatus.Paid
+                });
+            var orderId = orders[0].OrderId;
+            var order = await client.GetOrderAsync(orderId);
+
+            PrintHelper.PrintAsJson(order);
+        }
+
+        public static async Task GetOrderItemsDemo()
+        {
+            var client = BricklinkClientFactory.Build();
+            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+                {
+                    OrderStatus.Paid
+                });
+            var orderId = orders[0].OrderId;
+            var itemsBatchList = await client.GetOrderItemsAsync(orderId);
+
+            PrintHelper.PrintAsJson(itemsBatchList);
+        }
+
+        public static async Task GetOrderMessagesDemo()
+        {
+            var client = BricklinkClientFactory.Build();
+            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+                {
+                    OrderStatus.Paid
+                });
+            var orderId = orders[0].OrderId;
+            var messages = await client.GetOrderMessagesAsync(orderId);
+
+            PrintHelper.PrintAsJson(messages);
+        }
+
+        public static async Task GetOrderFeedbackDemo()
+        {
+            var client = BricklinkClientFactory.Build();
+            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+                {
+                    OrderStatus.Paid
+                });
+            var orderId = orders[orders.Length - 1].OrderId;
+            var feedbackArray = await client.GetOrderFeedbackAsync(orderId);
+
+            PrintHelper.PrintAsJson(feedbackArray);
+        }
+
         public static async Task GetOrdersDemo()
         {
             var client = BricklinkClientFactory.Build();

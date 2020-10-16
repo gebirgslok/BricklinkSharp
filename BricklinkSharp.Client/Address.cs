@@ -25,16 +25,40 @@
 
 using System;
 using System.Text.Json.Serialization;
+using NullGuard;
 
 namespace BricklinkSharp.Client
 {
-
-    public class Order : OrderBase
+    [Serializable]
+    public class Address
     {
-        [JsonPropertyName("cost")]
-        public CostBase Cost { get; set; }
+        [JsonPropertyName("name")]
+        public Name Name { get; set; }
 
-        [JsonPropertyName("disp_cost")]
-        public CostBase DisplayCost { get; set; }
+        [JsonPropertyName("full")]
+        public string FullAddressAsString { get; set; }
+
+        [JsonPropertyName("address1"), AllowNull]
+        public string Address1 { get; set; }
+
+        [JsonPropertyName("address2"), AllowNull]
+        public string Address2 { get; set; }
+
+        [JsonPropertyName("country_code")]
+        public string CountryCode { get; set; }
+
+        [JsonPropertyName("city"), AllowNull]
+        public string City { get; set; }
+
+        [JsonPropertyName("state"), AllowNull]
+        public string State { get; set; }
+
+        [JsonPropertyName("postal_code"), AllowNull]
+        public string PostalCode { get; set; }
+
+        public override string ToString()
+        {
+            return FullAddressAsString;
+        }
     }
 }

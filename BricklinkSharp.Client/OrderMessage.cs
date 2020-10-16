@@ -28,13 +28,22 @@ using System.Text.Json.Serialization;
 
 namespace BricklinkSharp.Client
 {
-
-    public class Order : OrderBase
+    [Serializable]
+    public class OrderMessage
     {
-        [JsonPropertyName("cost")]
-        public CostBase Cost { get; set; }
+        [JsonPropertyName("subject")]
+        public string Subject { get; set; }
 
-        [JsonPropertyName("disp_cost")]
-        public CostBase DisplayCost { get; set; }
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+
+        [JsonPropertyName("from")]
+        public string From { get; set; }
+
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("dateSent")]
+        public DateTime DateSent { get; set; }
     }
 }
