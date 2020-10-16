@@ -306,7 +306,7 @@ updateOrder.Remarks = "Add remark";
 updateOrder.IsFiled = true;
 updateOrder.Cost.Insurance = 2.5m;
 updateOrder.Cost.Etc1 = 1.0m;
-updateOrder.Shipping.TrackingNo = "1234567892;
+updateOrder.Shipping.TrackingNo = "1234567892";
 updateOrder.Shipping.TrackingLink = "www.foo.bar/123456789";
 await client.UpdateOrder(orderId, updateOrder);
 ```
