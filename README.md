@@ -83,7 +83,7 @@ containerBuilder.Register(c => BricklinkClientFactory.Build())
 ```csharp
 services.AddSingleton(typeof(IBricklinkClient), provider =>
 {
-	return BricklinkClientFactory.Build();
+    return BricklinkClientFactory.Build();
 });  
 ```
 

@@ -88,68 +88,32 @@ namespace BricklinkSharp.Client
             return null;
         }
 
-        private async Task<string> ExecutePutRequest<TBody>(string url, TBody body, JsonSerializerOptions options = null)
+        private async Task<string> ExecuteRequest<TBody>(string url, HttpMethod httpMethod, 
+            TBody body, JsonSerializerOptions options = null)
         {
-            var method = HttpMethod.Put;
-            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
-
+            GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
+            using var message = new HttpRequestMessage(httpMethod, url);
+            message.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
             var json = JsonSerializer.Serialize(body, options);
             using var content = new StringContent(json, Encoding.Default, "application/json");
             content.Headers.ContentType.CharSet = string.Empty;
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            message.Content = content;
 
-            var response = await _httpClient.PutAsync(url, content);
+            var response = await _httpClient.SendAsync(message);
+
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
 
-        private async Task<string> ExecutePostRequest<TBody>(string url, TBody body, JsonSerializerOptions options = null)
+        private async Task<string> ExecuteRequest(string url, HttpMethod httpMethod)
         {
-            var method = HttpMethod.Post;
-            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
+            GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
+            using var message = new HttpRequestMessage(httpMethod, url);
+            message.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            message.Content = null;
 
-            var json = JsonSerializer.Serialize(body, options);
-            using var content = new StringContent(json, Encoding.Default, "application/json");
-            content.Headers.ContentType.CharSet = string.Empty;
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
+            var response = await _httpClient.SendAsync(message);
 
-            var response = await _httpClient.PostAsync(url, content);
-            var contentAsString = await response.Content.ReadAsStringAsync();
-            return contentAsString;
-        }
-
-        private async Task<string> ExecuteGetRequest(string url)
-        {
-            var method = HttpMethod.Get;
-           
-            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
-
-            var response = await _httpClient.GetAsync(url);
-            var contentAsString = await response.Content.ReadAsStringAsync();
-            return contentAsString;
-        }
-
-        private async Task<string> ExecutePostRequest(string url)
-        {
-            var method = HttpMethod.Post;
-            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
-
-            var response = await _httpClient.PostAsync(url, null);
-            var contentAsString = await response.Content.ReadAsStringAsync();
-            return contentAsString;
-        }
-
-        private async Task<string> ExecuteDeleteRequest(string url)
-        {
-            var method = HttpMethod.Delete;
-            GetAuthorizationHeader(url, method.ToString(), out var authScheme, out var authParameter);
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
-
-            var response = await _httpClient.DeleteAsync(url);
             var contentAsString = await response.Content.ReadAsStringAsync();
             return contentAsString;
         }
@@ -235,9 +199,10 @@ namespace BricklinkSharp.Client
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}").ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
 
-            var data = ParseResponse<CatalogItem>(responseBody, 200, url, HttpMethod.Get);
+            var data = ParseResponse<CatalogItem>(responseBody, 200, url, method);
             return data;
         }
 
@@ -246,9 +211,10 @@ namespace BricklinkSharp.Client
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/images/{colorId}").ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
 
-            var data = ParseResponse<CatalogImage>(responseBody, 200, url, HttpMethod.Get);
+            var data = ParseResponse<CatalogImage>(responseBody, 200, url, method);
             return data;
         }
 
@@ -257,9 +223,10 @@ namespace BricklinkSharp.Client
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/supersets/{colorId}").ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
 
-            var data = ParseResponse<Superset[]>(responseBody, 200, url, HttpMethod.Get);
+            var data = ParseResponse<Superset[]>(responseBody, 200, url, method);
             return data;
         }
 
@@ -276,9 +243,11 @@ namespace BricklinkSharp.Client
             query.AddIfNotNull("break_subsets", breakSubsets);
             builder.Query = query.ToString();
             var url = builder.ToString();
-            var responseBody = await ExecuteGetRequest(builder.ToString());
 
-            var data = ParseResponse<Subset[]>(responseBody, 200, url, HttpMethod.Get);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(builder.ToString(), method);
+
+            var data = ParseResponse<Subset[]>(responseBody, 200, url, method);
             return data;
         }
 
@@ -297,9 +266,11 @@ namespace BricklinkSharp.Client
             query.AddIfNotNull("currency_code", currencyCode);
             builder.Query = query.ToString();
             var url = builder.ToString();
-            var responseBody = await ExecuteGetRequest(builder.ToString());
 
-            var data = ParseResponse<PriceGuide>(responseBody, 200, url, HttpMethod.Get);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(builder.ToString(), method);
+
+            var data = ParseResponse<PriceGuide>(responseBody, 200, url, method);
             return data;
         }
 
@@ -308,41 +279,51 @@ namespace BricklinkSharp.Client
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/colors").ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
 
-            var data = ParseResponse<KnownColor[]>(responseBody, 200, url, HttpMethod.Get);
+            var data = ParseResponse<KnownColor[]>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Color[]> GetColorListAsync()
         {
             var url = new Uri(_baseUri, "colors").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<Color[]>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+
+            var data = ParseResponse<Color[]>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Color> GetColorAsync(int colorId)
         {
             var url = new Uri(_baseUri, $"colors/{colorId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<Color>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<Color>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Category[]> GetCategoryListAsync()
         {
             var url = new Uri(_baseUri, "categories").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<Category[]>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<Category[]>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Category> GetCategoryAsync(int categoryId)
         {
             var url = new Uri(_baseUri, $"categories/{categoryId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<Category>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<Category>(responseBody, 200, url, method);
             return data;
         }
 
@@ -364,16 +345,19 @@ namespace BricklinkSharp.Client
             builder.Query = query.ToString();
             var url = builder.ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
-            var dataArray = ParseResponseArrayAllowEmpty<Inventory>(responseBody, 200, url, HttpMethod.Get);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var dataArray = ParseResponseArrayAllowEmpty<Inventory>(responseBody, 200, url, method);
             return dataArray;
         }
 
         public async Task<Inventory> GetInventoryAsync(int inventoryId)
         {
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<Inventory>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<Inventory>(responseBody, 200, url, method);
             return data;
         }
 
@@ -381,8 +365,10 @@ namespace BricklinkSharp.Client
         {
             newInventory.ValidateThrowException();
             var url = new Uri(_baseUri, "inventories").ToString();
-            var responseBody = await ExecutePostRequest(url, newInventory);
-            var data = ParseResponse<Inventory>(responseBody, 201, url, HttpMethod.Post);
+
+            var method = HttpMethod.Post;
+            var responseBody = await ExecuteRequest(url, method, newInventory);
+            var data = ParseResponse<Inventory>(responseBody, 201, url, method);
             return data;
         }
 
@@ -394,7 +380,9 @@ namespace BricklinkSharp.Client
             }
 
             var url = new Uri(_baseUri, "inventories").ToString();
-            var responseBody = await ExecutePostRequest(url, newInventories);
+            var method = HttpMethod.Post;
+
+            var responseBody = await ExecuteRequest(url, method, newInventories);
             ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
 
@@ -403,19 +391,20 @@ namespace BricklinkSharp.Client
             updatedInventory.ValidateThrowException();
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
-            var responseBody = await ExecutePutRequest(url, updatedInventory, new JsonSerializerOptions
+            var method = HttpMethod.Put;
+            var responseBody = await ExecuteRequest(url, method, updatedInventory, new JsonSerializerOptions
             {
                 IgnoreNullValues = true
             });
 
-            var data = ParseResponse<Inventory>(responseBody, 200, url, HttpMethod.Put);
+            var data = ParseResponse<Inventory>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task DeleteInventoryAsync(int inventoryId)
         {
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-            var responseBody = await ExecuteDeleteRequest(url);
+            var responseBody = await ExecuteRequest(url, HttpMethod.Delete);
             ParseResponseNoData(responseBody, 204, url, HttpMethod.Delete);
         }
 
@@ -426,48 +415,60 @@ namespace BricklinkSharp.Client
             query.AddIfNotNull("color_id", colorId);
             builder.Query = query.ToString();
             var url = builder.ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, method);
             return itemMappings;
         }
 
         public async Task<ItemMapping[]> GetItemNumberAsync(string elementId)
         {
             var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, method);
             return itemMappings;
         }
 
         public async Task<ShippingMethod[]> GetShippingMethodListAsync()
         {
             var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponseArrayAllowEmpty<ShippingMethod>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponseArrayAllowEmpty<ShippingMethod>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<ShippingMethod> GetShippingMethodAsync(int methodId)
         {
             var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<ShippingMethod>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<ShippingMethod>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Notification[]> GetNotificationsAsync()
         {
             var url = new Uri(_baseUri, "notifications").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponseArrayAllowEmpty<Notification>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponseArrayAllowEmpty<Notification>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<MemberRating> GetMemberRatingAsync(string username)
         {
             var url = new Uri(_baseUri, $"members/{username}/ratings").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<MemberRating>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<MemberRating>(responseBody, 200, url, method);
             return data;
         }
 
@@ -479,16 +480,19 @@ namespace BricklinkSharp.Client
             builder.Query = query.ToString();
             var url = builder.ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, HttpMethod.Get);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Feedback> GetFeedbackAsync(int feedbackId)
         {
             var url = new Uri(_baseUri, $"feedback/{feedbackId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<Feedback>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<Feedback>(responseBody, 200, url, method);
             return data;
         }
 
@@ -502,8 +506,9 @@ namespace BricklinkSharp.Client
                 Rating = rating
             };
 
-            var responseBody = await ExecutePostRequest(url, body);
-            var data = ParseResponse<Feedback>(responseBody, 201, url, HttpMethod.Post);
+            var method = HttpMethod.Post;
+            var responseBody = await ExecuteRequest(url, method, body);
+            var data = ParseResponse<Feedback>(responseBody, 201, url, method);
             return data;
         }
 
@@ -512,8 +517,9 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, $"feedback/{feedbackId}/reply").ToString();
             var body = new { reply };
 
-            var responseBody = await ExecutePostRequest(url, body);
-            ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
+            var method = HttpMethod.Post;
+            var responseBody = await ExecuteRequest(url, method, body);
+            ParseResponseNoData(responseBody, 201, url, method);
         }
 
         public async Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
@@ -529,26 +535,31 @@ namespace BricklinkSharp.Client
             builder.Query = query.ToString();
             var url = builder.ToString();
 
-            var responseBody = await ExecuteGetRequest(url);
-            var orders = ParseResponseArrayAllowEmpty<Order>(responseBody, 200, url, HttpMethod.Get);
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var orders = ParseResponseArrayAllowEmpty<Order>(responseBody, 200, url, method);
             return orders;
         }
 
         public async Task<OrderDetails> GetOrderAsync(int orderId)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var data = ParseResponse<OrderDetails>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<OrderDetails>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
-            var responseBody = await ExecuteGetRequest(url);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
             var itemsBatchList = new List<OrderItem[]>();
             using var document = JsonDocument.Parse(responseBody);
-            var dataElement = GetData(document, 200, url, HttpMethod.Get);
+            var dataElement = GetData(document, 200, url, method);
 
             if (dataElement.ValueKind != JsonValueKind.Array)
             {
@@ -567,36 +578,44 @@ namespace BricklinkSharp.Client
         public async Task<OrderMessage[]> GetOrderMessagesAsync(int orderId)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var messages = ParseResponseArrayAllowEmpty<OrderMessage>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var messages = ParseResponseArrayAllowEmpty<OrderMessage>(responseBody, 200, url, method);
             return messages;
         }
 
         public async Task<Feedback[]> GetOrderFeedbackAsync(int orderId)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/feedback").ToString();
-            var responseBody = await ExecuteGetRequest(url);
-            var feedbackArray = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, HttpMethod.Get);
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var feedbackArray = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, method);
             return feedbackArray;
         }
 
         public async Task UpdateOrderStatusAsync(int orderId, OrderStatus status)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/status").ToString();
-            var responseBody = await ExecutePutRequest(url, new
+
+            var method = HttpMethod.Put;
+            var responseBody = await ExecuteRequest(url, method, new
             {
                 field = "status",
                 value = status.GetStringValueOrDefault()
             });
 
-            ParseResponseNoData(responseBody, 200, url, HttpMethod.Put);
+            ParseResponseNoData(responseBody, 200, url, method);
             return;
         }
 
         public async Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/payment_status").ToString();
-            var responseBody = await ExecutePutRequest(url, new
+
+            var method = HttpMethod.Put;
+            var responseBody = await ExecuteRequest(url, method, new
             {
                 field = "payment_status",
                 value = status.ToString()
@@ -614,21 +633,24 @@ namespace BricklinkSharp.Client
             builder.Query = query.ToString();
             var url = builder.ToString();
 
-            var responseBody = await ExecutePostRequest(url);
+            var method = HttpMethod.Post;
+            var responseBody = await ExecuteRequest(url, method);
 
-            ParseResponseNoData(responseBody, 200, url, HttpMethod.Post);
+            ParseResponseNoData(responseBody, 200, url, method);
             return;
         }
 
         public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
-            var responseBody = await ExecutePutRequest(url, updateOrder, new JsonSerializerOptions
+
+            var method = HttpMethod.Put;
+            var responseBody = await ExecuteRequest(url, method, updateOrder, new JsonSerializerOptions
             {
                 IgnoreNullValues = true
             });
 
-            var order = ParseResponse<OrderDetails>(responseBody, 200, url, HttpMethod.Put);
+            var order = ParseResponse<OrderDetails>(responseBody, 200, url, method);
             return order;
         }
 
