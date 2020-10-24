@@ -386,7 +386,7 @@ namespace BricklinkSharp.Client
             ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
 
-        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdatedInventory updatedInventory)
+        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updatedInventory)
         {
             updatedInventory.ValidateThrowException();
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
@@ -472,7 +472,7 @@ namespace BricklinkSharp.Client
             return data;
         }
 
-        public async Task<Feedback[]> GetFeedbackListAsync(FeedbackDirection? direction = null)
+        public async Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -658,6 +658,73 @@ namespace BricklinkSharp.Client
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public async Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out, 
+            IEnumerable<CouponStatus> includedCouponStatusTypes = null,
+            IEnumerable<CouponStatus> excludedCouponStatusTypes = null)
+        {
+            var builder = new UriBuilder(new Uri(_baseUri, "coupons"));
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.Add("direction", direction.GetStringValueOrDefault());
+
+            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedCouponStatusTypes, 
+                excludedCouponStatusTypes, 
+                f => f.GetStringValueOrDefault()));
+
+            builder.Query = query.ToString();
+            var url = builder.ToString();
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var coupons = ParseResponseArrayAllowEmpty<Coupon>(responseBody, 200, url, method);
+            return coupons;
+        }
+
+        public async Task<Coupon> GetCouponAsync(int couponId)
+        {
+            var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
+
+            var method = HttpMethod.Get;
+            var responseBody = await ExecuteRequest(url, method);
+            var data = ParseResponse<Coupon>(responseBody, 200, url, method);
+            return data;
+        }
+
+        public async Task DeleteCouponAsync(int couponId)
+        {
+            var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
+            var method = HttpMethod.Delete;
+            var responseBody = await ExecuteRequest(url, method);
+            ParseResponseNoData(responseBody, 204, url, method);
+        }
+
+        public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon)
+        {
+            newCoupon.ValidateThrowException();
+
+            var url = new Uri(_baseUri, $"coupons").ToString();
+            var method = HttpMethod.Post;
+            var responseBody = await ExecuteRequest(url, method, newCoupon, new JsonSerializerOptions
+            {
+                IgnoreNullValues = true
+            });
+            var coupon = ParseResponse<Coupon>(responseBody, 201, url, method);
+            return coupon;
+        }
+
+        public async Task<Coupon> UpdateCouponAsync(int couponId, UpdateCoupon updateCoupon)
+        {
+            updateCoupon.ValidateThrowException();
+
+            var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
+            var method = HttpMethod.Put;
+            var responseBody = await ExecuteRequest(url, method, updateCoupon, new JsonSerializerOptions
+            {
+                IgnoreNullValues = true
+            });
+            var coupon = ParseResponse<Coupon>(responseBody, 200, url, method);
+            return coupon; ;
         }
     }
 }

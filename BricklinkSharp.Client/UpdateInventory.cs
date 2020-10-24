@@ -34,7 +34,7 @@ using NullGuard;
 
 namespace BricklinkSharp.Client
 {
-    public class UpdatedInventory
+    public class UpdateInventory
     {
         [JsonPropertyName("quantity"), JsonConverter(typeof(ChangedQuantityStringConverter))]
         public int? ChangedQuantity { get; set; }

@@ -23,11 +23,43 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Extensions;
+
+namespace BricklinkSharp.Client.Json
 {
-    public enum FeedbackDirection
+    internal class NullableItemTypeStringConverter : JsonConverter<ItemType?>
     {
-        Out = 1,
-        In = 0
+        public override ItemType? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var stringValue = reader.GetString();
+
+            if (string.IsNullOrEmpty(stringValue))
+            {
+                return null;
+            }
+
+            var removedUnderscore = stringValue.Replace("_", string.Empty);
+
+            if (Enum.TryParse(removedUnderscore, true, out ItemType result))
+            {
+                return result;
+            }
+
+            return 0;
+        }
+
+        public override void Write(Utf8JsonWriter writer, ItemType? value, JsonSerializerOptions options)
+        {
+            if (value == null)
+            {
+                return;
+            }
+
+            var typeString = value.GetStringValueOrDefault().ToUpperInvariant();
+            writer.WriteStringValue(typeString);
+        }
     }
 }

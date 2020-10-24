@@ -35,7 +35,7 @@ namespace BricklinkSharp.Demos
         public static async Task UpdatedInventoryDemo(int id)
         {
             using var client = BricklinkClientFactory.Build();
-            var inventory = await client.UpdateInventoryAsync(id, new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
+            var inventory = await client.UpdateInventoryAsync(id, new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
             
             PrintHelper.PrintAsJson(inventory);
         }

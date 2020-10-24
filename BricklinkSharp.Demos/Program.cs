@@ -33,13 +33,18 @@ namespace BricklinkSharp.Demos
     {
         static async Task Main()
         {
-            BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
-            BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
-            BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
-            BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
+            BricklinkClientConfiguration.Instance.TokenValue = "2EBD09FD75BE4A3BBA9E556B297D0CAF";
+            BricklinkClientConfiguration.Instance.TokenSecret = "95F3584C389340CBB20965839D1B737D";
+            BricklinkClientConfiguration.Instance.ConsumerKey = "67BD8A6AD39E441D855DBDA9613DBE0B";
+            BricklinkClientConfiguration.Instance.ConsumerSecret = "E36EADA87AC342D2AFD345E2769FD31A";
+
+            //BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
+            //BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
+            //BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
+            //BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 
             //await CatalogDemos.GetItemImageDemo();
-            await CatalogDemos.GetItemDemo();
+            //await CatalogDemos.GetItemDemo();
             //await CatalogDemos.GetSupersetsDemo();
             //await CatalogDemos.GetSubsetsDemo();
             //await CatalogDemos.GetPriceGuideDemo();
@@ -83,6 +88,13 @@ namespace BricklinkSharp.Demos
             //await OrderDemos.UpdateOrderStatusDemo();
             //await OrderDemos.UpdatePaymentStatusDemo();
             //await OrderDemos.UpdateOrderDemo();
+
+            await CouponDemos.GetCouponsDemo();
+            //var couponId = 123456789; //Must be a valid coupon ID.
+            //await CouponDemos.GetCouponDemo(couponId);
+            //await CouponDemos.DeleteCouponDemo(couponId);
+            //await CouponDemos.CreateCouponDemo();
+            //await CouponDemos.UpdateCouponDemo(couponId);
             Console.ReadKey(true);
         }
     }

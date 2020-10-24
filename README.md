@@ -10,6 +10,11 @@ It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
 
 ## Changelog
 
+### 0.5.0
+ - Coupons
+ - Nullable annotations
+ - Renamed *UpdatedInventory* container to *UpdateInventory*
+ 
 ### 0.4.0
  - Order
  - *IBricklinkClient* implements *IDisposable* and manages one instance of *HttpClient*
@@ -171,8 +176,8 @@ await client.CreateInventoriesAsync(newInventories);
 ```csharp
 var inventoryList = await client.GetInventoryListAsync();
 var id = inventoryList.First().InventoryId;
-var updatedInventory = new UpdatedInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
-var inventory = await client.UpdatedInventoryAsync(id, updatedInventory);
+var updateInventory = new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
+var inventory = await client.UpdateInventoryAsync(id, updateInventory);
 ```
 #### Delete inventory
 ```csharp	
@@ -350,4 +355,53 @@ catch (Exception exception)
 {
 	//Handle invalid operation.
 }
+```
+
+### Coupons
+
+#### Get Coupons
+```csharp
+var includesStatusTypes = new List<CouponStatus>
+{
+	CouponStatus.Open
+}
+var coupons = await client.GetCouponsAsync(Direction.Out, includedCouponStatusTypes: includesStatusTypes);
+```
+
+#### Get Coupon
+```csharp
+var couponId = 123456789; //Must be a valid coupon ID.
+var coupon = await client.GetCouponAsync(couponId);
+```
+
+#### Create Coupon
+```csharp
+var newCoupon = new NewCoupon("bluser", "Special gift for you")
+{
+	DiscountType = DiscountType.Percentage,
+	DiscountRate = 10
+};
+newCoupon.AppliesTo.ExceptOnSale = true;
+newCoupon.AppliesTo.RestrictionType = CouponRestrictionType.ApplyToSpecifiedItemType;
+newCoupon.AppliesTo.ItemType = ItemType.Part; //Only applies to parts.
+
+var coupon = await client.CreateCouponAsync(newCoupon);
+```
+
+#### Update Coupon
+```csharp
+var updateCoupon = new UpdateCoupon
+{
+	DiscountType = DiscountType.Percentage,
+	DiscountRate = 15 //Increase discount rate to 15 percent.
+};
+
+var couponId = 123456789; //Must be a valid coupon ID.
+var coupon = await client.UpdateCouponAsync(couponId, updateCoupon);
+```
+
+#### Delete Coupon
+```csharp
+var couponId = 123456789; //Must be a valid coupon ID.
+await client.DeleteCouponAsync(couponId);
 ```

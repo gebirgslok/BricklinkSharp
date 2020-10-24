@@ -36,11 +36,11 @@ namespace BricklinkSharp.Demos
         {
             using var client = BricklinkClientFactory.Build();
 
-            var feedbackInList = await client.GetFeedbackListAsync(FeedbackDirection.In);
+            var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
             Console.WriteLine("Received feedback ('In'):");
             PrintHelper.PrintAsJson(feedbackInList);
 
-            var feedbackOutList = await client.GetFeedbackListAsync(FeedbackDirection.Out);
+            var feedbackOutList = await client.GetFeedbackListAsync(Direction.Out);
             Console.WriteLine("Posted feedback ('Out'):");
             PrintHelper.PrintAsJson(feedbackOutList);
         }
@@ -48,7 +48,7 @@ namespace BricklinkSharp.Demos
         public static async Task GetFeedbackDemo()
         {
             using var client = BricklinkClientFactory.Build();
-            var feedbackInList = await client.GetFeedbackListAsync(FeedbackDirection.In);
+            var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
             var id = feedbackInList.First().FeedbackId;
 
             var feedback = await client.GetFeedbackAsync(id);

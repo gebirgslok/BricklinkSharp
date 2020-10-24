@@ -68,7 +68,7 @@ namespace BricklinkSharp.Client
 
         Task CreateInventoriesAsync(NewInventory[] newInventories);
 
-        Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdatedInventory updatedInventory);
+        Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updatedInventory);
 
         Task DeleteInventoryAsync(int inventoryId);
 
@@ -84,7 +84,7 @@ namespace BricklinkSharp.Client
 
         Task<MemberRating> GetMemberRatingAsync(string username);
 
-        Task<Feedback[]> GetFeedbackListAsync(FeedbackDirection? direction = null);
+        Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null);
 
         Task<Feedback> GetFeedbackAsync(int feedbackId);
 
@@ -112,5 +112,17 @@ namespace BricklinkSharp.Client
         Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status);
 
         Task SendDriveThruAsync(int orderId, bool mailCcMe);
+
+        Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
+            IEnumerable<CouponStatus> includedCouponStatusTypes = null,
+            IEnumerable<CouponStatus> excludedCouponStatusTypes = null);
+
+        Task<Coupon> GetCouponAsync(int couponId);
+
+        Task<Coupon> CreateCouponAsync(NewCoupon newCoupon);
+
+        Task<Coupon> UpdateCouponAsync(int couponId, UpdateCoupon updateCoupon);
+
+        Task DeleteCouponAsync(int couponId);
     }
 }
