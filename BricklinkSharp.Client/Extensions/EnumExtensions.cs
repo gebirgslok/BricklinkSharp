@@ -32,7 +32,7 @@ namespace BricklinkSharp.Client.Extensions
     {
         private static readonly Dictionary<Enum, string> _stringValueCache = new Dictionary<Enum, string>();
 
-        private static T GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
+        private static T? GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
         {
             var type = enumVal.GetType();
             var memInfo = type.GetMember(enumVal.ToString());

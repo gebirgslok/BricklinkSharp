@@ -37,7 +37,7 @@ namespace BricklinkSharp.Client
         public int CategoryId { get; set; }
 
         [JsonPropertyName("category_name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("parent_id")]
         public int ParentId { get; set; }

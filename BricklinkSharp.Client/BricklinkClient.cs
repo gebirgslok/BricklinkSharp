@@ -35,6 +35,8 @@ using System.Web;
 using BricklinkSharp.Client.Extensions;
 using BricklinkSharp.Client.OAuth;
 
+#pragma warning disable 8602
+
 namespace BricklinkSharp.Client
 {
     internal sealed class BricklinkClient : IBricklinkClient
@@ -52,10 +54,10 @@ namespace BricklinkSharp.Client
         {
             BricklinkClientConfiguration.Instance.ValidateThrowException();
 
-            var request = new OAuthRequest(BricklinkClientConfiguration.Instance.ConsumerKey,
-                BricklinkClientConfiguration.Instance.ConsumerSecret,
-                BricklinkClientConfiguration.Instance.TokenValue,
-                BricklinkClientConfiguration.Instance.TokenSecret,
+            var request = new OAuthRequest(BricklinkClientConfiguration.Instance.ConsumerKey!,
+                BricklinkClientConfiguration.Instance.ConsumerSecret!,
+                BricklinkClientConfiguration.Instance.TokenValue!,
+                BricklinkClientConfiguration.Instance.TokenSecret!,
                 url,
                 method);
 
@@ -65,7 +67,7 @@ namespace BricklinkSharp.Client
             parameter = schemeParameter[1];
         }
 
-        private string BuildIncludeExcludeParameter<T>(IEnumerable<T> includes, IEnumerable<T> excludes,
+        private string? BuildIncludeExcludeParameter<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
             Func<T, string> toStringFunc)
         {
             var allParameters = new List<string>();
@@ -89,7 +91,7 @@ namespace BricklinkSharp.Client
         }
 
         private async Task<string> ExecuteRequest<TBody>(string url, HttpMethod httpMethod, 
-            TBody body, JsonSerializerOptions options = null)
+            TBody body, JsonSerializerOptions? options = null)
         {
             GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
             using var message = new HttpRequestMessage(httpMethod, url);
@@ -252,15 +254,16 @@ namespace BricklinkSharp.Client
         }
 
         public async Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
-            PriceGuideType? priceGuideType = null, Condition? condition = null, string countryCode = null,
-            string region = null, string currencyCode = null)
+            PriceGuideType? priceGuideType = null, Condition? condition = null, 
+            string? countryCode = null, string? region = null, string? currencyCode = null)
         {
             var typeString = type.GetStringValueOrDefault();
             var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/price"));
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["color_id"] = colorId.ToString();
-            query.AddIfNotNull("guide_type", priceGuideType, pg => pg.ToString().ToLower());
-            query.AddIfNotNull("new_or_used", condition, c => c.GetStringValueOrDefault());
+            query.AddIfNotNull("guide_type", priceGuideType, pg => pg!.ToString().ToLower());
+            query.AddIfNotNull("new_or_used", condition, c => c!.GetStringValueOrDefault());
+            
             query.AddIfNotNull("country_code", countryCode);
             query.AddIfNotNull("region", region);
             query.AddIfNotNull("currency_code", currencyCode);
@@ -327,14 +330,14 @@ namespace BricklinkSharp.Client
             return data;
         }
 
-        public async Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType> includedItemTypes = null,
-            IEnumerable<ItemType> excludedItemTypes = null,
-            IEnumerable<InventoryStatusType> includedStatusFlags = null,
-            IEnumerable<InventoryStatusType> excludedStatusFlags = null,
-            IEnumerable<int> includedCategoryIds = null,
-            IEnumerable<int> excludedCategoryIds = null,
-            IEnumerable<int> includedColorIds = null,
-            IEnumerable<int> excludedColorIds = null)
+        public async Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
+            IEnumerable<ItemType>? excludedItemTypes = null,
+            IEnumerable<InventoryStatusType>? includedStatusFlags = null,
+            IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
+            IEnumerable<int>? includedCategoryIds = null,
+            IEnumerable<int>? excludedCategoryIds = null,
+            IEnumerable<int>? includedColorIds = null,
+            IEnumerable<int>? excludedColorIds = null)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "inventories"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -476,7 +479,7 @@ namespace BricklinkSharp.Client
         {
             var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query.AddIfNotNull("direction", direction, d => d.ToString().ToLowerInvariant());
+            query.AddIfNotNull("direction", direction, d => d!.ToString().ToLowerInvariant());
             builder.Query = query.ToString();
             var url = builder.ToString();
 
@@ -523,8 +526,8 @@ namespace BricklinkSharp.Client
         }
 
         public async Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
-            IEnumerable<OrderStatus> includedStatusFlags = null,
-            IEnumerable<OrderStatus> excludedStatusFlags = null,
+            IEnumerable<OrderStatus>? includedStatusFlags = null,
+            IEnumerable<OrderStatus>? excludedStatusFlags = null,
             bool filed = false)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "orders"));
@@ -661,8 +664,8 @@ namespace BricklinkSharp.Client
         }
 
         public async Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out, 
-            IEnumerable<CouponStatus> includedCouponStatusTypes = null,
-            IEnumerable<CouponStatus> excludedCouponStatusTypes = null)
+            IEnumerable<CouponStatus>? includedCouponStatusTypes = null,
+            IEnumerable<CouponStatus>? excludedCouponStatusTypes = null)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "coupons"));
             var query = HttpUtility.ParseQueryString(builder.Query);

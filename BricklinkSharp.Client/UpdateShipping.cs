@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using NullGuard;
 using System;
 using System.Text.Json.Serialization;
 
@@ -35,11 +34,11 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("date_shipped")]
         public DateTime? DateShipped { get; set; }
 
-        [JsonPropertyName("tracking_no"), AllowNull]
-        public string TrackingNo { get; set; }
+        [JsonPropertyName("tracking_no")]
+        public string? TrackingNo { get; set; }
 
-        [JsonPropertyName("tracking_link"), AllowNull]
-        public string TrackingLink { get; set; }
+        [JsonPropertyName("tracking_link")]
+        public string? TrackingLink { get; set; }
 
         [JsonPropertyName("method_id")]
         public int? MethodId { get; set; }

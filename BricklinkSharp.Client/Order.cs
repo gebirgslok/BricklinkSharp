@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using NullGuard;
 using System;
 using System.Text.Json.Serialization;
 
@@ -37,8 +36,8 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("shipping")]
         public UpdateShipping Shipping { get; }
 
-        [JsonPropertyName("remarks") ,AllowNull]
-        public string Remarks { get; set; }
+        [JsonPropertyName("remarks")]
+        public string? Remarks { get; set; }
 
         [JsonPropertyName("is_filed")]
         public bool? IsFiled { get; set; }
@@ -54,9 +53,9 @@ namespace BricklinkSharp.Client
     public class Order : OrderBase
     {
         [JsonPropertyName("cost")]
-        public CostBase Cost { get; set; }
+        public CostBase Cost { get; set; } = null!;
 
         [JsonPropertyName("disp_cost")]
-        public CostBase DisplayCost { get; set; }
+        public CostBase DisplayCost { get; set; } = null!;
     }
 }

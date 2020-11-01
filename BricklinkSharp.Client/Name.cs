@@ -25,7 +25,6 @@
 
 using System;
 using System.Text.Json.Serialization;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
@@ -33,13 +32,13 @@ namespace BricklinkSharp.Client
     public class Name
     {
         [JsonPropertyName("full")]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = null!;
 
-        [JsonPropertyName("first"), AllowNull]
-        public string FirstName { get; set; }
+        [JsonPropertyName("first")]
+        public string? FirstName { get; set; }
 
-        [JsonPropertyName("last"), AllowNull]
-        public string LastName { get; set; }
+        [JsonPropertyName("last")]
+        public string? LastName { get; set; }
 
         public override string ToString()
         {

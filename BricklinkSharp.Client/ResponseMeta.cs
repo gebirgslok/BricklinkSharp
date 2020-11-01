@@ -33,10 +33,10 @@ namespace BricklinkSharp.Client
     internal class ResponseMeta
     {
         [JsonPropertyName("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         [JsonPropertyName("message")]
-        public string Message { get; set; }
+        public string Message { get; set; } = null!;
 
         [JsonPropertyName("code")]
         public int Code { get; set; }

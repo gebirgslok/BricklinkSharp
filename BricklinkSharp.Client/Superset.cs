@@ -25,7 +25,6 @@
 
 using System;
 using System.Text.Json.Serialization;
-using NullGuard;
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
@@ -33,8 +32,8 @@ namespace BricklinkSharp.Client
     [Serializable]
     public class Superset
     {
-        [JsonPropertyName("entries"), AllowNull]
-        public SupersetEntry[] Entries { get; set; }
+        [JsonPropertyName("entries")]
+        public SupersetEntry[]? Entries { get; set; }
 
         [JsonPropertyName("color_id")]
         public int ColorId { get; set; }

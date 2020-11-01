@@ -35,10 +35,10 @@ namespace BricklinkSharp.Client
     public class SuperSubSetItem
     {
         [JsonPropertyName("no")]
-        public string Number { get; set; }
+        public string Number { get; set; } = null!;
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
         public ItemType Type { get; set; }

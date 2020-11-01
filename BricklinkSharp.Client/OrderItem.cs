@@ -24,10 +24,7 @@
 #endregion
 
 using BricklinkSharp.Client.Json;
-using NullGuard;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace BricklinkSharp.Client
@@ -45,13 +42,13 @@ namespace BricklinkSharp.Client
         public int InventoryId { get; set; }
 
         [JsonPropertyName("item")]
-        public InventoryItem Item { get; set; }
+        public InventoryItem Item { get; set; } = null!;
 
         [JsonPropertyName("color_id")]
         public int ColorId { get; set; }
 
-        [JsonPropertyName("color_name"), AllowNull]
-        public string ColorName { get; set; }
+        [JsonPropertyName("color_name")]
+        public string? ColorName { get; set; }
 
         [JsonPropertyName("quantity")]
         public int Quantity { get; set; }
@@ -75,16 +72,16 @@ namespace BricklinkSharp.Client
         public decimal DisplayUnitPriceFinal { get; set; }
 
         [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; }
+        public string CurrencyCode { get; set; } = null!;
 
         [JsonPropertyName("disp_currency_code")]
-        public string DisplayCurrencyCode { get; set; }
+        public string DisplayCurrencyCode { get; set; } = null!;
 
-        [JsonPropertyName("remarks"), AllowNull]
-        public string Remarks { get; set; }
+        [JsonPropertyName("remarks")]
+        public string? Remarks { get; set; }
 
-        [JsonPropertyName("description"), AllowNull]
-        public string Description { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
 
         [JsonPropertyName("weight"), JsonConverter(typeof(DoubleStringConverter))]
         public double Weight { get; set; }

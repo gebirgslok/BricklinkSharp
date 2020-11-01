@@ -42,13 +42,13 @@ namespace BricklinkSharp.Client
         public DateTime DateExpire { get; set; }
 
         [JsonPropertyName("buyer_name")]
-        public string BuyerName { get; set; }
+        public string BuyerName { get; set; } = null!;
 
         [JsonPropertyName("seller_name")]
-        public string SellerName { get; set; }
+        public string SellerName { get; set; } = null!;
 
         [JsonPropertyName("store_name")]
-        public string StoreName { get; set; }
+        public string StoreName { get; set; } = null!;
 
         [JsonPropertyName("status"), JsonConverter(typeof(CouponStatusStringConverter))]
         public CouponStatus Status { get; set; }
@@ -57,7 +57,7 @@ namespace BricklinkSharp.Client
         public int OrderId { get; set; }
 
         [JsonPropertyName("disp_currency_code")]
-        public string DisplayCurrencyCode { get; set; }
+        public string DisplayCurrencyCode { get; set; } = null!;
 
         [JsonPropertyName("disp_discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
         public decimal DisplayDiscountAmount { get; set; }

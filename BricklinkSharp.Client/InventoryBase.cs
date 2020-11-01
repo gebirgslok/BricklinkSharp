@@ -26,7 +26,6 @@
 using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
@@ -48,11 +47,11 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("completeness"), JsonConverter(typeof(CompletenessStringConverter))]
         public Completeness Completeness { get; set; }
 
-        [JsonPropertyName("description"), AllowNull]
-        public string Description { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
 
-        [JsonPropertyName("remarks"), AllowNull]
-        public string Remarks { get; set; }
+        [JsonPropertyName("remarks")]
+        public string? Remarks { get; set; }
 
         [JsonPropertyName("bulk")] 
         public int Bulk { get; set; } = 1;
@@ -63,8 +62,8 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("is_stock_room")]
         public bool IsStockRoom { get; set; }
 
-        [JsonPropertyName("stock_room_id"), AllowNull]
-        public string StockRoomId { get; set; }
+        [JsonPropertyName("stock_room_id")]
+        public string? StockRoomId { get; set; }
 
         [JsonPropertyName("my_cost"), JsonConverter(typeof(DecimalStringConverter))]
         public decimal MyCost { get; set; }

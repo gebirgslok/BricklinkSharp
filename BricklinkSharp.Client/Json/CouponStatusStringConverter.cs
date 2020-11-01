@@ -35,19 +35,14 @@ namespace BricklinkSharp.Client.Json
         public override CouponStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var stringValue = reader.GetString();
-            switch (stringValue)
+            return stringValue switch
             {
-                case "O":
-                    return CouponStatus.Open;
-                case "A":
-                    return CouponStatus.Redeemed;
-                case "D":
-                    return CouponStatus.Declined;
-                case "E":
-                    return CouponStatus.Expired;
-                default:
-                    return CouponStatus.Expired;
-            }
+                "O" => CouponStatus.Open,
+                "A" => CouponStatus.Redeemed,
+                "D" => CouponStatus.Declined,
+                "E" => CouponStatus.Expired,
+                _ => CouponStatus.Expired,
+            };
         }
 
         public override void Write(Utf8JsonWriter writer, CouponStatus value, JsonSerializerOptions options)

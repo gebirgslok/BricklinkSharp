@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client
     public class CostBase
     {
         [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; }
+        public string CurrencyCode { get; set; } = null!;
 
         [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
         public decimal Subtotal { get; set; }

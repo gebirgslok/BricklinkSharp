@@ -31,9 +31,9 @@ namespace BricklinkSharp.Client
     public class MemberRating
     {
         [JsonPropertyName("user_name")]
-        public string Username { get; set; }
+        public string Username { get; set; } = null!;
 
         [JsonPropertyName("rating")]
-        public Rating Rating { get; set; }
+        public Rating Rating { get; set; } = null!;
     }
 }

@@ -39,10 +39,10 @@ namespace BricklinkSharp.Client
         public DateTime OrderDate { get; set; }
 
         [JsonPropertyName("seller_name")]
-        public string SellerName { get; set; }
+        public string SellerName { get; set; } = null!;
 
         [JsonPropertyName("buyer_name")]
-        public string BuyerName { get; set; }
+        public string BuyerName { get; set; } = null!;
 
         [JsonPropertyName("total_count")]
         public int TotalCount { get; set; }
@@ -54,6 +54,6 @@ namespace BricklinkSharp.Client
         public OrderStatus Status { get; set; }
 
         [JsonPropertyName("payment")]
-        public Payment Payment { get; set; }
+        public Payment Payment { get; set; } = null!;
     }
 }

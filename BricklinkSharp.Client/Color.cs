@@ -35,13 +35,13 @@ namespace BricklinkSharp.Client
         public int ColorId { get; set; }
 
         [JsonPropertyName("color_name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("color_code")]
-        public string HtmlCode { get; set; }
+        public string HtmlCode { get; set; } = null!;
 
         [JsonPropertyName("color_type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = null!;
 
         public override string ToString()
         {

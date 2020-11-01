@@ -34,7 +34,7 @@ namespace BricklinkSharp.Client
     public class NewInventory : InventoryBase
     {
         [JsonPropertyName("item")]
-        public ItemBase Item { get; set; }
+        public ItemBase Item { get; set; } = null!;
 
         private int GetTieredPricePropertiesSetCount()
         {
@@ -86,11 +86,21 @@ namespace BricklinkSharp.Client
                     GetType());
             }
 
+            if (IsStockRoom && string.IsNullOrEmpty(StockRoomId))
+            {
+                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+                    {
+                        {nameof(StockRoomId), "Null"}
+                    },
+                    $"{nameof(StockRoomId)} cannot be Null if {nameof(IsStockRoom)} is true.",
+                    GetType());
+            }
+
             if (IsStockRoom && StockRoomId != "A" && StockRoomId != "B" && StockRoomId != "C")
             {
                 throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                     {
-                        {nameof(StockRoomId), StockRoomId}
+                        {nameof(StockRoomId), StockRoomId!}
                     },
                     $"{nameof(StockRoomId)} must be either A, B or C (set to: {StockRoomId}.",
                     GetType());

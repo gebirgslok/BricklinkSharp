@@ -25,7 +25,6 @@
 
 using System;
 using System.Text.Json.Serialization;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
@@ -33,28 +32,28 @@ namespace BricklinkSharp.Client
     public class Address
     {
         [JsonPropertyName("name")]
-        public Name Name { get; set; }
+        public Name Name { get; set; } = null!;
 
         [JsonPropertyName("full")]
-        public string FullAddressAsString { get; set; }
+        public string FullAddressAsString { get; set; } = null!;
 
-        [JsonPropertyName("address1"), AllowNull]
-        public string Address1 { get; set; }
+        [JsonPropertyName("address1")]
+        public string? Address1 { get; set; }
 
-        [JsonPropertyName("address2"), AllowNull]
-        public string Address2 { get; set; }
+        [JsonPropertyName("address2")]
+        public string? Address2 { get; set; }
 
         [JsonPropertyName("country_code")]
-        public string CountryCode { get; set; }
+        public string CountryCode { get; set; } = null!;
 
-        [JsonPropertyName("city"), AllowNull]
-        public string City { get; set; }
+        [JsonPropertyName("city")]
+        public string? City { get; set; }
 
-        [JsonPropertyName("state"), AllowNull]
-        public string State { get; set; }
+        [JsonPropertyName("state")]
+        public string? State { get; set; }
 
-        [JsonPropertyName("postal_code"), AllowNull]
-        public string PostalCode { get; set; }
+        [JsonPropertyName("postal_code")]
+        public string? PostalCode { get; set; }
 
         public override string ToString()
         {

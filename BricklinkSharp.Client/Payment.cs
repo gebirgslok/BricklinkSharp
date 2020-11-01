@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client
     public class Payment
     {
         [JsonPropertyName("method")]
-        public string Method { get; set; }
+        public string Method { get; set; } = null!;
 
         [JsonPropertyName("status"), JsonConverter(typeof(PaymentStatusStringConverter))]
         public PaymentStatus Status { get; set; }
@@ -42,6 +42,6 @@ namespace BricklinkSharp.Client
         public DateTime DatePaid { get; set; }
 
         [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; }
+        public string CurrencyCode { get; set; } = null!;
     }
 }

@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-using NullGuard;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -42,11 +41,11 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("unit_price")]
         public decimal? UnitPrice { get; set; }
 
-        [JsonPropertyName("description"), AllowNull]
-        public string Description { get; set; }
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
 
-        [JsonPropertyName("remarks"), AllowNull]
-        public string Remarks { get; set; }
+        [JsonPropertyName("remarks")]
+        public string? Remarks { get; set; }
 
         [JsonPropertyName("bulk")]
         public int? Bulk { get; set; }
@@ -57,8 +56,8 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("is_stock_room")]
         public bool? IsStockRoom { get; set; }
 
-        [JsonPropertyName("stock_room_id "), AllowNull]
-        public string StockRoomId { get; set; }
+        [JsonPropertyName("stock_room_id ")]
+        public string? StockRoomId { get; set; }
 
         [JsonPropertyName("my_cost")]
         public decimal? MyCost { get; set; }
@@ -138,12 +137,12 @@ namespace BricklinkSharp.Client
             {
                 throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                     {
-                        {nameof(TierQuantity1), TierQuantity1},
-                        {nameof(TierQuantity2), TierQuantity2},
-                        {nameof(TierQuantity3), TierQuantity3},
-                        {nameof(TierPrice1), TierPrice1},
-                        {nameof(TierPrice2), TierPrice2},
-                        {nameof(TierPrice3), TierPrice3},
+                        {nameof(TierQuantity1), TierQuantity1!},
+                        {nameof(TierQuantity2), TierQuantity2!},
+                        {nameof(TierQuantity3), TierQuantity3!},
+                        {nameof(TierPrice1), TierPrice1!},
+                        {nameof(TierPrice2), TierPrice2!},
+                        {nameof(TierPrice3), TierPrice3!},
                     },
                     $"All properties ({nameof(TierPrice1)}-{nameof(TierPrice3)}, {nameof(TierQuantity1)}-{nameof(TierQuantity3)}) must be set" +
                     "when using tiered pricing.",
@@ -155,27 +154,27 @@ namespace BricklinkSharp.Client
                 var invalidParameters = new Dictionary<string, object>();
                 if (TierQuantity2 >= TierQuantity1)
                 {
-                    invalidParameters.Add(nameof(TierQuantity2), TierQuantity2);
+                    invalidParameters.Add(nameof(TierQuantity2), TierQuantity2!);
                 }
 
                 if (TierQuantity3 >= TierQuantity2)
                 {
-                    invalidParameters.Add(nameof(TierQuantity3), TierQuantity3);
+                    invalidParameters.Add(nameof(TierQuantity3), TierQuantity3!);
                 }
 
                 if (TierPrice1 >= UnitPrice)
                 {
-                    invalidParameters.Add(nameof(TierPrice1), TierPrice1);
+                    invalidParameters.Add(nameof(TierPrice1), TierPrice1!);
                 }
 
                 if (TierPrice2 >= TierPrice1)
                 {
-                    invalidParameters.Add(nameof(TierPrice2), TierPrice2);
+                    invalidParameters.Add(nameof(TierPrice2), TierPrice2!);
                 }
 
                 if (TierPrice3 >= TierPrice2)
                 {
-                    invalidParameters.Add(nameof(TierPrice3), TierPrice3);
+                    invalidParameters.Add(nameof(TierPrice3), TierPrice3!);
                 }
 
                 if (invalidParameters.Any())

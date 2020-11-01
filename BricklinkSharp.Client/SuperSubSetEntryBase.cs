@@ -32,7 +32,7 @@ namespace BricklinkSharp.Client
     public abstract class SuperSubSetEntryBase
     {
         [JsonPropertyName("item")]
-        public SuperSubSetItem Item { get; set; }
+        public SuperSubSetItem Item { get; set; } = null!;
 
         [JsonPropertyName("quantity")]
         public int Quantity { get; set; }

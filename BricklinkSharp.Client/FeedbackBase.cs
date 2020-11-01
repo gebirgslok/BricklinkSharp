@@ -37,6 +37,6 @@ namespace BricklinkSharp.Client
         public RatingType Rating { get; set; }
 
         [JsonPropertyName("comment")]
-        public string Comment { get; set; }
+        public string Comment { get; set; } = null!;
     }
 }

@@ -26,7 +26,6 @@
 using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
@@ -34,10 +33,10 @@ namespace BricklinkSharp.Client
     public class OrderDetails : OrderBase
     {
         [JsonPropertyName("store_name")]
-        public string StoreName { get; set; }
+        public string StoreName { get; set; } = null!;
 
         [JsonPropertyName("buyer_email")]
-        public string BuyerEmail { get; set; }
+        public string BuyerEmail { get; set; } = null!;
 
         [JsonPropertyName("buyer_order_count")]
         public int BuyerOrderCount { get; set; }
@@ -57,19 +56,19 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("salesTax_collected_by_bl")]
         public bool WasSalesTaxCollectedByBricklink { get; set; }
 
-        [JsonPropertyName("remarks"), AllowNull]
-        public string Remarks { get; set; }
+        [JsonPropertyName("remarks")]
+        public string? Remarks { get; set; }
 
         [JsonPropertyName("total_weight"), JsonConverter(typeof(DoubleStringConverter))]
         public double TotalWeight { get; set; }
 
         [JsonPropertyName("shipping")]
-        public Shipping Shipping { get; set; }
+        public Shipping Shipping { get; set; } = null!;
 
         [JsonPropertyName("cost")]
-        public Cost Cost { get; set; }
+        public Cost Cost { get; set; } = null!;
 
         [JsonPropertyName("disp_cost")]
-        public Cost DisplayCost { get; set; }
+        public Cost DisplayCost { get; set; } = null!;
     }
 }

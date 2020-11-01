@@ -44,14 +44,14 @@ namespace BricklinkSharp.Client.OAuth
             return $"{Name}={Value}";
         }
 
-        public int CompareTo(WebParameter other)
+        public int CompareTo(WebParameter? other)
         {
             if (ReferenceEquals(this, other))
             {
                 return 0;
             }
 
-            if (ReferenceEquals(null, other))
+            if (other is null)
             {
                 return 1;
             }
@@ -66,9 +66,15 @@ namespace BricklinkSharp.Client.OAuth
             return string.Compare(Value, other.Value, StringComparison.Ordinal);
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(object? obj)
         {
-            return CompareTo(obj as WebParameter);
+            if (obj is WebParameter webParameter)
+            {
+                return CompareTo(webParameter);
+            }
+
+            throw new ArgumentException($"{nameof(obj)} must be of type {typeof(WebParameter)}," +
+                $"received {obj?.GetType().ToString() ?? "Null"}.");
         }
     }
 }

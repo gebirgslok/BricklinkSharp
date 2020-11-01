@@ -26,7 +26,6 @@
 using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
@@ -42,11 +41,11 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("shipping_available")]
         public bool? IsShippingAvailable { get; set; }
 
-        [JsonPropertyName("seller_country_code"), AllowNull]
-        public string SellerCountryCode { get; set; }
+        [JsonPropertyName("seller_country_code")]
+        public string? SellerCountryCode { get; set; }
 
-        [JsonPropertyName("buyer_country_code"), AllowNull]
-        public string BuyerCountryCode { get; set; }
+        [JsonPropertyName("buyer_country_code")]
+        public string? BuyerCountryCode { get; set; }
 
         [JsonPropertyName("date_ordered")]
         public DateTime? OrderDate { get; set; }

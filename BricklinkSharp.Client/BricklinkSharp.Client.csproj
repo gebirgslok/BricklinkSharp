@@ -20,7 +20,7 @@
     <AssemblyName>BricklinkSharp.Client</AssemblyName>
     <RepositoryUrl>https://github.com/gebirgslok/BricklinkSharp</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">

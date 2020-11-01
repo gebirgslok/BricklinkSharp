@@ -26,7 +26,6 @@
 using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-using NullGuard;
 
 namespace BricklinkSharp.Client
 {
@@ -37,10 +36,10 @@ namespace BricklinkSharp.Client
         public int MethodId { get; set; }
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        [JsonPropertyName("note"), AllowNull]
-        public string Note { get; set; }
+        [JsonPropertyName("note")]
+        public string? Note { get; set; }
 
         [JsonPropertyName("insurance")]
         public bool HasInsurance { get; set; }

@@ -33,13 +33,13 @@ namespace BricklinkSharp.Client
     public class PriceGuide
     {
         [JsonPropertyName("item")]
-        public ItemBase Item { get; set; }
+        public ItemBase Item { get; set; } = null!;
 
         [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
         public Condition Condition { get; set; }
 
         [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; }
+        public string CurrencyCode { get; set; } = null!;
 
         [JsonPropertyName("min_price"), JsonConverter(typeof(DecimalStringConverter))]
         public decimal MinPrice { get; set; }
@@ -60,7 +60,7 @@ namespace BricklinkSharp.Client
         public int TotalQuantity { get; set; }
 
         [JsonPropertyName("price_detail")]
-        public PriceDetail[] PriceDetails { get; set; }
+        public PriceDetail[] PriceDetails { get; set; } = null!;
 
         public override string ToString()
         {

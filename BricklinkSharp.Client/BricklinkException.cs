@@ -34,9 +34,9 @@ namespace BricklinkSharp.Client
 {
     public abstract class BricklinkException : Exception
     {
-        public string RequestUrl { get; }
+        public string? RequestUrl { get; }
 
-        public HttpMethod HttpMethod { get; }
+        public HttpMethod? HttpMethod { get; }
 
         protected internal BricklinkException(string message, string url, HttpMethod httpMethod) : base(message)
         {

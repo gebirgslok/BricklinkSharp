@@ -36,10 +36,10 @@ namespace BricklinkSharp.Client
         public int InventoryId { get; set; }
 
         [JsonPropertyName("item")]
-        public InventoryItem Item { get; set; }
+        public InventoryItem Item { get; set; } = null!;
 
         [JsonPropertyName("color_name")]
-        public string ColorName { get; set; }
+        public string ColorName { get; set; } = null!;
 
         [JsonPropertyName("bind_id")]
         public int BindId { get; set; }

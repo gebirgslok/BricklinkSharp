@@ -77,7 +77,7 @@ namespace BricklinkSharp.Client.OAuth
             parameter.AddRange(authParameters);
         }
 
-        private string GetSignature(string timestamp, string nonce, List<WebParameter> queryParameters = null)
+        private string GetSignature(string timestamp, string nonce, List<WebParameter>? queryParameters = null)
         {
             var parameters = queryParameters ?? new List<WebParameter>();
             AddAuthParamters(parameters, timestamp, nonce);
@@ -86,7 +86,7 @@ namespace BricklinkSharp.Client.OAuth
             return signature;
         }
 
-        public string GetAuthorizationHeader(List<WebParameter> queryParameters = null)
+        public string GetAuthorizationHeader(List<WebParameter>? queryParameters = null)
         {
             var timestamp = OAuthUtilities.GetTimestamp();
             var nonce = OAuthUtilities.GetNonce();

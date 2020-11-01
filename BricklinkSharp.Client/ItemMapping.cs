@@ -31,12 +31,12 @@ namespace BricklinkSharp.Client
     public class ItemMapping
     {
         [JsonPropertyName("item")]
-        public ItemBase Item { get; set; }
+        public ItemBase Item { get; set; } = null!;
 
         [JsonPropertyName("color_id")]
         public int ColorId { get; set; }
 
         [JsonPropertyName("element_id")]
-        public string ElementId { get; set; }
+        public string ElementId { get; set; } = null!;
     }
 }

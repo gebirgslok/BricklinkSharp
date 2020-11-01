@@ -30,15 +30,15 @@ namespace BricklinkSharp.Client
 {
     public class BricklinkClientConfiguration
     {
-        public string ConsumerKey { get; set; }
+        public string? ConsumerKey { get; set; }
 
-        public string ConsumerSecret { get; set; }
+        public string? ConsumerSecret { get; set; }
 
-        public string TokenValue { get; set; }
+        public string? TokenValue { get; set; }
 
-        public string TokenSecret { get; set; }
+        public string? TokenSecret { get; set; }
 
-        private static BricklinkClientConfiguration _instance;
+        private static BricklinkClientConfiguration? _instance;
         public static BricklinkClientConfiguration Instance => _instance ??= new BricklinkClientConfiguration();
 
         private BricklinkClientConfiguration()
@@ -49,22 +49,22 @@ namespace BricklinkSharp.Client
         {
             var missingParams = new List<string>();
 
-            if (string.IsNullOrEmpty(ConsumerKey.Trim()))
+            if (string.IsNullOrEmpty(ConsumerKey?.Trim()))
             {
                 missingParams.Add(nameof(ConsumerKey));
             }
 
-            if (string.IsNullOrEmpty(ConsumerSecret.Trim()))
+            if (string.IsNullOrEmpty(ConsumerSecret?.Trim()))
             {
                 missingParams.Add(nameof(ConsumerSecret));
             }
 
-            if (string.IsNullOrEmpty(TokenValue.Trim()))
+            if (string.IsNullOrEmpty(TokenValue?.Trim()))
             {
                 missingParams.Add(nameof(TokenValue));
             }
 
-            if (string.IsNullOrEmpty(TokenSecret.Trim()))
+            if (string.IsNullOrEmpty(TokenSecret?.Trim()))
             {
                 missingParams.Add(nameof(TokenSecret));
             }

@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client
     public class InventoryItem : ItemBase
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("category_id")]
         public int CategoryId { get; set; }

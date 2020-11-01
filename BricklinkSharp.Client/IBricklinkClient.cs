@@ -40,8 +40,11 @@ namespace BricklinkSharp.Client
         Task<Subset[]> GetSubsetsAsync(ItemType type, string no, int colorId = 0, bool? includeOriginalBox = null,
             bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null);
 
-        Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0, PriceGuideType? priceGuideType = null,
-            Condition? condition = null, string countryCode = null, string region = null, string currencyCode = null);
+        Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, 
+            int colorId = 0, PriceGuideType? priceGuideType = null,
+            Condition? condition = null, string? countryCode = null, 
+            string? region = null, 
+            string? currencyCode = null);
 
         Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no);
 
@@ -53,14 +56,14 @@ namespace BricklinkSharp.Client
 
         Task<Category> GetCategoryAsync(int categoryId);
 
-        Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType> includedItemTypes = null, 
-            IEnumerable<ItemType> excludedItemTypes = null,
-            IEnumerable<InventoryStatusType> includedStatusFlags = null,
-            IEnumerable<InventoryStatusType> excludedStatusFlags = null,
-            IEnumerable<int> includedCategoryIds = null, 
-            IEnumerable<int> excludedCategoryIds = null,
-            IEnumerable<int> includedColorIds = null,
-            IEnumerable<int> excludedColorIds = null);
+        Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null, 
+            IEnumerable<ItemType>? excludedItemTypes = null,
+            IEnumerable<InventoryStatusType>? includedStatusFlags = null,
+            IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
+            IEnumerable<int>? includedCategoryIds = null, 
+            IEnumerable<int>? excludedCategoryIds = null,
+            IEnumerable<int>? includedColorIds = null,
+            IEnumerable<int>? excludedColorIds = null);
 
         Task<Inventory> GetInventoryAsync(int inventoryId);
 
@@ -93,8 +96,8 @@ namespace BricklinkSharp.Client
         Task ReplyFeedbackAsync(int feedbackId, string reply);
 
         Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
-            IEnumerable<OrderStatus> includedStatusFlags = null,
-            IEnumerable<OrderStatus> excludedStatusFlags = null, 
+            IEnumerable<OrderStatus>? includedStatusFlags = null,
+            IEnumerable<OrderStatus>? excludedStatusFlags = null, 
             bool filed = false);
 
         Task<OrderDetails> GetOrderAsync(int orderId);
@@ -114,8 +117,8 @@ namespace BricklinkSharp.Client
         Task SendDriveThruAsync(int orderId, bool mailCcMe);
 
         Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
-            IEnumerable<CouponStatus> includedCouponStatusTypes = null,
-            IEnumerable<CouponStatus> excludedCouponStatusTypes = null);
+            IEnumerable<CouponStatus>? includedCouponStatusTypes = null,
+            IEnumerable<CouponStatus>? excludedCouponStatusTypes = null);
 
         Task<Coupon> GetCouponAsync(int couponId);
 

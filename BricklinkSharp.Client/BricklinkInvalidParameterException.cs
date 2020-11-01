@@ -34,19 +34,19 @@ namespace BricklinkSharp.Client
 {
     public class BricklinkInvalidParameterException : Exception
     {
-        public Dictionary<string, object> InvalidParameters { get; }
+        public Dictionary<string, object>? InvalidParameters { get; }
 
-        public Type TypeOfDataObject { get; }
+        public Type? TypeOfDataObject { get; }
 
         internal BricklinkInvalidParameterException(Dictionary<string, object> invalidParameters,
-            string baseMessage = null,
-            Type typeOfDataObject = null) : base(BuildMessage(baseMessage, invalidParameters, typeOfDataObject))
+            string? baseMessage = null,
+            Type? typeOfDataObject = null) : base(BuildMessage(baseMessage, invalidParameters, typeOfDataObject))
         {
             InvalidParameters = invalidParameters;
             TypeOfDataObject = typeOfDataObject;
         }
 
-        private static string BuildMessage(string baseMessage, Dictionary<string, object> invalidParameters, Type typeOfDataObject)
+        private static string BuildMessage(string? baseMessage, Dictionary<string, object> invalidParameters, Type? typeOfDataObject)
         {
             var builder = new StringBuilder();
 

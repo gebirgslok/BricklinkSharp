@@ -41,15 +41,12 @@ namespace BricklinkSharp.Client.Json
                 return null;
             }
 
-            switch (stringValue)
+            return stringValue switch
             {
-                case "A":
-                    return CouponRestrictionType.ApplyToSpecifiedItemType;
-                case "E":
-                    return CouponRestrictionType.ExcludeSpecifiedType;
-                default:
-                    return null;
-            }
+                "A" => CouponRestrictionType.ApplyToSpecifiedItemType,
+                "E" => CouponRestrictionType.ExcludeSpecifiedType,
+                _ => null,
+            };
         }
 
         public override void Write(Utf8JsonWriter writer, CouponRestrictionType? value, JsonSerializerOptions options)

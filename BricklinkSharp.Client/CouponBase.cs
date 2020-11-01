@@ -24,7 +24,6 @@
 #endregion
 
 using BricklinkSharp.Client.Json;
-using NullGuard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,11 +34,11 @@ namespace BricklinkSharp.Client
     [Serializable]
     public abstract class CouponBase
     {
-        [JsonPropertyName("remarks"), AllowNull]
-        public string Remarks { get; set; }
+        [JsonPropertyName("remarks")]
+        public string? Remarks { get; set; }
 
         [JsonPropertyName("applies_to")]
-        public CouponAppliesTo AppliesTo { get; set; }
+        public CouponAppliesTo AppliesTo { get; set; } = null!;
 
         [JsonPropertyName("discount_type"), JsonConverter(typeof(DiscountTypeStringConverter))]
         public DiscountType DiscountType { get; set; }
