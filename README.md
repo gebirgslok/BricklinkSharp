@@ -6,14 +6,21 @@
 ## Introduction
 
 BricklinkSharp is a stronly-typed, easy-to-use C# client for the [bricklink](https://www.bricklink.com/v2/main.page) marketplace that gets you started with just a few lines of code. It features OAuth1 authentication, error handling and parsing of JSON data into typed instances.
-It supports all .NET platforms compatible with *.NET standard 2.0* and upwards.
+It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 ## Changelog
 
-### 0.5.0
+### 1.0.0 (Future)
+ - Covers all public API endpoints
+ - New Assembly versioning:
+ 	- Assembly Version: 1.0.0.0
+ 	- Assembly File Version: 1.0.0.\<build ID\>
+	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\>
+
+### 0.5.0 (current WIP)
  - Coupons
  - Nullable annotations
- - Renamed *UpdatedInventory* container to *UpdateInventory*
+ - Renamed *UpdatedInventory* container to *UpdateInventory* (**breaking**)
  
 ### 0.4.0
  - Order
