@@ -34,11 +34,6 @@ namespace BricklinkSharp.Client.OAuth
     {
         public static IEnumerable<WebParameter> ParseQueryString(Uri uri)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
             var parsedQuery = HttpUtility.ParseQueryString(uri.Query);
 
             var queryStringParameters = parsedQuery

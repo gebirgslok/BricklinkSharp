@@ -32,7 +32,7 @@ namespace BricklinkSharp.Client
     public class Shipping
     {
         [JsonPropertyName("method")]
-        public string Method { get; set; } = null!;
+        public string? Method { get; set; }
 
         [JsonPropertyName("method_id")]
         public int Id { get; set; }

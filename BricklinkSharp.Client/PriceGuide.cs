@@ -60,7 +60,7 @@ namespace BricklinkSharp.Client
         public int TotalQuantity { get; set; }
 
         [JsonPropertyName("price_detail")]
-        public PriceDetail[] PriceDetails { get; set; } = null!;
+        public PriceDetail[]? PriceDetails { get; set; }
 
         public override string ToString()
         {

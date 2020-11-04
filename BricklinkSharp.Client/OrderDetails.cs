@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client
     public class OrderDetails : OrderBase
     {
         [JsonPropertyName("store_name")]
-        public string StoreName { get; set; } = null!;
+        public string? StoreName { get; set; }
 
         [JsonPropertyName("buyer_email")]
         public string BuyerEmail { get; set; } = null!;
