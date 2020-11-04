@@ -23,8 +23,8 @@ steps:
   - task: PowerShell@2
     displayName: Update Project File
     inputs:
-      filePath: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)\Build\UpdateProjectFile.ps1'
-      arguments: '-PathToCsprojFile $(SYSTEM.DEFAULTWORKINGDIRECTORY)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(BUILD.BUILDID)'
+      filePath: '$(System.DefaultWorkingDirectory)\Build\UpdateProjectFile.ps1'
+      arguments: '-PathToCsprojFile $(SYSTEM.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(Build.BuildId)'
 
   - task: VSBuild@1
     inputs:
@@ -39,12 +39,12 @@ steps:
       
   - task: CopyFiles@2
     inputs:
-        SourceFolder: '$(SYSTEM.DEFAULTWORKINGDIRECTORY)'
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: BricklinkSharp.Client\bin\$(BuildConfiguration)\**
-        TargetFolder: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'
+        TargetFolder: '$(Build.ArtifactsStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
     inputs:
-        PathtoPublish: '$(BUILD.ARTIFACTSTAGINGDIRECTORY)'
+        PathtoPublish: '$(Build.ArtifactsStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'

@@ -10,14 +10,14 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 ## Changelog
 
-### 1.0.0 (Future)
+### 1.0.0 (WIP)
  - Covers all public API endpoints
  - New Assembly versioning:
  	- Assembly Version: 1.0.0.0
  	- Assembly File Version: 1.0.0.\<build ID\>
 	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\>
 
-### 0.5.0 (current WIP)
+### 0.5.0
  - Coupons
  - Nullable annotations
  - Renamed *UpdatedInventory* container to *UpdateInventory* (**breaking**)
