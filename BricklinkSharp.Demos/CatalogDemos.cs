@@ -87,5 +87,13 @@ namespace BricklinkSharp.Demos
 
             Console.WriteLine($"URL: {uri.AbsoluteUri}");
         }
+
+        public static void EnsureImageUrlSchemeDemo()
+        {
+            using var client = BricklinkClientFactory.Build();
+            var uri = client.EnsureImageUrlScheme("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https");
+
+            Console.WriteLine($"URL: {uri.AbsoluteUri}");
+        }
     }
 }

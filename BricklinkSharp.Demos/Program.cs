@@ -34,69 +34,65 @@ namespace BricklinkSharp.Demos
     {
         static async Task Main()
         {
-            BricklinkClientConfiguration.Instance.TokenValue = "2EBD09FD75BE4A3BBA9E556B297D0CAF";
-            BricklinkClientConfiguration.Instance.TokenSecret = "95F3584C389340CBB20965839D1B737D";
-            BricklinkClientConfiguration.Instance.ConsumerKey = "67BD8A6AD39E441D855DBDA9613DBE0B";
-            BricklinkClientConfiguration.Instance.ConsumerSecret = "E36EADA87AC342D2AFD345E2769FD31A";
+            BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
+            BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
+            BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
+            BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 
-            //BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
-            //BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
-            //BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
-            //BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
-
-            //await CatalogDemos.GetItemImageDemo();
+            await CatalogDemos.GetItemImageDemo();
             CatalogDemos.GetPartImageForColorDemo();
-            //await CatalogDemos.GetItemDemo();
-            //await CatalogDemos.GetSupersetsDemo();
-            //await CatalogDemos.GetSubsetsDemo();
-            //await CatalogDemos.GetPriceGuideDemo();
-            //await CatalogDemos.GetKnownColorsDemo();
+            CatalogDemos.EnsureImageUrlSchemeDemo();
+            await CatalogDemos.GetItemDemo();
+            await CatalogDemos.GetSupersetsDemo();
+            await CatalogDemos.GetSubsetsDemo();
+            await CatalogDemos.GetPriceGuideDemo();
+            await CatalogDemos.GetKnownColorsDemo();
 
-            //await ColorDemos.GetColorListDemo();
-            //await ColorDemos.GetColorDemo();
+            await ColorDemos.GetColorListDemo();
+            await ColorDemos.GetColorDemo();
 
-            //await CategoryDemos.GetCategoryListDemo();
-            //await CategoryDemos.GetCategoryDemo();
+            await CategoryDemos.GetCategoryListDemo();
+            await CategoryDemos.GetCategoryDemo();
 
-            //await InventoryDemos.CreateInventoriesDemo();
-            //var inventory = await InventoryDemos.CreateInventoryDemo();
-            //await InventoryDemos.UpdatedInventoryDemo(inventory.InventoryId);
-            //await InventoryDemos.DeleteInventoryDemo(inventory.InventoryId);
-            //await InventoryDemos.GetInventoryListDemo();
+            await InventoryDemos.CreateInventoriesDemo();
+            var inventory = await InventoryDemos.CreateInventoryDemo();
+            await InventoryDemos.UpdatedInventoryDemo(inventory.InventoryId);
+            await InventoryDemos.DeleteInventoryDemo(inventory.InventoryId);
+            await InventoryDemos.GetInventoryListDemo();
 
-            //await ItemMappingDemos.GetElementIdDemo();
-            //await ItemMappingDemos.GetItemNumberDemo();
+            await ItemMappingDemos.GetElementIdDemo();
+            await ItemMappingDemos.GetItemNumberDemo();
 
-            //var shippingMethods = await SettingDemos.GetShippingMethodListDemo();
-            //var id = shippingMethods.First().MethodId;
-            //await SettingDemos.GetShippingMethodDemo(id);
+            var shippingMethods = await SettingDemos.GetShippingMethodListDemo();
+            var id = shippingMethods.First().MethodId;
+            await SettingDemos.GetShippingMethodDemo(id);
 
-            //await PushNotificationDemos.GetNotificationsDemo();
+            await PushNotificationDemos.GetNotificationsDemo();
 
-            //await MemberDemos.GetMemberRatingDemo();
+            await MemberDemos.GetMemberRatingDemo();
 
-            //await FeedbackDemos.GetFeedbackListDemo();
-            //await FeedbackDemos.GetFeedbackDemo();
-            //var orderId = 123456789; //replace with a valid order ID.
-            //await FeedbackDemos.PostFeedbackDemo(orderId);
-            //var feedbackId = 123456789; //replace with a valid feedback ID.
-            //await FeedbackDemos.ReplyFeedbackDemo(feedbackId);
+            await FeedbackDemos.GetFeedbackListDemo();
+            await FeedbackDemos.GetFeedbackDemo();
+            var orderId = 123456789; //replace with a valid order ID.
+            await FeedbackDemos.PostFeedbackDemo(orderId);
+            var feedbackId = 123456789; //replace with a valid feedback ID.
+            await FeedbackDemos.ReplyFeedbackDemo(feedbackId);
 
-            //await OrderDemos.GetOrdersDemo();
-            //await OrderDemos.GetOrderDemo();
-            //await OrderDemos.GetOrderItemsDemo();
-            //await OrderDemos.GetOrderMessagesDemo();
-            //await OrderDemos.GetOrderFeedbackDemo();
-            //await OrderDemos.UpdateOrderStatusDemo();
-            //await OrderDemos.UpdatePaymentStatusDemo();
-            //await OrderDemos.UpdateOrderDemo();
+            await OrderDemos.GetOrdersDemo();
+            await OrderDemos.GetOrderDemo();
+            await OrderDemos.GetOrderItemsDemo();
+            await OrderDemos.GetOrderMessagesDemo();
+            await OrderDemos.GetOrderFeedbackDemo();
+            await OrderDemos.UpdateOrderStatusDemo();
+            await OrderDemos.UpdatePaymentStatusDemo();
+            await OrderDemos.UpdateOrderDemo();
 
-            //await CouponDemos.GetCouponsDemo();
-            //var couponId = 123456789; //Must be a valid coupon ID.
-            //await CouponDemos.GetCouponDemo(couponId);
-            //await CouponDemos.DeleteCouponDemo(couponId);
-            //await CouponDemos.CreateCouponDemo();
-            //await CouponDemos.UpdateCouponDemo(couponId);
+            await CouponDemos.GetCouponsDemo();
+            var couponId = 123456789; //Must be a valid coupon ID.
+            await CouponDemos.GetCouponDemo(couponId);
+            await CouponDemos.DeleteCouponDemo(couponId);
+            await CouponDemos.CreateCouponDemo();
+            await CouponDemos.UpdateCouponDemo(couponId);
             Console.ReadKey(true);
         }
     }
