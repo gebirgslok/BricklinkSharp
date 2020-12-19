@@ -41,6 +41,7 @@ namespace BricklinkSharp.Client
 {
     internal sealed class BricklinkClient : IBricklinkClient
     {
+        private static readonly string _partImageUrlTemplate = "//img.bricklink.com/ItemImage/PN/{0}/{1}.png";
         private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
         private readonly HttpClient _httpClient = new HttpClient();
         private bool _isDisposed;
@@ -218,6 +219,16 @@ namespace BricklinkSharp.Client
 
             var data = ParseResponse<CatalogImage>(responseBody, 200, url, method);
             return data;
+        }
+
+        public Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https")
+        {
+            return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), partNo)}");
+        }
+
+        public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")
+        {
+            return new Uri($"{scheme}:{imageUrl}");
         }
 
         public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId)

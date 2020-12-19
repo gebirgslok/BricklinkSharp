@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
@@ -74,9 +75,17 @@ namespace BricklinkSharp.Demos
         public static async Task GetItemImageDemo()
         {
             using var client = BricklinkClientFactory.Build();
-            var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 0);
+            var catalogImage = await client.GetItemImageAsync(ItemType.Part, "2540", 8);
 
             PrintHelper.PrintAsJson(catalogImage);
+        }
+
+        public static void GetPartImageForColorDemo()
+        {
+            using var client = BricklinkClientFactory.Build();
+            var uri = client.GetPartImageForColor("2540", 10);
+
+            Console.WriteLine($"URL: {uri.AbsoluteUri}");
         }
     }
 }

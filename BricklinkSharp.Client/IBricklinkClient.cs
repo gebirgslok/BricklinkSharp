@@ -35,6 +35,10 @@ namespace BricklinkSharp.Client
 
         Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId);
 
+        Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https");
+
+        Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
+
         Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId);
 
         Task<Subset[]> GetSubsetsAsync(ItemType type, string no, int colorId = 0, bool? includeOriginalBox = null,
