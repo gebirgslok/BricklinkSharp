@@ -95,7 +95,7 @@ containerBuilder.Register(c => BricklinkClientFactory.Build())
 	.SingleInstance();
 ```
 
-#### [Microsoft.Extensions.DependencyInjection] example
+#### [Microsoft.Extensions.DependencyInjection](https://docs.microsoft.com/de-de/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-5.0) example
 ```csharp
 services.AddSingleton(typeof(IBricklinkClient), provider =>
 {
