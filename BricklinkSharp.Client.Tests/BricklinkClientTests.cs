@@ -38,7 +38,7 @@ namespace BricklinkSharp.Client.Tests
         {
             var request = base.GetWebRequest(address);
 
-            if (HeadOnly && request.Method == "GET")
+            if (HeadOnly && request!.Method == "GET")
             {
                 request.Method = "HEAD";
             }
