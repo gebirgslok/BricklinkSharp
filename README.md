@@ -19,7 +19,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 ### 0.6.0
  - New method on *IBricklinkClient*: GetPartImageForColor. Builds and returns the image URL for a specific part number / color ID. 
- - New helper method on *IBricklinkClient*: EnsureImageUrlScheme. Adds (ensures) an URI scheme on image URL's returned by the Bricklink API.
+ - New helper method on *IBricklinkClient*: EnsureImageUrlScheme. Adds (ensures) an URI scheme on image URLs returned by the Bricklink API.
 
 ### 0.5.0
  - Coupons
