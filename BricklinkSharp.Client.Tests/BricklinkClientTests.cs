@@ -63,6 +63,16 @@ namespace BricklinkSharp.Client.Tests
             }
         }
 
+        [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https")]
+        [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "http")]
+        public void EnsureImageUrlScheme(string url, string scheme)
+        {
+            using var client = BricklinkClientFactory.Build();
+            var uri = client.EnsureImageUrlScheme(url, scheme);
+
+            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/34/43898pb006.png", uri.AbsoluteUri);
+        }
+
         [TestCase("2540", 10, "https")]
         [TestCase("2540", 10, "http")]
         [TestCase("43898pb006", 34, "https")]
