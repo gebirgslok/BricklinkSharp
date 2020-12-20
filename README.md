@@ -18,8 +18,8 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\>
 
 ### 0.6.0
- - New method on *IBricklinkClient*: GetPartImageForColor. Builds and returns the image URL for a specific part number / color ID. 
- - New helper method on *IBricklinkClient*: EnsureImageUrlScheme. Adds (ensures) an URI scheme on image URLs returned by the Bricklink API.
+ - New method on *IBricklinkClient*: **GetPartImageForColor**. Builds and returns the image URL for a specific part number / color ID. 
+ - New helper method on *IBricklinkClient*: **EnsureImageUrlScheme**. Adds (ensures) an URI scheme on image URLs returned by the Bricklink API.
 
 ### 0.5.0
  - Coupons
@@ -120,9 +120,9 @@ var uri = client.GetPartImageForColor("43898pb006", 34);
 ```
 #### Ensure image url scheme
 ```csharp  
-var uri = client.EnsureImageUrlScheme("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https);
-Console.Writeline(uri.ToString());
-//Prins: https://img.bricklink.com/ItemImage/PN/34/43898pb006.png
+var uri = client.EnsureImageUrlScheme("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https");
+Console.WriteLine(uri.ToString());
+//Prints: https://img.bricklink.com/ItemImage/PN/34/43898pb006.png
 ```
 #### Get supersets
 ```csharp    
