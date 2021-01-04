@@ -33,12 +33,12 @@ steps:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: Run Unit Tests
-  inputs:
-    command: 'test'
-    projects: '**/*.Tests.csproj'
-    arguments: '-c $(buildConfiguration)'
+  - task: DotNetCoreCLI@2
+    displayName: Run Unit Tests
+    inputs:
+      command: 'test'
+      projects: '**/*.Tests.csproj'
+      arguments: '-c $(buildConfiguration)'
       
   - task: CopyFiles@2
     inputs:
