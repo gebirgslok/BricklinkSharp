@@ -17,6 +17,9 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
  	- Assembly File Version: 1.0.0.\<build ID\>
 	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\>
 
+### 0.6.1
+ - Fixed: *OrderMessage.Subject* can be **Null**. Thanks to [aalex675](https://github.com/aalex675) for his contribution.
+
 ### 0.6.0
  - New method on *IBricklinkClient*: **GetPartImageForColor**. Builds and returns the image URL for a specific part number / color ID. 
  - New helper method on *IBricklinkClient*: **EnsureImageUrlScheme**. Adds (ensures) an URI scheme on image URLs returned by the Bricklink API.

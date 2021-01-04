@@ -27,15 +27,18 @@ steps:
       arguments: '-PathToCsprojFile $(SYSTEM.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(Build.BuildId)'
 
   - task: VSBuild@1
+    displayName: Build Solution
     inputs:
       solution: '$(solution)'
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-  - task: VSTest@2
-    inputs:
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
+- task: DotNetCoreCLI@2
+  displayName: Run Unit Tests
+  inputs:
+    command: 'test'
+    projects: '**/*.Tests.csproj'
+    arguments: '-c $(buildConfiguration)'
       
   - task: CopyFiles@2
     inputs:
