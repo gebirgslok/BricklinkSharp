@@ -32,7 +32,7 @@ namespace BricklinkSharp.Client
     public class OrderMessage
     {
         [JsonPropertyName("subject")]
-        public string Subject { get; set; } = null!;
+        public string? Subject { get; set; } = null;
 
         [JsonPropertyName("body")]
         public string Body { get; set; } = null!;
