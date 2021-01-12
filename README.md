@@ -5,7 +5,7 @@
 
 ## Introduction
 
-BricklinkSharp is a stronly-typed, easy-to-use C# client for the [bricklink](https://www.bricklink.com/v2/main.page) marketplace that gets you started with just a few lines of code. It features OAuth1 authentication, error handling and parsing of JSON data into typed instances.
+BricklinkSharp is a strongly-typed, easy-to-use C# client for the [bricklink](https://www.bricklink.com/v2/main.page) marketplace that gets you started with just a few lines of code. It features OAuth1 authentication, error handling and parsing of JSON data into typed instances.
 It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 ## Changelog
