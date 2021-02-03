@@ -42,6 +42,8 @@ namespace BricklinkSharp.Client
     internal sealed class BricklinkClient : IBricklinkClient
     {
         private static readonly string _partImageUrlTemplate = "//img.bricklink.com/ItemImage/PN/{0}/{1}.png";
+        private static readonly string _minifigImageUrlTemplate = "//img.bricklink.com/ItemImage/MN/0/{0}.png";
+        private static readonly string _setImageUrlTemplate = "//img.bricklink.com/ItemImage/SN/0/{0}.png";
         private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
         private readonly HttpClient _httpClient = new HttpClient();
         private bool _isDisposed;
@@ -224,6 +226,16 @@ namespace BricklinkSharp.Client
         public Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https")
         {
             return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), partNo)}");
+        }
+
+        public Uri GetMinifigImage(string number, string scheme = "https")
+        {
+            return new Uri($"{scheme}:{string.Format(_minifigImageUrlTemplate, number)}");
+        }
+
+        public Uri GetSetImage(string number, string scheme = "https")
+        {
+            return new Uri($"{scheme}:{string.Format(_setImageUrlTemplate, number)}");
         }
 
         public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")

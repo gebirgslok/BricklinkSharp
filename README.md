@@ -17,6 +17,10 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
  	- Assembly File Version: 1.0.0.\<build ID\>
 	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\>
 
+### 0.7.0
+ - New method on *IBricklinkClient*: **GetMinifigImage**. Builds and returns the image URL for a specific minifigure number.
+ - New method on *IBricklinkClient*: **GetSetImage**. Builds and returns the image URL for a specific set number.
+ 
 ### 0.6.1
  - Fixed: *OrderMessage.Subject* can be **Null**. Thanks to [aalex675](https://github.com/aalex675) for his contribution.
 
@@ -120,6 +124,14 @@ var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 
 ```csharp  
 var colorId = 34; //Lime. 
 var uri = client.GetPartImageForColor("43898pb006", 34);
+```
+#### Get minifigure image
+```csharp   
+var uri = client.GetMinifigImage("sw1093");
+```
+#### Get set image
+```csharp   
+var uri = client.GetSetImage("6090-1");
 ```
 #### Ensure image url scheme
 ```csharp  

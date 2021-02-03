@@ -37,6 +37,10 @@ namespace BricklinkSharp.Client
 
         Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https");
 
+        Uri GetMinifigImage(string number, string scheme = "https");
+
+        Uri GetSetImage(string number, string scheme = "https");
+
         Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
 
         Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId);

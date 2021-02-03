@@ -84,5 +84,31 @@ namespace BricklinkSharp.Client.Tests
             Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/{colorId}/{partNo}.png", uri.AbsoluteUri);
             Assert.IsTrue(CheckUriExists(uri));
         }
+
+        [TestCase("soc130", "https")]
+        [TestCase("soc130", "http")]
+        [TestCase("85863pb095", "https")]
+        [TestCase("sw1093", "https")]
+        public void GetMinifigImage(string number, string scheme)
+        {
+            using var client = BricklinkClientFactory.Build();
+            var uri = client.GetMinifigImage(number, scheme);
+
+            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/MN/0/{number}.png", uri.AbsoluteUri);
+            Assert.IsTrue(CheckUriExists(uri));
+        }
+
+        [TestCase("723-1", "https")]
+        [TestCase("723-1", "http")]
+        [TestCase("7774-1", "https")]
+        [TestCase("6090-1", "https")]
+        public void GetSetImage(string number, string scheme)
+        {
+            using var client = BricklinkClientFactory.Build();
+            var uri = client.GetSetImage(number, scheme);
+
+            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/SN/0/{number}.png", uri.AbsoluteUri);
+            Assert.IsTrue(CheckUriExists(uri));
+        }
     }
 }
