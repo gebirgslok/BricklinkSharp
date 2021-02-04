@@ -27,16 +27,14 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-// ReSharper disable ClassNeverInstantiated.Global
 #nullable enable
-#pragma warning disable 8618
 namespace BricklinkSharp.Client
 {
     [Serializable]
     public class CatalogItem : ItemBase
     {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
+        [JsonPropertyName("name")] 
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("category_id")]
         public int CategoryId { get; set; }
