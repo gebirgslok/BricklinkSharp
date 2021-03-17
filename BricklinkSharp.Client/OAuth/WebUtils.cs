@@ -40,7 +40,7 @@ namespace BricklinkSharp.Client.OAuth
                 .AllKeys
                 .SelectMany(parsedQuery.GetValues!, (key, value) => new { key, value });
 
-            return queryStringParameters.Select(p => new WebParameter(p.key, p.value));
+            return queryStringParameters.Select(p => new WebParameter(p.key!, p.value!));
         }
     }
 }
