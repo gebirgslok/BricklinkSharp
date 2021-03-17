@@ -38,7 +38,7 @@ namespace BricklinkSharp.Client.OAuth
 
             var queryStringParameters = parsedQuery
                 .AllKeys
-                .SelectMany(parsedQuery.GetValues, (key, value) => new { key, value });
+                .SelectMany(parsedQuery.GetValues!, (key, value) => new { key, value });
 
             return queryStringParameters.Select(p => new WebParameter(p.key, p.value));
         }

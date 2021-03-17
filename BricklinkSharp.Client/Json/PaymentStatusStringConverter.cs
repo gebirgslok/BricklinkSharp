@@ -33,7 +33,14 @@ namespace BricklinkSharp.Client.Json
     {
         public override PaymentStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return (PaymentStatus)Enum.Parse(typeof(PaymentStatus), reader.GetString(), true);
+            var stringValue = reader.GetString();
+
+            if (stringValue == null)
+            {
+                throw new NullReferenceException(nameof(stringValue));
+            }
+
+            return (PaymentStatus)Enum.Parse(typeof(PaymentStatus), stringValue, true);
         }
 
         public override void Write(Utf8JsonWriter writer, PaymentStatus value, JsonSerializerOptions options)

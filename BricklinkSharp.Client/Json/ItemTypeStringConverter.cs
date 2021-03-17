@@ -35,6 +35,12 @@ namespace BricklinkSharp.Client.Json
         public override ItemType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var stringValue = reader.GetString();
+
+            if (stringValue == null)
+            {
+                throw new NullReferenceException(nameof(stringValue));
+            }
+
             var removedUnderscore = stringValue.Replace("_", string.Empty);
 
             if (Enum.TryParse(removedUnderscore, true, out ItemType result))

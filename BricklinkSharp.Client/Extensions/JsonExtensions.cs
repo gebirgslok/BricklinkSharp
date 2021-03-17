@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Linq;
 using System.Text.Json;
 
@@ -48,7 +49,20 @@ namespace BricklinkSharp.Client.Extensions
         internal static T ToObject<T>(this JsonElement element)
         {
             var json = element.GetRawText();
-            return JsonSerializer.Deserialize<T>(json!);
+
+            if (json == null)
+            {
+                throw new NullReferenceException(nameof(json));
+            }
+
+            var obj = JsonSerializer.Deserialize<T>(json);
+
+            if (obj == null)
+            {
+                throw new NullReferenceException(nameof(obj));
+            }
+
+            return obj;
         }
     }
 }
