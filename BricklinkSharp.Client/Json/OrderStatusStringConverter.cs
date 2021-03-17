@@ -34,7 +34,7 @@ namespace BricklinkSharp.Client.Json
     {
         public override OrderStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return (OrderStatus)Enum.Parse(typeof(OrderStatus), reader.GetString(), true);
+            return (OrderStatus)Enum.Parse(typeof(OrderStatus), reader.GetString()!, true);
         }
 
         public override void Write(Utf8JsonWriter writer, OrderStatus value, JsonSerializerOptions options)

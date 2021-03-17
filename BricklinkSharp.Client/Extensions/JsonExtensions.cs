@@ -48,7 +48,7 @@ namespace BricklinkSharp.Client.Extensions
         internal static T ToObject<T>(this JsonElement element)
         {
             var json = element.GetRawText();
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json!);
         }
     }
 }

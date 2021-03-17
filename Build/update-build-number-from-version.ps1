@@ -10,7 +10,7 @@ Write-Host "File: $PathToCsprojFile"
 $xml = New-Object XML
 $xml.Load($PathToCsprojFile)
 
-[string]$version = $xml.Project.PropertyGroup.Version
+[string]$version = $xml.Project.PropertyGroup.FileVersion
 Write-Host "version = $version"
 
 [string]$buildNumber = $env:BUILD_BUILDNUMBER
