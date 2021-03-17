@@ -16,22 +16,36 @@ name: $(Build.Reason)_commit-$(Build.SourceVersion)_$(Date:yyyyMMdd_HHmmss)
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  buildConfiguration: 'Release'  
+  semVerDate: $(Get-Date -Format yyyyMMdd+HHmmss)
 
 steps:
   - task: NuGetToolInstaller@1
   
   - task: NuGetCommand@2
+    displayName: Restore NuGet packages
     inputs:
       command: 'restore'
       restoreSolution: '**/*.sln'
       feedsToUse: 'select'
 
   - task: PowerShell@2
-    displayName: Update Project File
+    displayName: Update CSPROJ Files
     inputs:
-      filePath: '$(System.DefaultWorkingDirectory)\Build\UpdateProjectFile.ps1'
-      arguments: '-PathToCsprojFile $(SYSTEM.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj -BuildId $(Build.BuildId)'
+      filePath: '$(System.DefaultWorkingDirectory)\Build\update-csproj-versions.ps1'
+      arguments: '-SrcDirectory $(System.DefaultWorkingDirectory) -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(semVerDate)"'
+      
+  - task: PowerShell@2
+    displayName: Update Build Number From Version
+    inputs:
+      filePath: '$(System.DefaultWorkingDirectory)\Build\update-build-number-from-version.ps1'
+      arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
+      
+  - task: PowerShell@2
+    displayName: Set GeneratePackageOnBuild Property = true in CSPROJ
+    inputs:
+      filePath: '$(System.DefaultWorkingDirectory)\Build\update-csproj-generate-package-on-build.ps1'
+      arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
 
   - task: VSBuild@1
     displayName: Build Solution
@@ -48,12 +62,14 @@ steps:
       arguments: '-c $(buildConfiguration)'
       
   - task: CopyFiles@2
+    displayName: Copy Bin To ArtifactsStagingDirectory
     inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: BricklinkSharp.Client\bin\$(BuildConfiguration)\**
         TargetFolder: '$(Build.ArtifactsStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
+    displayName: Publish Artifacts
     inputs:
         PathtoPublish: '$(Build.ArtifactsStagingDirectory)'
         ArtifactName: 'drop'
