@@ -24,13 +24,14 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace BricklinkSharp.Client.Extensions
 {
     internal static class EnumExtensions
     {
-        private static readonly Dictionary<Enum, string> _stringValueCache = new Dictionary<Enum, string>();
+        private static readonly IDictionary<Enum, string> _stringValueCache = new ConcurrentDictionary<Enum, string>();
 
         private static T? GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
         {

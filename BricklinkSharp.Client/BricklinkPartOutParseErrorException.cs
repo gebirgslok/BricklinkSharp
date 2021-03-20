@@ -30,9 +30,9 @@ namespace BricklinkSharp.Client
 {
     public class BricklinkPartOutParseErrorException : BricklinkException
     {
-        public string Branch { get; }
+        public string? Branch { get; }
 
-        public string Stage { get; }
+        public string? Stage { get; }
 
         internal BricklinkPartOutParseErrorException(string message, string stage, string branch, string url) : base(message, url, HttpMethod.Get)
         {

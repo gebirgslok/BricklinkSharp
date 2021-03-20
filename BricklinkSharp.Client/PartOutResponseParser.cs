@@ -23,7 +23,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace BricklinkSharp.Client
@@ -107,10 +109,13 @@ namespace BricklinkSharp.Client
         private static readonly Regex _decimal = new Regex("\\d+\\.?\\d*");
         private static readonly Regex _number = new Regex("\\d+");
         private static readonly CultureInfo _enUs = new CultureInfo("en-US");
-        private static readonly Regex _included = new Regex("<FONT CLASS=\"fv\">Including <B>\\d+<\\/B> Item[s]? in <B>\\d+<\\/B> Lot[s]?.");
-        private static readonly Regex _numOfItems = new Regex("<B>\\d+<\\/B> Item[s]?");
-        private static readonly Regex _numOfLots = new Regex("<B>\\d+<\\/B> Lot[s]?");
-        private static readonly Regex _notIncluded = new Regex("<FONT COLOR=\"#FF0000\">Not Included <B>\\d+<\\/B> Item[s]? in <B>\\d+<\\/B> Lot[s]?.<\\/FONT>");
+        private static readonly Regex _included = new Regex("<FONT CLASS=\"fv\">Including <B>\\d+<\\/B> Item[s]? in <B>\\d+<\\/B> Lot[s]?.", 
+            RegexOptions.IgnoreCase);
+        private static readonly Regex _numOfItems = new Regex("<B>\\d+<\\/B> Item[s]?", RegexOptions.IgnoreCase);
+        private static readonly Regex _numOfLots = new Regex("<B>\\d+<\\/B> Lot[s]?", RegexOptions.IgnoreCase);
+        private static readonly Regex _notIncluded = new Regex("<FONT COLOR=\"#FF0000\">Not Included <B>\\d+<\\/B> Item[s]? in <B>\\d+<\\/B> Lot[s]?.<\\/FONT>", 
+            RegexOptions.IgnoreCase);
+        private static readonly Regex _errorMessages = new Regex("<OL><LI>.*<\\/OL>", RegexOptions.IgnoreCase);
 
         private static (int includedItemsCount, int includedLotsCount, int notIncludedItemsCount, int notIncludedLotsCount) 
             ExtractIncluded(string htmlResponse, string branch, string url)
@@ -160,8 +165,25 @@ namespace BricklinkSharp.Client
             return price;
         }
 
+        private static string ExtractErrorMessage(string s)
+        {
+            const string startTag = "<OL><LI>";
+            var startIndex = s.IndexOf(startTag, StringComparison.OrdinalIgnoreCase) + startTag.Length;
+            var endIndex = s.IndexOf("</OL>", StringComparison.OrdinalIgnoreCase);
+            return s.Substring(startIndex, endIndex - startIndex);
+        }
+
         internal static PartOutResult ParseResponse(string htmlResponse, string url)
         {
+            if (htmlResponse.Contains("CLASS=\"tb-global-error\">"))
+            {
+                var matches = _errorMessages.Matches(htmlResponse)
+                    .Cast<Match>()
+                    .Select(x => ExtractErrorMessage(x.Value));
+
+                throw new BricklinkPartOutRequestErrorException(matches.ToList(), url);
+            }
+
             var avg6MonthsSalesPrice = ExtractPrice(htmlResponse, _partOut6MonthsSales, Branches.Avg6MonthsSalesPrice, url);
             var currentSalesPrices = ExtractPrice(htmlResponse, _partOutCurrentSales, Branches.CurrentSalesAvgPrice, url);
 

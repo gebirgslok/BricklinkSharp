@@ -23,39 +23,60 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace BricklinkSharp.Client
 {
-    public abstract class BricklinkException : Exception
+    public class BricklinkPartOutRequestErrorException : BricklinkException
     {
-        public string? RequestUrl { get; }
+        public List<string> Errors { get; }
 
-        public HttpMethod? HttpMethod { get; }
-
-        protected internal BricklinkException(string message, string url, HttpMethod httpMethod) : base(message)
+        internal BricklinkPartOutRequestErrorException(List<string> errors, string url) : base(BuildMessage(errors), url, HttpMethod.Get)
         {
-            RequestUrl = url;
-            HttpMethod = httpMethod;
+            Errors = errors;
         }
 
-        protected internal BricklinkException(SerializationInfo info, StreamingContext context) : base(info, context)
+        internal BricklinkPartOutRequestErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            RequestUrl = info.GetString(nameof(RequestUrl));
-            var method = info.GetString("Method");
+            Errors = new List<string>();
 
-            if (method != null)
+            var count = info.GetInt32("Count");
+
+            for (var i = 0; i < count; i++)
             {
-                HttpMethod = new HttpMethod(method);
+                var message = info.GetString($"Error{i}");
+
+                if (message != null)
+                {
+                    Errors.Add(message);
+                }
             }
+        }
+
+        private static string BuildMessage(List<string> errors)
+        {
+            var builder = new StringBuilder("The Part-Out value request returned a global error page. The following error(s) occurred:");
+
+            for (var i = 0; i < errors.Count; i++)
+            {
+                builder.AppendLine();
+                builder.Append($"{i} - {errors[i]}");
+            }
+
+            return builder.ToString();
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(nameof(RequestUrl), RequestUrl);
-            info.AddValue("Method", HttpMethod?.Method);
+            info.AddValue("Count", Errors.Count);
+            
+            for (var i = 0; i < Errors.Count; i++)
+            {
+                info.AddValue($"Error{i}", Errors[i]);
+            }
 
             base.GetObjectData(info, context);
         }

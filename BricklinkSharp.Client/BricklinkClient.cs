@@ -781,7 +781,7 @@ namespace BricklinkSharp.Client
             var response = await _httpClient.GetAsync(url);
 
             var htmlResponse = await response.Content.ReadAsStringAsync();
-            
+
             var result = PartOutResponseParser.ParseResponse(htmlResponse, url);
             result.ItemNumber = $"{rawItemNumber}-{sequenceNumber}";
             result.Condition = condition;

@@ -31,9 +31,9 @@ namespace BricklinkSharp.Client
 {
     public class BricklinkUnexpectedDataKindException : BricklinkException
     {
-        public string ExpectedDataKind { get; }
+        public string? ExpectedDataKind { get; }
 
-        public string ReceivedDataKind { get; }
+        public string? ReceivedDataKind { get; }
 
         internal BricklinkUnexpectedDataKindException(string expectedDataKind, string receivedDataKind,
             string url, HttpMethod httpMethod) : 

@@ -84,6 +84,16 @@ namespace BricklinkSharp.Client.Tests
             await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
         }
 
+        [TestCase("1212adsa")]
+        public void GetPartOutValueAsync_ItemDoesNotExist(string itemNumber)
+        {
+            Assert.ThrowsAsync<BricklinkPartOutRequestErrorException>(async () =>
+            {
+                using var client = BricklinkClientFactory.Build();
+                await client.GetPartOutValueAsync(itemNumber, itemType: PartOutItemType.Set);
+            });
+        }
+
         [TestCase("1610")]
         [TestCase("1610-2")]
         [TestCase("1498")]
