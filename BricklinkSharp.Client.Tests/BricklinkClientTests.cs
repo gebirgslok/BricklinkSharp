@@ -25,6 +25,7 @@
 
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace BricklinkSharp.Client.Tests
@@ -62,6 +63,44 @@ namespace BricklinkSharp.Client.Tests
                 return false;
             }
         }
+
+        private async Task GetPartOutValueAsync_ItemExists(string itemNumber, PartOutItemType itemType)
+        {
+            using var client = BricklinkClientFactory.Build();
+
+            var result = await client.GetPartOutValueAsync(itemNumber, itemType: itemType);
+
+            Assert.True(result.Average6MonthsSalesValueUsd > 0.0M);
+            Assert.True(result.CurrentSalesValueUsd > 0.0M);
+            Assert.True(result.IncludedItemsCount > 0);
+            Assert.True(result.IncludedLotsCount > 0);
+        }
+
+        [TestCase("aqu017")]
+        [TestCase("aqu017-1")]
+        [TestCase("hol183")]
+        public async Task GetPartOutValueAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
+        {
+            await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
+        }
+
+        [TestCase("1610")]
+        [TestCase("1610-2")]
+        [TestCase("1498")]
+        [TestCase("9446")]
+
+        public async Task GetPartOutValueAsync_ItemTypeIsSet_ItemExists(string itemNumber)
+        {
+            await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Set);
+        }
+
+        [TestCase("6031641")]
+        [TestCase("6043191-1")]
+        public async Task GetPartOutValueAsync_ItemTypeIsGear_ItemExists(string itemNumber)
+        {
+            await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Gear);
+        }
+
 
         [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https")]
         [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "http")]

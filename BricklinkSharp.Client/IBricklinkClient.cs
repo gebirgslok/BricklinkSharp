@@ -135,5 +135,10 @@ namespace BricklinkSharp.Client
         Task<Coupon> UpdateCouponAsync(int couponId, UpdateCoupon updateCoupon);
 
         Task DeleteCouponAsync(int couponId);
+
+        Task<PartOutResult> GetPartOutValueAsync(string itemNo, Condition condition = Condition.New, 
+            bool includeInstructions = true, bool breakMinifigs = false, 
+            bool includeBox = false, bool includeExtraParts = false, bool breakSetsInSet = false, 
+            PartOutItemType itemType = PartOutItemType.Set);
     }
 }

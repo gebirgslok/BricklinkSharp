@@ -23,47 +23,35 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Net.Http;
+using System.Runtime.Serialization;
+
 namespace BricklinkSharp.Client
 {
-    public enum PartOutItemType
+    public class BricklinkPartOutParseErrorException : BricklinkException
     {
-        [StringValue("S")]
-        Set = 0,
+        public string Branch { get; }
 
-        [StringValue("M")]
-        Minifig = 1,
+        public string Stage { get; }
 
-        [StringValue("G")]
-        Gear = 2,
-    }
+        internal BricklinkPartOutParseErrorException(string message, string stage, string branch, string url) : base(message, url, HttpMethod.Get)
+        {
+            Stage = stage;
+            Branch = branch;
+        }
 
-    public enum ItemType
-    {
-        [StringValue("minifig")]
-        Minifig = 0,
+        internal BricklinkPartOutParseErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            Stage = info.GetString(nameof(Stage));
+            Branch = info.GetString(nameof(Branch));
+        }
 
-        [StringValue("part")]
-        Part = 1,
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(Stage), Stage);
+            info.AddValue(nameof(Branch), Branch);
 
-        [StringValue("set")]
-        Set = 2,
-
-        [StringValue("book")]
-        Book = 3,
-
-        [StringValue("gear")]
-        Gear = 4,
-
-        [StringValue("catalog")]
-        Catalog = 5,
-
-        [StringValue("instruction")]
-        Instruction = 6,
-
-        [StringValue("unsorted_lot")]
-        UnsortedLot = 7,
-
-        [StringValue("original_box")]
-        OriginalBox = 8
+            base.GetObjectData(info, context);
+        }
     }
 }

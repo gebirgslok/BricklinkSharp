@@ -26,16 +26,14 @@
 using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BricklinkSharp.Client
 {
     public class BricklinkUnexpectedDataKindException : BricklinkException
     {
-        public string? ExpectedDataKind { get; }
+        public string ExpectedDataKind { get; }
 
-        public string? ReceivedDataKind { get; }
+        public string ReceivedDataKind { get; }
 
         internal BricklinkUnexpectedDataKindException(string expectedDataKind, string receivedDataKind,
             string url, HttpMethod httpMethod) : 
@@ -49,6 +47,16 @@ namespace BricklinkSharp.Client
 
         private BricklinkUnexpectedDataKindException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            ExpectedDataKind = info.GetString(nameof(ExpectedDataKind));
+            ReceivedDataKind = info.GetString(nameof(ReceivedDataKind));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(ExpectedDataKind), ExpectedDataKind);
+            info.AddValue(nameof(ReceivedDataKind), ReceivedDataKind);
+
+            base.GetObjectData(info, context);
         }
     }
 }

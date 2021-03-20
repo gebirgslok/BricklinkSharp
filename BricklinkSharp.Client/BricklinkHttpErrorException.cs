@@ -27,9 +27,6 @@ using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable MemberCanBePrivate.Global
-
 namespace BricklinkSharp.Client
 {
     public class BricklinkHttpErrorException : BricklinkException
@@ -38,9 +35,9 @@ namespace BricklinkSharp.Client
 
         public int ReceivedCode { get; }
 
-        public string? Description { get; }
+        public string Description { get; }
 
-        public string? RawMessage { get; }
+        public string RawMessage { get; }
 
         internal BricklinkHttpErrorException(int receivedCode, int expectedCode, string description, string message, string url, HttpMethod httpMethod)
             : base($"Received unexpected HTTP status code for request '{httpMethod}' {url}:" +
@@ -57,6 +54,20 @@ namespace BricklinkSharp.Client
 
         private BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            ExpectedCode = info.GetInt32(nameof(ExpectedCode));
+            ReceivedCode = info.GetInt32(nameof(ReceivedCode));
+            Description = info.GetString(nameof(Description));
+            RawMessage = info.GetString(nameof(RawMessage));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(ExpectedCode), ExpectedCode);
+            info.AddValue(nameof(ReceivedCode), ReceivedCode);
+            info.AddValue(nameof(Description), Description);
+            info.AddValue(nameof(RawMessage), RawMessage);
+
+            base.GetObjectData(info, context);
         }
     }
 }

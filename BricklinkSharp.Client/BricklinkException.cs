@@ -27,16 +27,13 @@ using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable MemberCanBePrivate.Global
-
 namespace BricklinkSharp.Client
 {
     public abstract class BricklinkException : Exception
     {
-        public string? RequestUrl { get; }
+        public string RequestUrl { get; }
 
-        public HttpMethod? HttpMethod { get; }
+        public HttpMethod HttpMethod { get; }
 
         protected internal BricklinkException(string message, string url, HttpMethod httpMethod) : base(message)
         {
@@ -46,7 +43,16 @@ namespace BricklinkSharp.Client
 
         protected internal BricklinkException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
+            RequestUrl = info.GetString(nameof(RequestUrl));
+            HttpMethod = new HttpMethod(info.GetString(nameof(HttpMethod)));
+        }
 
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(RequestUrl), RequestUrl);
+            info.AddValue(nameof(HttpMethod), HttpMethod.Method);
+
+            base.GetObjectData(info, context);
         }
     }
 }

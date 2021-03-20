@@ -45,6 +45,8 @@ namespace BricklinkSharp.Client
         private static readonly string _minifigImageUrlTemplate = "//img.bricklink.com/ItemImage/MN/0/{0}.png";
         private static readonly string _setImageUrlTemplate = "//img.bricklink.com/ItemImage/SN/0/{0}.png";
         private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
+
+
         private readonly HttpClient _httpClient = new HttpClient();
         private bool _isDisposed;
 
@@ -633,7 +635,6 @@ namespace BricklinkSharp.Client
             });
 
             ParseResponseNoData(responseBody, 200, url, method);
-            return;
         }
 
         public async Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status)
@@ -648,7 +649,6 @@ namespace BricklinkSharp.Client
             });
 
             ParseResponseNoData(responseBody, 200, url, HttpMethod.Put);
-            return;
         }
 
         public async Task SendDriveThruAsync(int orderId, bool mailCcMe)
@@ -663,7 +663,6 @@ namespace BricklinkSharp.Client
             var responseBody = await ExecuteRequest(url, method);
 
             ParseResponseNoData(responseBody, 200, url, method);
-            return;
         }
 
         public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder)
@@ -750,7 +749,44 @@ namespace BricklinkSharp.Client
                 IgnoreNullValues = true
             });
             var coupon = ParseResponse<Coupon>(responseBody, 200, url, method);
-            return coupon; ;
+            return coupon;
+        }
+
+        public async Task<PartOutResult> GetPartOutValueAsync(string itemNo, Condition condition = Condition.New, 
+            bool includeInstructions = true, bool breakMinifigs = false, bool includeBox = false,
+            bool includeExtraParts = false, bool breakSetsInSet = false, PartOutItemType itemType = PartOutItemType.Set)
+        {
+            var split = itemNo.Split('-');
+            var rawItemNumber = split[0];
+
+            var sequenceNumber = 1;
+
+            if (split.Length > 1)
+            {
+                if (!int.TryParse(split[1], out int temp))
+                {
+                    throw new ArgumentException($"{itemNo} '{itemNo}' has an invalid sequence number. The section after the '-' must be numeric.", 
+                        nameof(itemNo));
+                }
+
+                sequenceNumber = temp;
+            }
+
+            var url = "https://www.bricklink.com/catalogPOV.asp?" + 
+                      $"itemType={itemType.GetStringValueOrDefault()}&itemNo={rawItemNumber}&itemSeq={sequenceNumber}&itemQty=1&" +
+                      $"breakType={(breakMinifigs ? "P" : "M")}&itemCondition={condition.GetStringValueOrDefault()}" +
+                      $"&incInstr={(includeInstructions ? "Y" : "N")}&incBox={(includeBox ? "Y" : "N")}&" +
+                      $"incParts={(includeExtraParts ? "Y" : "N")}&breakSets={(breakSetsInSet ? "Y" : "N")}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            var htmlResponse = await response.Content.ReadAsStringAsync();
+            
+            var result = PartOutResponseParser.ParseResponse(htmlResponse, url);
+            result.ItemNumber = $"{rawItemNumber}-{sequenceNumber}";
+            result.Condition = condition;
+
+            return result;
         }
     }
 }
