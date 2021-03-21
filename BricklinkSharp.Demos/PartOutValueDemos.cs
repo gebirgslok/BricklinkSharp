@@ -31,7 +31,7 @@ namespace BricklinkSharp.Demos
 {
     internal static class PartOutValueDemos
     {
-        public static async Task GetPartOutValueDemo()
+        public static async Task GetPartOutValueFromPageDemo()
         {
             using var client = BricklinkClientFactory.Build();
             var items = new List<KeyValuePair<string, PartOutItemType>>
@@ -45,8 +45,8 @@ namespace BricklinkSharp.Demos
             {
                 var number = kvp.Key;
                 var itemType = kvp.Value;
-                await client.GetPartOutValueAsync(number, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
-                    includeExtraParts: true, includeInstructions:true, itemType: itemType);
+                await client.GetPartOutValueFromPageAsync(number, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
+                    includeExtraParts: true, includeInstructions:true, itemType: itemType, currencyCode: "EUR");
             }
         }
     }

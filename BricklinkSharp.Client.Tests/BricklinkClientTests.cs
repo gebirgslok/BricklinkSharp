@@ -64,11 +64,11 @@ namespace BricklinkSharp.Client.Tests
             }
         }
 
-        private async Task GetPartOutValueAsync_ItemExists(string itemNumber, PartOutItemType itemType)
+        private async Task GetPartOutValueFromPageAsync_ItemExists(string itemNumber, PartOutItemType itemType)
         {
             using var client = BricklinkClientFactory.Build();
 
-            var result = await client.GetPartOutValueAsync(itemNumber, itemType: itemType);
+            var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: itemType);
 
             Assert.True(result.Average6MonthsSalesValueUsd > 0.0M);
             Assert.True(result.CurrentSalesValueUsd > 0.0M);
@@ -79,19 +79,36 @@ namespace BricklinkSharp.Client.Tests
         [TestCase("aqu017")]
         [TestCase("aqu017-1")]
         [TestCase("hol183")]
-        public async Task GetPartOutValueAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
+        public async Task GetPartOutValueFrompageAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
         {
-            await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
+            await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
         }
 
         [TestCase("1212adsa")]
-        public void GetPartOutValueAsync_ItemDoesNotExist(string itemNumber)
+        public void GetPartOutValueFromPageAsync_ItemDoesNotExist(string itemNumber)
         {
             Assert.ThrowsAsync<BricklinkPartOutRequestErrorException>(async () =>
             {
                 using var client = BricklinkClientFactory.Build();
-                await client.GetPartOutValueAsync(itemNumber, itemType: PartOutItemType.Set);
+                await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set);
             });
+        }
+
+        [TestCase("21322-1", "EUR", true)]
+        [TestCase("21322-1", "SEK", false)]
+        public async Task GetPartOutValueAsync_WithExchangeRate_ItemTypeIsSet_ItemExists(string itemNumber, string currencyCode, bool shouldLessThanUsd)
+        {
+            using var client = BricklinkClientFactory.Build();
+
+            var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set, currencyCode: currencyCode);
+
+            Assert.True(shouldLessThanUsd ? 
+                result.CurrentSalesValueUsd > result.CurrentSalesValueMyCurreny : 
+                result.CurrentSalesValueUsd < result.CurrentSalesValueMyCurreny);
+
+            Assert.True(shouldLessThanUsd ?
+                result.Average6MonthsSalesValueUsd > result.Average6MonthsSalesValueMyCurrency :
+                result.Average6MonthsSalesValueUsd < result.Average6MonthsSalesValueMyCurrency);
         }
 
         [TestCase("1610")]
@@ -101,16 +118,15 @@ namespace BricklinkSharp.Client.Tests
 
         public async Task GetPartOutValueAsync_ItemTypeIsSet_ItemExists(string itemNumber)
         {
-            await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Set);
+            await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Set);
         }
 
         [TestCase("6031641")]
         [TestCase("6043191-1")]
         public async Task GetPartOutValueAsync_ItemTypeIsGear_ItemExists(string itemNumber)
         {
-            await GetPartOutValueAsync_ItemExists(itemNumber, PartOutItemType.Gear);
+            await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Gear);
         }
-
 
         [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https")]
         [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "http")]

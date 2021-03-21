@@ -34,6 +34,9 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("average_6months_sales_value_usd")]
         public decimal Average6MonthsSalesValueUsd { get; }
 
+        [JsonPropertyName("average_6months_sales_value_my_currency")]
+        public decimal? Average6MonthsSalesValueMyCurrency { get; internal set; }
+
         [JsonPropertyName("included_items_count")]
         public int IncludedItemsCount { get; }
 
@@ -48,6 +51,9 @@ namespace BricklinkSharp.Client
 
         [JsonPropertyName("current_sales_value_usd")]
         public decimal CurrentSalesValueUsd { get; }
+
+        [JsonPropertyName("current_sales_value_my_currency")]
+        public decimal? CurrentSalesValueMyCurreny { get; internal set; }
 
         [JsonPropertyName("item_number")]
         public string ItemNumber { get; internal set; } = string.Empty;

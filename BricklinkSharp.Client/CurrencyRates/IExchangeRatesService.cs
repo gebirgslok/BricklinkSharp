@@ -23,18 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Net.Http;
-using BricklinkSharp.Client.CurrencyRates;
+using System.Threading.Tasks;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.CurrencyRates
 {
-    public static class BricklinkClientFactory
+    internal interface IExchangeRatesService
     {
-        public static IBricklinkClient Build()
-        {
-            var httpClient = new HttpClient();
-            var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
-            return new BricklinkClient(httpClient, exchangeRatesService);
-        }
+        Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency);
     }
 }

@@ -16,8 +16,11 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
  	- Assembly Version: 1.0.0.0 :heavy_check_mark:
  	- Assembly File Version: 1.0.0.\<build ID\> :heavy_check_mark:
 	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\> :heavy_check_mark:
- - Get Part Out Value
-
+ - Get Part Out Value From Page
+	- Demo project :heavy_check_mark:
+	- Doc
+	- Exchange rate service :heavy_check_mark:
+	
 ### 0.7.0
  - New method on *IBricklinkClient*: **GetMinifigImage**. Builds and returns the image URL for a specific minifigure number.
  - New method on *IBricklinkClient*: **GetSetImage**. Builds and returns the image URL for a specific set number.

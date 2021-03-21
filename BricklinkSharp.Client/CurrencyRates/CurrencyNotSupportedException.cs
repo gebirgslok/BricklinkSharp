@@ -23,18 +23,29 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Net.Http;
-using BricklinkSharp.Client.CurrencyRates;
+using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.CurrencyRates
 {
-    public static class BricklinkClientFactory
+    public sealed class CurrencyNotSupportedException : System.Exception
     {
-        public static IBricklinkClient Build()
+        public string? CurrencyCode { get; }
+
+        internal CurrencyNotSupportedException(string currencyCode) : base($"The currency (code = {currencyCode} is not supported by the underlying exchange rate service.")
         {
-            var httpClient = new HttpClient();
-            var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
-            return new BricklinkClient(httpClient, exchangeRatesService);
+            CurrencyCode = currencyCode;
+        }
+
+        private CurrencyNotSupportedException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
+        {
+            CurrencyCode = info.GetString(nameof(CurrencyCode));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(CurrencyCode), CurrencyCode);
+            base.GetObjectData(info, context);
         }
     }
 }

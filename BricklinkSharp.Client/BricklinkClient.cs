@@ -32,6 +32,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
+using BricklinkSharp.Client.CurrencyRates;
 using BricklinkSharp.Client.Extensions;
 using BricklinkSharp.Client.OAuth;
 
@@ -44,11 +45,18 @@ namespace BricklinkSharp.Client
         private static readonly string _partImageUrlTemplate = "//img.bricklink.com/ItemImage/PN/{0}/{1}.png";
         private static readonly string _minifigImageUrlTemplate = "//img.bricklink.com/ItemImage/MN/0/{0}.png";
         private static readonly string _setImageUrlTemplate = "//img.bricklink.com/ItemImage/SN/0/{0}.png";
+
+        private readonly IExchangeRatesService _currencyRatesService;
         private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
+        private readonly HttpClient _httpClient;
 
-
-        private readonly HttpClient _httpClient = new HttpClient();
         private bool _isDisposed;
+
+        public BricklinkClient(HttpClient httpClient, IExchangeRatesService currencyRatesService)
+        {
+            _httpClient = httpClient;
+            _currencyRatesService = currencyRatesService;
+        }
 
         ~BricklinkClient()
         {
@@ -752,9 +760,10 @@ namespace BricklinkSharp.Client
             return coupon;
         }
 
-        public async Task<PartOutResult> GetPartOutValueAsync(string itemNo, Condition condition = Condition.New, 
+        public async Task<PartOutResult> GetPartOutValueFromPageAsync(string itemNo, Condition condition = Condition.New, 
             bool includeInstructions = true, bool breakMinifigs = false, bool includeBox = false,
-            bool includeExtraParts = false, bool breakSetsInSet = false, PartOutItemType itemType = PartOutItemType.Set)
+            bool includeExtraParts = false, bool breakSetsInSet = false, PartOutItemType itemType = PartOutItemType.Set,
+            string? currencyCode = null)
         {
             var split = itemNo.Split('-');
             var rawItemNumber = split[0];
@@ -785,6 +794,14 @@ namespace BricklinkSharp.Client
             var result = PartOutResponseParser.ParseResponse(htmlResponse, url);
             result.ItemNumber = $"{rawItemNumber}-{sequenceNumber}";
             result.Condition = condition;
+
+            if (currencyCode != null)
+            {
+                var exchangeRate = await _currencyRatesService.GetExchangeRateAsync("USD", currencyCode);
+
+                result.Average6MonthsSalesValueMyCurrency = Math.Round(result.Average6MonthsSalesValueUsd * exchangeRate, 3);
+                result.CurrentSalesValueMyCurreny = Math.Round(result.CurrentSalesValueUsd * exchangeRate, 3);
+            }
 
             return result;
         }
