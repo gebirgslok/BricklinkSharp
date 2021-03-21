@@ -31,7 +31,8 @@ namespace BricklinkSharp.Client.CurrencyRates
     {
         public string? CurrencyCode { get; }
 
-        internal CurrencyNotSupportedException(string currencyCode) : base($"The currency (code = {currencyCode} is not supported by the underlying exchange rate service.")
+        internal CurrencyNotSupportedException(string currencyCode) : 
+            base($"The currency (code = {currencyCode} is not supported by the underlying exchange rate service.")
         {
             CurrencyCode = currencyCode;
         }

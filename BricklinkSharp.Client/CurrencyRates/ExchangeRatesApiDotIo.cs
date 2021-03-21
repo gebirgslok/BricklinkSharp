@@ -49,7 +49,7 @@ namespace BricklinkSharp.Client.CurrencyRates
 
         private readonly HttpClient _httpClient;
 
-        private ExchangeRatesApiResponse? _cachedResponse;
+        private static ExchangeRatesApiResponse? _cachedResponse;
 
         public ExchangeRatesApiDotIo(HttpClient httpClient)
         {
@@ -84,7 +84,7 @@ namespace BricklinkSharp.Client.CurrencyRates
                 _cachedResponse = JsonSerializer.Deserialize<ExchangeRatesApiResponse>(contentAsString);
             }
 
-            return GetRate(toCurrency, _cachedResponse) / GetRate(fromCurrency, _cachedResponse);
+            return GetRate(toCurrency, _cachedResponse!) / GetRate(fromCurrency, _cachedResponse!);
         }
     }
 }
