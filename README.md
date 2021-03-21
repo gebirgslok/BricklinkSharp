@@ -459,6 +459,6 @@ var itemNo = "21322"; //Uses Sequence Number = 1 (21322-1).
 //var itemNo = "1610-2"; //Set Sequence Number explicitly.
 var currencyCode = "EUR"; //Uses the exchange rate service to convert USD to Euro.
 //var currencyCode = null; //Skips calling the exchange rate service and only returns USD.
-await client.GetPartOutValueFromPageAsync(itemNo, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
+var result = await client.GetPartOutValueFromPageAsync(itemNo, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
                     includeExtraParts: true, includeInstructions:true, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 ```
