@@ -137,6 +137,22 @@ namespace BricklinkSharp.Demos
             }
         }
 
+        public static void GetInstructionImageDemo()
+        {
+            using var client = BricklinkClientFactory.Build();
+
+            var instructionIds = new List<string>
+            {
+                "1518-1", "2996-1", "4128-1"
+            };
+
+            foreach (var instructionId in instructionIds)
+            {
+                var uri = client.GetInstructionImage(instructionId);
+                Console.WriteLine($"URL: {uri.AbsoluteUri}");
+            }
+        }
+
         public static void EnsureImageUrlSchemeDemo()
         {
             using var client = BricklinkClientFactory.Build();
