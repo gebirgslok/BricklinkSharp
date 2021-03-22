@@ -10,21 +10,24 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 ## Changelog
 
-### 1.0.0 (WIP)
- - Covers all public API endpoints :heavy_check_mark:
+> :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
+
+### 1.0.0
+ - Covers all public API endpoints
  - New Assembly versioning:
- 	- Assembly Version: 1.0.0.0 :heavy_check_mark:
- 	- Assembly File Version: 1.0.0.\<build ID\> :heavy_check_mark:
-	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\> :heavy_check_mark:
+ 	- Assembly Version: 1.0.0.0
+ 	- Assembly File Version: 1.0.0.\<build ID\>
+	- Assembly Informational File Version: 1.0.0-\<build time\>+\<build date\>
  - Get Part Out Value From Page
-	- Demo project :heavy_check_mark:
-	- Doc :heavy_check_mark:
-	- Exchange rate service :heavy_check_mark:
- - New method on *IBricklinkClient*: **GetBookImage**. Builds and returns the image URL for a specific book number. :heavy_check_mark:
- - New method on *IBricklinkClient*: **GetGearImage**. Builds and returns the image URL for a specific gear number. :heavy_check_mark:
- - New method on *IBricklinkClient*: **GetCatalogImage**. Builds and returns the image URL for a specific catalog number. :heavy_check_mark:
- - New method on *IBricklinkClient*: **GetInstructionImage**. Builds and returns the image URL for a specific instruction number. :heavy_check_mark:
- - New method on *IBricklinkClient*: **GetOriginalBoxImage**. Builds and returns the image URL for a specific original box number. :heavy_check_mark:
+	- Demo project
+	- Docs
+	- Exchange rate service
+ - New method on *IBricklinkClient*: **GetBookImage**. Builds and returns the image URL for a specific book number
+ - New method on *IBricklinkClient*: **GetGearImage**. Builds and returns the image URL for a specific gear number
+ - New method on *IBricklinkClient*: **GetCatalogImage**. Builds and returns the image URL for a specific catalog number
+ - New method on *IBricklinkClient*: **GetInstructionImage**. Builds and returns the image URL for a specific instruction number
+ - New method on *IBricklinkClient*: **GetOriginalBoxImage**. Builds and returns the image URL for a specific original box number
+  
 ### 0.7.0
  - New method on *IBricklinkClient*: **GetMinifigImage**. Builds and returns the image URL for a specific minifigure number.
  - New method on *IBricklinkClient*: **GetSetImage**. Builds and returns the image URL for a specific set number.
