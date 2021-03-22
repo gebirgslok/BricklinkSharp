@@ -49,6 +49,7 @@ namespace BricklinkSharp.Client
         private static readonly string _gearImageUrlTemplate = "//img.bricklink.com/ItemImage/GN/0/{0}.png";
         private static readonly string _catalogImageUrlTemplate = "//img.bricklink.com/ItemImage/CN/0/{0}.png";
         private static readonly string _instructionImageUrlTemplate = "//img.bricklink.com/ItemImage/IN/0/{0}.png";
+        private static readonly string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
 
         private readonly IExchangeRatesService _currencyRatesService;
         private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
@@ -270,6 +271,11 @@ namespace BricklinkSharp.Client
         public Uri GetInstructionImage(string number, string scheme = "https")
         {
             return new Uri($"{scheme}:{string.Format(_instructionImageUrlTemplate, number)}");
+        }
+
+        public Uri GetOriginalBoxImage(string number, string scheme = "https")
+        {
+            return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, number)}");
         }
 
         public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")

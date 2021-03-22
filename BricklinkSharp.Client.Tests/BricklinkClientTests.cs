@@ -206,7 +206,7 @@ namespace BricklinkSharp.Client.Tests
         [TestCase("c58dk2", "http")]
         [TestCase("c77de", "https")]
         [TestCase("c84uk", "http")]
-        public void GetCatalogImagge(string number, string scheme)
+        public void GetCatalogImage(string number, string scheme)
         {
             using var client = BricklinkClientFactory.Build();
             var uri = client.GetCatalogImage(number, scheme);
@@ -219,12 +219,25 @@ namespace BricklinkSharp.Client.Tests
         [TestCase("1518-1", "http")]
         [TestCase("2996-1", "https")]
         [TestCase("4128-1", "http")]
-        public void GetInstructionImagge(string number, string scheme)
+        public void GetInstructionImage(string number, string scheme)
         {
             using var client = BricklinkClientFactory.Build();
             var uri = client.GetInstructionImage(number, scheme);
 
             Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/IN/0/{number}.png", uri.AbsoluteUri);
+            Assert.IsTrue(CheckUriExists(uri));
+        }
+
+        [TestCase("2964-1", "https")]
+        [TestCase("3552-1", "http")]
+        [TestCase("3552-1", "https")]
+        [TestCase("4709-1", "http")]
+        public void GetOriginalBoxImage(string number, string scheme)
+        {
+            using var client = BricklinkClientFactory.Build();
+            var uri = client.GetOriginalBoxImage(number, scheme);
+
+            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/ON/0/{number}.png", uri.AbsoluteUri);
             Assert.IsTrue(CheckUriExists(uri));
         }
     }

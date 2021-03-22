@@ -153,6 +153,22 @@ namespace BricklinkSharp.Demos
             }
         }
 
+        public static void GetOrignalBoxImageDemo()
+        {
+            using var client = BricklinkClientFactory.Build();
+
+            var boxIds = new List<string>
+            {
+                "2964-1", "3552-1", "4709-1"
+            };
+
+            foreach (var boxId in boxIds)
+            {
+                var uri = client.GetOriginalBoxImage(boxId);
+                Console.WriteLine($"URL: {uri.AbsoluteUri}");
+            }
+        }
+
         public static void EnsureImageUrlSchemeDemo()
         {
             using var client = BricklinkClientFactory.Build();

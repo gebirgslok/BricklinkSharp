@@ -24,7 +24,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
  - New method on *IBricklinkClient*: **GetGearImage**. Builds and returns the image URL for a specific gear number. :heavy_check_mark:
  - New method on *IBricklinkClient*: **GetCatalogImage**. Builds and returns the image URL for a specific catalog number. :heavy_check_mark:
  - New method on *IBricklinkClient*: **GetInstructionImage**. Builds and returns the image URL for a specific instruction number. :heavy_check_mark:
-	
+ - New method on *IBricklinkClient*: **GetOriginalBoxImage**. Builds and returns the image URL for a specific original box number. :heavy_check_mark:
 ### 0.7.0
  - New method on *IBricklinkClient*: **GetMinifigImage**. Builds and returns the image URL for a specific minifigure number.
  - New method on *IBricklinkClient*: **GetSetImage**. Builds and returns the image URL for a specific set number.
@@ -156,6 +156,10 @@ var uri = client.GetCatalogImage("c58dk2");
 #### Get instruction image
 ```csharp   
 var uri = client.GetInstructionImage("1518-1");
+```
+#### Get original box image
+```csharp   
+var uri = client.GetOriginalBoxImage("2964-1");
 ```
 #### Ensure image url scheme
 ```csharp  
