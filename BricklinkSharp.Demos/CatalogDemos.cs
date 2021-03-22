@@ -105,6 +105,22 @@ namespace BricklinkSharp.Demos
             }
         }
 
+        public static void GetGearImageDemo()
+        {
+            using var client = BricklinkClientFactory.Build();
+
+            var gearIds = new List<string>
+            {
+                "BioGMC041", "GMRacer1", "flyermariode"
+            };
+
+            foreach (var gearId in gearIds)
+            {
+                var uri = client.GetGearImage(gearId);
+                Console.WriteLine($"URL: {uri.AbsoluteUri}");
+            }
+        }
+
         public static void EnsureImageUrlSchemeDemo()
         {
             using var client = BricklinkClientFactory.Build();

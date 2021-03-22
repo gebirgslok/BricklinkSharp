@@ -21,6 +21,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 	- Doc :heavy_check_mark:
 	- Exchange rate service :heavy_check_mark:
  - New method on *IBricklinkClient*: **GetBookImage**. Builds and returns the image URL for a specific book number.
+ - New method on *IBricklinkClient*: **GetGearImage**. Builds and returns the image URL for a specific gear number.
 	
 ### 0.7.0
  - New method on *IBricklinkClient*: **GetMinifigImage**. Builds and returns the image URL for a specific minifigure number.
@@ -141,6 +142,10 @@ var uri = client.GetSetImage("6090-1");
 #### Get book image
 ```csharp   
 var uri = client.GetBookImage("5002772");
+```
+#### Get gear image
+```csharp   
+var uri = client.GetGearImage("BioGMC041");
 ```
 #### Ensure image url scheme
 ```csharp  
