@@ -452,7 +452,7 @@ await client.DeleteCouponAsync(couponId);
 
 > :warning: This method makes a call to the public Bricklink page and parses the received HTML. Therefore, no credentials are required. 
 
-> :information_source: The method can optionally call the [Foreign exchange rates API](https://exchangeratesapi.io/) in order to fetch the Part-Out-Value in your prefered currency. Fetched API calls will be cached in-memory for 24 hours.
+> :information_source: The method can optionally call the [Foreign exchange rates API](https://exchangeratesapi.io/) in order to fetch the Part-Out-Value in your preferred currency. Fetched API calls will be cached in-memory up to 24 hours.
 
 ```csharp
 var itemNo = "21322"; //Uses Sequence Number = 1 (21322-1).
