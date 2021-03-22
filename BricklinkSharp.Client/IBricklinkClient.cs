@@ -41,6 +41,8 @@ namespace BricklinkSharp.Client
 
         Uri GetSetImage(string number, string scheme = "https");
 
+        Uri GetBookImage(string number, string scheme = "https");
+
         Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
 
         Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId);

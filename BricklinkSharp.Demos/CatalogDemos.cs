@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
@@ -86,6 +87,22 @@ namespace BricklinkSharp.Demos
             var uri = client.GetPartImageForColor("2540", 10);
 
             Console.WriteLine($"URL: {uri.AbsoluteUri}");
+        }
+
+        public static void GetBookImageDemo()
+        {
+            using var client = BricklinkClientFactory.Build();
+
+            var bookIds = new List<string>
+            {
+                "DKPiratesNL", "5002772", "b65de2"
+            };
+
+            foreach (var bookId in bookIds)
+            {
+                var uri = client.GetBookImage(bookId);
+                Console.WriteLine($"URL: {uri.AbsoluteUri}");
+            }
         }
 
         public static void EnsureImageUrlSchemeDemo()

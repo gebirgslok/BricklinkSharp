@@ -41,6 +41,7 @@ namespace BricklinkSharp.Demos
 
             await CatalogDemos.GetItemImageDemo();
             CatalogDemos.GetPartImageForColorDemo();
+            CatalogDemos.GetBookImageDemo();
             CatalogDemos.EnsureImageUrlSchemeDemo();
             await CatalogDemos.GetItemDemo();
             await CatalogDemos.GetSupersetsDemo();
