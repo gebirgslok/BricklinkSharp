@@ -13,7 +13,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
 ### 1.1.0
- - Supports API key for [Exchange rate servic] (https://exchangeratesapi.io/) when using the *Get Part Out Value Page* **with** exchange rate service (see demo project and documentation on this readme below for usage)
+ - Supports API key for [Exchange rate servic](https://exchangeratesapi.io/) when using the *Get Part Out Value Page* method **with** the exchange rate service (see demo project and documentation on this readme below for usage)
 
 ### 1.0.0
  - Covers all public API endpoints
