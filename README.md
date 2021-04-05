@@ -12,6 +12,9 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.1.0
+ - Supports API key for [Exchange rate servic] (https://exchangeratesapi.io/) when using the *Get Part Out Value Page* **with** exchange rate service (see demo project and documentation on this readme below for usage)
+
 ### 1.0.0
  - Covers all public API endpoints
  - New Assembly versioning:
@@ -484,8 +487,13 @@ await client.DeleteCouponAsync(couponId);
 ```csharp
 var itemNo = "21322"; //Uses Sequence Number = 1 (21322-1).
 //var itemNo = "1610-2"; //Set Sequence Number explicitly.
+
+//You must sign up on https://exchangeratesapi.io/ (free plan) in order to get your API key.
+//Note that this setup line can be done one-time during bootstrapping of your application. 
+ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = "1234567890";
+
 var currencyCode = "EUR"; //Uses the exchange rate service to convert USD to Euro.
-//var currencyCode = null; //Skips calling the exchange rate service and only returns USD.
+//var currencyCode = null; //Skips calling the exchange rate service and only returns USD. In this case, no API key is required.
 var result = await client.GetPartOutValueFromPageAsync(itemNo, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
                     includeExtraParts: true, includeInstructions:true, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 ```

@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
+using BricklinkSharp.Client.CurrencyRates;
 
 namespace BricklinkSharp.Demos
 {
@@ -33,6 +34,11 @@ namespace BricklinkSharp.Demos
     {
         public static async Task GetPartOutValueFromPageDemo()
         {
+            string currencyCode = "EUR";
+            ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = "<Insert your API key here or comment these two lines and uncomment the Null-assignment>";
+
+            //string currencyCode = null;
+
             using var client = BricklinkClientFactory.Build();
             var items = new List<KeyValuePair<string, PartOutItemType>>
             {
@@ -46,7 +52,7 @@ namespace BricklinkSharp.Demos
                 var number = kvp.Key;
                 var itemType = kvp.Value;
                 await client.GetPartOutValueFromPageAsync(number, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
-                    includeExtraParts: true, includeInstructions:true, itemType: itemType, currencyCode: "EUR");
+                    includeExtraParts: true, includeInstructions:true, itemType: itemType, currencyCode: currencyCode);
             }
         }
     }
