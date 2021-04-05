@@ -54,8 +54,16 @@ steps:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
+  - task: CmdLine@2
+    inputs:
+     script: |
+      setlocal
+      set ACCESS_KEY=$(EXCHANGE_RATES_API_ACCESS_KEY)
+      dotnet test -c $(buildConfiguration)
+
   - task: DotNetCoreCLI@2
     displayName: Run Unit Tests
+    enabled: false
     inputs:
       command: 'test'
       projects: '**/*.Tests.csproj'
