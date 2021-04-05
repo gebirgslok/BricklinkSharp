@@ -77,7 +77,14 @@ namespace BricklinkSharp.Client.CurrencyRates
         {
             if (_cachedResponse == null || (DateTime.Now - _cachedResponse.Date) >= TimeSpan.FromHours(24))
             {
-                var response = await _httpClient.GetAsync("https://api.exchangeratesapi.io/latest");
+                var key = ExchangeRatesApiDotIoConfiguration.Instance.ApiKey;
+
+                if (key == null)
+                {
+                    throw new BricklinkMissingCredentialsException(new List<string>{ "Exchangeratesapi.io - API Access Key" });
+                }
+
+                var response = await _httpClient.GetAsync($"http://api.exchangeratesapi.io/v1/latest?access_key={key}");
                 response.EnsureSuccessStatusCode();
 
                 var contentAsString = await response.Content.ReadAsStringAsync();

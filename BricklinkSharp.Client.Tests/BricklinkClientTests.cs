@@ -26,6 +26,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using BricklinkSharp.Client.CurrencyRates;
 using NUnit.Framework;
 
 namespace BricklinkSharp.Client.Tests
@@ -100,6 +101,8 @@ namespace BricklinkSharp.Client.Tests
         {
             using var client = BricklinkClientFactory.Build();
 
+            ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
+
             var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 
             Assert.True(shouldLessThanUsd ? 
@@ -115,7 +118,6 @@ namespace BricklinkSharp.Client.Tests
         [TestCase("1610-2")]
         [TestCase("1498")]
         [TestCase("9446")]
-
         public async Task GetPartOutValueAsync_ItemTypeIsSet_ItemExists(string itemNumber)
         {
             await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Set);

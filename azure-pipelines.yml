@@ -55,6 +55,7 @@ steps:
       configuration: '$(buildConfiguration)'
 
   - task: CmdLine@2
+    displayName: Run Unit Tests
     inputs:
      script: |
       setlocal
