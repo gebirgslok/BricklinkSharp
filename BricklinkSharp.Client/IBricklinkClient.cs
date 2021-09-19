@@ -53,7 +53,7 @@ namespace BricklinkSharp.Client
 
         Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
 
-        Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId);
+        Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId = 0);
 
         Task<Subset[]> GetSubsetsAsync(ItemType type, string no, int colorId = 0, bool? includeOriginalBox = null,
             bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null);

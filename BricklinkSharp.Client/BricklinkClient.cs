@@ -283,10 +283,15 @@ namespace BricklinkSharp.Client
             return new Uri($"{scheme}:{imageUrl}");
         }
 
-        public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId)
+        public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId = 0)
         {
             var typeString = type.GetStringValueOrDefault();
-            var url = new Uri(_baseUri, $"items/{typeString}/{no}/supersets/{colorId}").ToString();
+
+            var url = new Uri(_baseUri, 
+                colorId > 0 ? 
+                    $"items/{typeString}/{no}/supersets?color_id={colorId}" :
+                    $"items/{typeString}/{no}/supersets")
+                .ToString();
 
             var method = HttpMethod.Get;
             var responseBody = await ExecuteRequest(url, method);

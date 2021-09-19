@@ -3,10 +3,10 @@
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <!-- version numbers will be updated by build -->
-    <Version>1.1.0.0</Version>
-    <FileVersion>1.1.0.0</FileVersion>
-    <InformationalVersion>1.1.0.0</InformationalVersion>
-    <PackageVersion>1.1.0</PackageVersion>
+    <Version>1.1.1.0</Version>
+    <FileVersion>1.1.1.0</FileVersion>
+    <InformationalVersion>1.1.1.0</InformationalVersion>
+    <PackageVersion>1.1.1</PackageVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BricklinkSharp</Product>
     <Description>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Description>
@@ -23,6 +23,7 @@
     <RepositoryType>Git</RepositoryType>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <AssemblyTitle>BricklinkSharp .Net Standard 2.0</AssemblyTitle>

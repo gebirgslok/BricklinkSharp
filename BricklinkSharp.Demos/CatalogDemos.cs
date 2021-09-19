@@ -65,6 +65,15 @@ namespace BricklinkSharp.Demos
             PrintHelper.PrintAsJson(supersets);
         }
 
+        public static async Task GetSupersetsDemo2()
+        {
+            using var client = BricklinkClientFactory.Build();
+            var colorId = 8; //Brown
+            var supersets = await client.GetSupersetsAsync(ItemType.Part, "40232", colorId);
+
+            PrintHelper.PrintAsJson(supersets);
+        }
+
         public static async Task GetItemDemo()
         {
             using var client = BricklinkClientFactory.Build();
@@ -153,7 +162,7 @@ namespace BricklinkSharp.Demos
             }
         }
 
-        public static void GetOrignalBoxImageDemo()
+        public static void GetOriginalBoxImageDemo()
         {
             using var client = BricklinkClientFactory.Build();
 
