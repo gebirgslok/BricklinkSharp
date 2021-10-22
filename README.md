@@ -337,7 +337,7 @@ var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags
 ```
 ```csharp
 //Only paid orders that must be shipped.
-var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+var orders = await client.GetOrdersAsync(OrderDirection.Out, includedStatusFlags: new List<OrderStatus>
 {
 	OrderStatus.Paid
 });
