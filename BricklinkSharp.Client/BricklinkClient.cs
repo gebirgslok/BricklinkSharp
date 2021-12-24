@@ -30,6 +30,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+#if HAVE_JSON_DEFAULT_IGNORE_CONDITION
+using System.Text.Json.Serialization;
+#endif
 using System.Threading.Tasks;
 using System.Web;
 using BricklinkSharp.Client.CurrencyRates;
@@ -52,7 +55,7 @@ namespace BricklinkSharp.Client
         private static readonly string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
 
         private readonly IExchangeRatesService _currencyRatesService;
-        private static readonly Uri _baseUri = new Uri("https://api.bricklink.com/api/store/v1/");
+        private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
         private readonly HttpClient _httpClient;
 
         private bool _isDisposed;
@@ -68,7 +71,16 @@ namespace BricklinkSharp.Client
             Dispose(false);
         }
 
-        private void GetAuthorizationHeader(string url, string method, out string scheme, out string parameter)
+        private JsonSerializerOptions IgnoreNullValuesJsonSerializerOptions => new()
+        {
+#if HAVE_JSON_DEFAULT_IGNORE_CONDITION
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+#else
+            IgnoreNullValues = true,
+#endif
+        };
+
+        private static void GetAuthorizationHeader(string url, string method, out string scheme, out string parameter)
         {
             BricklinkClientConfiguration.Instance.ValidateThrowException();
 
@@ -85,7 +97,7 @@ namespace BricklinkSharp.Client
             parameter = schemeParameter[1];
         }
 
-        private string? BuildIncludeExcludeParameter<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
+        private static string? BuildIncludeExcludeParameter<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
             Func<T, string> toStringFunc)
         {
             var allParameters = new List<string>();
@@ -138,7 +150,7 @@ namespace BricklinkSharp.Client
             return contentAsString;
         }
 
-        private JsonElement GetData(JsonDocument document, int expectedCode, string url, HttpMethod httpMethod)
+        private static JsonElement GetData(JsonDocument document, int expectedCode, string url, HttpMethod httpMethod)
         {
             var meta = document.RootElement.GetProperty("meta").ToObject<ResponseMeta>();
 
@@ -151,7 +163,7 @@ namespace BricklinkSharp.Client
             return dataElement;
         }
 
-        private TData[] ParseResponseArrayAllowEmpty<TData>(string responseBody, int expectedCode, string url,
+        private static TData[] ParseResponseArrayAllowEmpty<TData>(string responseBody, int expectedCode, string url,
             HttpMethod httpMethod)
         {
             using var document = JsonDocument.Parse(responseBody);
@@ -167,7 +179,7 @@ namespace BricklinkSharp.Client
             return dataArray;
         }
 
-        private void ParseResponseNoData(string responseBody, int expectedCode, string url,
+        private static void ParseResponseNoData(string responseBody, int expectedCode, string url,
             HttpMethod httpMethod)
         {
             using var document = JsonDocument.Parse(responseBody);
@@ -185,7 +197,7 @@ namespace BricklinkSharp.Client
             }
         }
 
-        private TData ParseResponse<TData>(string responseBody, int expectedCode, string url, HttpMethod httpMethod)
+        private static TData ParseResponse<TData>(string responseBody, int expectedCode, string url, HttpMethod httpMethod)
         {
             using var document = JsonDocument.Parse(responseBody);
             var dataElement = GetData(document, expectedCode, url, httpMethod);
@@ -463,10 +475,7 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updatedInventory, new JsonSerializerOptions
-            {
-                IgnoreNullValues = true
-            });
+            var responseBody = await ExecuteRequest(url, method, updatedInventory, IgnoreNullValuesJsonSerializerOptions);
 
             var data = ParseResponse<Inventory>(responseBody, 200, url, method);
             return data;
@@ -713,10 +722,7 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updateOrder, new JsonSerializerOptions
-            {
-                IgnoreNullValues = true
-            });
+            var responseBody = await ExecuteRequest(url, method, updateOrder, IgnoreNullValuesJsonSerializerOptions);
 
             var order = ParseResponse<OrderDetails>(responseBody, 200, url, method);
             return order;
@@ -773,10 +779,7 @@ namespace BricklinkSharp.Client
 
             var url = new Uri(_baseUri, $"coupons").ToString();
             var method = HttpMethod.Post;
-            var responseBody = await ExecuteRequest(url, method, newCoupon, new JsonSerializerOptions
-            {
-                IgnoreNullValues = true
-            });
+            var responseBody = await ExecuteRequest(url, method, newCoupon, IgnoreNullValuesJsonSerializerOptions);
             var coupon = ParseResponse<Coupon>(responseBody, 201, url, method);
             return coupon;
         }
@@ -787,10 +790,7 @@ namespace BricklinkSharp.Client
 
             var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updateCoupon, new JsonSerializerOptions
-            {
-                IgnoreNullValues = true
-            });
+            var responseBody = await ExecuteRequest(url, method, updateCoupon, IgnoreNullValuesJsonSerializerOptions);
             var coupon = ParseResponse<Coupon>(responseBody, 200, url, method);
             return coupon;
         }

@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
+    <!--<TargetFramework>net6.0</TargetFramework>-->
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
     <!-- version numbers will be updated by build -->
-    <Version>1.1.1.0</Version>
-    <FileVersion>1.1.1.0</FileVersion>
-    <InformationalVersion>1.1.1.0</InformationalVersion>
-    <PackageVersion>1.1.1</PackageVersion>
+    <Version>1.2.0.0</Version>
+    <FileVersion>1.2.0.0</FileVersion>
+    <InformationalVersion>1.2.0.0</InformationalVersion>
+    <PackageVersion>1.2.1</PackageVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BricklinkSharp</Product>
     <Description>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Description>
@@ -36,6 +37,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net5.0'">
     <AssemblyTitle>BricklinkSharp .Net 5.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
+    <AssemblyTitle>BricklinkSharp .Net 6.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
