@@ -12,11 +12,18 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.2.0
+ - Upgraded *Demos* and *Tests* to .NET6
+ - Added .NET6 Build Target
+ - Fixed all obsolete warnings for .NET6
+ - Minor performance improvements
+ - Removed unused code
+
 ### 1.1.1
  - Fixed [Get Supersets does not use color id, just gets all supersets](https://github.com/gebirgslok/BricklinkSharp/issues/3), thanks to [Yoonwoo](https://github.com/Yoonwoo).
 
 ### 1.1.0
- - Supports API key for [Exchange rate service](https://exchangeratesapi.io/) when using the *Get Part Out Value Page* method **with** the exchange rate service (see demo project and documentation on this readme below for usage)
+ - Supports API key for [Exchange rate service](https://exchangeratesapi.io/) when using the *Get Part Out Value From Page* method **with** the exchange rate service (see demo project and documentation on this readme below for usage)
 
 ### 1.0.0
  - Covers all public API endpoints
