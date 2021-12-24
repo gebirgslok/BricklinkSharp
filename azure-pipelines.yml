@@ -9,7 +9,7 @@ schedules:
     - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'
 
 name: $(Build.Reason)_commit-$(Build.SourceVersion)_$(Date:yyyyMMdd_HHmmss)
 
