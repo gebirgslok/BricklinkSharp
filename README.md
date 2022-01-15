@@ -12,6 +12,9 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.2.1
+ - Fixed a typo in **JsonPropertyName** of the **UpdateInventory.StockRoomId** property that made it impossible for the user to update the stock room ID 
+
 ### 1.2.0
  - Upgraded *Demos* and *Tests* to .NET6
  - Added .NET6 Build Target
