@@ -56,7 +56,7 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("is_stock_room")]
         public bool? IsStockRoom { get; set; }
 
-        [JsonPropertyName("stock_room_id ")]
+        [JsonPropertyName("stock_room_id")]
         public string? StockRoomId { get; set; }
 
         [JsonPropertyName("my_cost")]
