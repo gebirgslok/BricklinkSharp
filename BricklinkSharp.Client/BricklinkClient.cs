@@ -30,6 +30,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 #if HAVE_JSON_DEFAULT_IGNORE_CONDITION
 using System.Text.Json.Serialization;
 #endif
@@ -57,13 +58,15 @@ namespace BricklinkSharp.Client
         private readonly IExchangeRatesService _currencyRatesService;
         private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
         private readonly HttpClient _httpClient;
+        private readonly bool _disposeHttpClient;
 
         private bool _isDisposed;
 
-        public BricklinkClient(HttpClient httpClient, IExchangeRatesService currencyRatesService)
+        public BricklinkClient(HttpClient httpClient, IExchangeRatesService currencyRatesService, bool disposeHttpClient)
         {
             _httpClient = httpClient;
             _currencyRatesService = currencyRatesService;
+            _disposeHttpClient = disposeHttpClient;
         }
 
         ~BricklinkClient()
@@ -71,7 +74,7 @@ namespace BricklinkSharp.Client
             Dispose(false);
         }
 
-        private JsonSerializerOptions IgnoreNullValuesJsonSerializerOptions => new()
+        private static JsonSerializerOptions IgnoreNullValuesJsonSerializerOptions => new()
         {
 #if HAVE_JSON_DEFAULT_IGNORE_CONDITION
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -120,8 +123,8 @@ namespace BricklinkSharp.Client
             return null;
         }
 
-        private async Task<string> ExecuteRequest<TBody>(string url, HttpMethod httpMethod, 
-            TBody body, JsonSerializerOptions? options = null)
+        private async Task<string> ExecuteRequest<TBody>(string url, HttpMethod httpMethod,
+            TBody body, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
         {
             GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
             using var message = new HttpRequestMessage(httpMethod, url);
@@ -131,22 +134,31 @@ namespace BricklinkSharp.Client
             content.Headers.ContentType.CharSet = string.Empty;
             message.Content = content;
 
-            var response = await _httpClient.SendAsync(message);
+            var response = await _httpClient.SendAsync(message, cancellationToken);
 
+#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
+            var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
+#else
             var contentAsString = await response.Content.ReadAsStringAsync();
+#endif
             return contentAsString;
         }
 
-        private async Task<string> ExecuteRequest(string url, HttpMethod httpMethod)
+        private async Task<string> ExecuteRequest(string url, HttpMethod httpMethod, CancellationToken cancellationToken = default)
         {
             GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
             using var message = new HttpRequestMessage(httpMethod, url);
             message.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
             message.Content = null;
 
-            var response = await _httpClient.SendAsync(message);
+            var response = await _httpClient.SendAsync(message, cancellationToken);
 
+#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
+            var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
+#else
             var contentAsString = await response.Content.ReadAsStringAsync();
+#endif
+
             return contentAsString;
         }
 
@@ -220,31 +232,34 @@ namespace BricklinkSharp.Client
 
             if (disposing)
             {
-                _httpClient.Dispose();
+                if (_disposeHttpClient)
+                {
+                    _httpClient.Dispose();
+                }
             }
 
             _isDisposed = true;
         }
 
-        public async Task<CatalogItem> GetItemAsync(ItemType type, string no)
+        public async Task<CatalogItem> GetItemAsync(ItemType type, string no, CancellationToken cancellationToken)
         {
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
 
             var data = ParseResponse<CatalogItem>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId)
+        public async Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId, CancellationToken cancellationToken)
         {
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/images/{colorId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
 
             var data = ParseResponse<CatalogImage>(responseBody, 200, url, method);
             return data;
@@ -295,25 +310,27 @@ namespace BricklinkSharp.Client
             return new Uri($"{scheme}:{imageUrl}");
         }
 
-        public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no, int colorId = 0)
+        public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
+            int colorId = 0, CancellationToken cancellationToken = default)
         {
             var typeString = type.GetStringValueOrDefault();
 
-            var url = new Uri(_baseUri, 
-                colorId > 0 ? 
+            var url = new Uri(_baseUri,
+                colorId > 0 ?
                     $"items/{typeString}/{no}/supersets?color_id={colorId}" :
                     $"items/{typeString}/{no}/supersets")
                 .ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
 
             var data = ParseResponse<Superset[]>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<Subset[]> GetSubsetsAsync(ItemType type, string no, int colorId = 0, bool? includeOriginalBox = null,
-            bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null)
+            bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null,
+            CancellationToken cancellationToken = default)
         {
             var typeString = type.GetStringValueOrDefault();
             var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/subsets"));
@@ -327,15 +344,16 @@ namespace BricklinkSharp.Client
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(builder.ToString(), method);
+            var responseBody = await ExecuteRequest(builder.ToString(), method, cancellationToken);
 
             var data = ParseResponse<Subset[]>(responseBody, 200, url, method);
             return data;
         }
 
         public async Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
-            PriceGuideType? priceGuideType = null, Condition? condition = null, 
-            string? countryCode = null, string? region = null, string? currencyCode = null)
+            PriceGuideType? priceGuideType = null, Condition? condition = null,
+            string? countryCode = null, string? region = null, string? currencyCode = null,
+            CancellationToken cancellationToken = default)
         {
             var typeString = type.GetStringValueOrDefault();
             var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/price"));
@@ -343,7 +361,7 @@ namespace BricklinkSharp.Client
             query["color_id"] = colorId.ToString();
             query.AddIfNotNull("guide_type", priceGuideType, pg => pg!.ToString().ToLower());
             query.AddIfNotNull("new_or_used", condition, c => c!.GetStringValueOrDefault());
-            
+
             query.AddIfNotNull("country_code", countryCode);
             query.AddIfNotNull("region", region);
             query.AddIfNotNull("currency_code", currencyCode);
@@ -351,61 +369,62 @@ namespace BricklinkSharp.Client
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(builder.ToString(), method);
+            var responseBody = await ExecuteRequest(builder.ToString(), method, cancellationToken);
 
             var data = ParseResponse<PriceGuide>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no)
+        public async Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
+            CancellationToken cancellationToken = default)
         {
             var typeString = type.GetStringValueOrDefault();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/colors").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
 
             var data = ParseResponse<KnownColor[]>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Color[]> GetColorListAsync()
+        public async Task<Color[]> GetColorListAsync(CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, "colors").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
 
             var data = ParseResponse<Color[]>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Color> GetColorAsync(int colorId)
+        public async Task<Color> GetColorAsync(int colorId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"colors/{colorId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<Color>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Category[]> GetCategoryListAsync()
+        public async Task<Category[]> GetCategoryListAsync(CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, "categories").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<Category[]>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Category> GetCategoryAsync(int categoryId)
+        public async Task<Category> GetCategoryAsync(int categoryId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"categories/{categoryId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<Category>(responseBody, 200, url, method);
             return data;
         }
@@ -417,7 +436,8 @@ namespace BricklinkSharp.Client
             IEnumerable<int>? includedCategoryIds = null,
             IEnumerable<int>? excludedCategoryIds = null,
             IEnumerable<int>? includedColorIds = null,
-            IEnumerable<int>? excludedColorIds = null)
+            IEnumerable<int>? excludedColorIds = null,
+            CancellationToken cancellationToken = default)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "inventories"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -429,33 +449,33 @@ namespace BricklinkSharp.Client
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var dataArray = ParseResponseArrayAllowEmpty<Inventory>(responseBody, 200, url, method);
             return dataArray;
         }
 
-        public async Task<Inventory> GetInventoryAsync(int inventoryId)
+        public async Task<Inventory> GetInventoryAsync(int inventoryId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<Inventory>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory)
+        public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory, CancellationToken cancellationToken = default)
         {
             newInventory.ValidateThrowException();
             var url = new Uri(_baseUri, "inventories").ToString();
 
             var method = HttpMethod.Post;
-            var responseBody = await ExecuteRequest(url, method, newInventory);
+            var responseBody = await ExecuteRequest(url, method, newInventory, cancellationToken: cancellationToken);
             var data = ParseResponse<Inventory>(responseBody, 201, url, method);
             return data;
         }
 
-        public async Task CreateInventoriesAsync(NewInventory[] newInventories)
+        public async Task CreateInventoriesAsync(NewInventory[] newInventories, CancellationToken cancellationToken = default)
         {
             foreach (var newInventory in newInventories)
             {
@@ -465,94 +485,97 @@ namespace BricklinkSharp.Client
             var url = new Uri(_baseUri, "inventories").ToString();
             var method = HttpMethod.Post;
 
-            var responseBody = await ExecuteRequest(url, method, newInventories);
+            var responseBody = await ExecuteRequest(url, method, newInventories, cancellationToken: cancellationToken);
             ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
 
-        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updatedInventory)
+        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updatedInventory,
+            CancellationToken cancellationToken = default)
         {
             updatedInventory.ValidateThrowException();
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updatedInventory, IgnoreNullValuesJsonSerializerOptions);
+            var responseBody = await ExecuteRequest(url, method, updatedInventory, IgnoreNullValuesJsonSerializerOptions, cancellationToken);
 
             var data = ParseResponse<Inventory>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task DeleteInventoryAsync(int inventoryId)
+        public async Task DeleteInventoryAsync(int inventoryId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-            var responseBody = await ExecuteRequest(url, HttpMethod.Delete);
+            var responseBody = await ExecuteRequest(url, HttpMethod.Delete, cancellationToken);
             ParseResponseNoData(responseBody, 204, url, HttpMethod.Delete);
         }
 
-        public async Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId)
+        public async Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId, 
+            CancellationToken cancellationToken = default)
         {
-            var builder = new UriBuilder(new Uri(_baseUri, $"item_mapping/PART/{partNo}"));
+            var builder = new UriBuilder(new Uri(_baseUri, $"item_mapping/part/{partNo}"));
             var query = HttpUtility.ParseQueryString(builder.Query);
             query.AddIfNotNull("color_id", colorId);
             builder.Query = query.ToString();
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, method);
             return itemMappings;
         }
 
-        public async Task<ItemMapping[]> GetItemNumberAsync(string elementId)
+        public async Task<ItemMapping[]> GetItemNumberAsync(string elementId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, method);
             return itemMappings;
         }
 
-        public async Task<ShippingMethod[]> GetShippingMethodListAsync()
+        public async Task<ShippingMethod[]> GetShippingMethodListAsync(CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponseArrayAllowEmpty<ShippingMethod>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<ShippingMethod> GetShippingMethodAsync(int methodId)
+        public async Task<ShippingMethod> GetShippingMethodAsync(int methodId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<ShippingMethod>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Notification[]> GetNotificationsAsync()
+        public async Task<Notification[]> GetNotificationsAsync(CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, "notifications").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponseArrayAllowEmpty<Notification>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<MemberRating> GetMemberRatingAsync(string username)
+        public async Task<MemberRating> GetMemberRatingAsync(string username, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"members/{username}/ratings").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<MemberRating>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null)
+        public async Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null, 
+            CancellationToken cancellationToken = default)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -561,22 +584,23 @@ namespace BricklinkSharp.Client
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Feedback> GetFeedbackAsync(int feedbackId)
+        public async Task<Feedback> GetFeedbackAsync(int feedbackId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"feedback/{feedbackId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<Feedback>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<Feedback> PostFeedbackAsync(int orderId, RatingType rating, string comment)
+        public async Task<Feedback> PostFeedbackAsync(int orderId, RatingType rating, string comment,
+            CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, "feedback").ToString();
             var body = new FeedbackBase
@@ -587,25 +611,26 @@ namespace BricklinkSharp.Client
             };
 
             var method = HttpMethod.Post;
-            var responseBody = await ExecuteRequest(url, method, body);
+            var responseBody = await ExecuteRequest(url, method, body, cancellationToken: cancellationToken);
             var data = ParseResponse<Feedback>(responseBody, 201, url, method);
             return data;
         }
 
-        public async Task ReplyFeedbackAsync(int feedbackId, string reply)
+        public async Task ReplyFeedbackAsync(int feedbackId, string reply, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"feedback/{feedbackId}/reply").ToString();
             var body = new { reply };
 
             var method = HttpMethod.Post;
-            var responseBody = await ExecuteRequest(url, method, body);
+            var responseBody = await ExecuteRequest(url, method, body, cancellationToken: cancellationToken);
             ParseResponseNoData(responseBody, 201, url, method);
         }
 
         public async Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
             IEnumerable<OrderStatus>? includedStatusFlags = null,
             IEnumerable<OrderStatus>? excludedStatusFlags = null,
-            bool filed = false)
+            bool filed = false,
+            CancellationToken cancellationToken = default)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "orders"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -616,27 +641,27 @@ namespace BricklinkSharp.Client
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var orders = ParseResponseArrayAllowEmpty<Order>(responseBody, 200, url, method);
             return orders;
         }
 
-        public async Task<OrderDetails> GetOrderAsync(int orderId)
+        public async Task<OrderDetails> GetOrderAsync(int orderId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<OrderDetails>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId)
+        public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var itemsBatchList = new List<OrderItem[]>();
             using var document = JsonDocument.Parse(responseBody);
             var dataElement = GetData(document, 200, url, method);
@@ -655,27 +680,27 @@ namespace BricklinkSharp.Client
             return itemsBatchList;
         }
 
-        public async Task<OrderMessage[]> GetOrderMessagesAsync(int orderId)
+        public async Task<OrderMessage[]> GetOrderMessagesAsync(int orderId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var messages = ParseResponseArrayAllowEmpty<OrderMessage>(responseBody, 200, url, method);
             return messages;
         }
 
-        public async Task<Feedback[]> GetOrderFeedbackAsync(int orderId)
+        public async Task<Feedback[]> GetOrderFeedbackAsync(int orderId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/feedback").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var feedbackArray = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, method);
             return feedbackArray;
         }
 
-        public async Task UpdateOrderStatusAsync(int orderId, OrderStatus status)
+        public async Task UpdateOrderStatusAsync(int orderId, OrderStatus status, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/status").ToString();
 
@@ -684,12 +709,13 @@ namespace BricklinkSharp.Client
             {
                 field = "status",
                 value = status.GetStringValueOrDefault()
-            });
+            }, cancellationToken: cancellationToken);
 
             ParseResponseNoData(responseBody, 200, url, method);
         }
 
-        public async Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status)
+        public async Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status, 
+            CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}/payment_status").ToString();
 
@@ -698,12 +724,13 @@ namespace BricklinkSharp.Client
             {
                 field = "payment_status",
                 value = status.ToString()
-            });
+            }, cancellationToken: cancellationToken);
 
             ParseResponseNoData(responseBody, 200, url, HttpMethod.Put);
         }
 
-        public async Task SendDriveThruAsync(int orderId, bool mailCcMe)
+        public async Task SendDriveThruAsync(int orderId, bool mailCcMe,
+            CancellationToken cancellationToken = default)
         {
             var builder = new UriBuilder(new Uri(_baseUri, $"orders/{orderId}/drive_thru"));
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -712,17 +739,19 @@ namespace BricklinkSharp.Client
             var url = builder.ToString();
 
             var method = HttpMethod.Post;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
 
             ParseResponseNoData(responseBody, 200, url, method);
         }
 
-        public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder)
+        public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder,
+            CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updateOrder, IgnoreNullValuesJsonSerializerOptions);
+            var responseBody = await ExecuteRequest(url, method, updateOrder, 
+                IgnoreNullValuesJsonSerializerOptions, cancellationToken);
 
             var order = ParseResponse<OrderDetails>(responseBody, 200, url, method);
             return order;
@@ -734,71 +763,76 @@ namespace BricklinkSharp.Client
             GC.SuppressFinalize(this);
         }
 
-        public async Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out, 
+        public async Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
             IEnumerable<CouponStatus>? includedCouponStatusTypes = null,
-            IEnumerable<CouponStatus>? excludedCouponStatusTypes = null)
+            IEnumerable<CouponStatus>? excludedCouponStatusTypes = null,
+            CancellationToken cancellationToken = default)
         {
             var builder = new UriBuilder(new Uri(_baseUri, "coupons"));
             var query = HttpUtility.ParseQueryString(builder.Query);
             query.Add("direction", direction.GetStringValueOrDefault());
 
-            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedCouponStatusTypes, 
-                excludedCouponStatusTypes, 
+            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedCouponStatusTypes,
+                excludedCouponStatusTypes,
                 f => f.GetStringValueOrDefault()));
 
             builder.Query = query.ToString();
             var url = builder.ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var coupons = ParseResponseArrayAllowEmpty<Coupon>(responseBody, 200, url, method);
             return coupons;
         }
 
-        public async Task<Coupon> GetCouponAsync(int couponId)
+        public async Task<Coupon> GetCouponAsync(int couponId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
 
             var method = HttpMethod.Get;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             var data = ParseResponse<Coupon>(responseBody, 200, url, method);
             return data;
         }
 
-        public async Task DeleteCouponAsync(int couponId)
+        public async Task DeleteCouponAsync(int couponId, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
             var method = HttpMethod.Delete;
-            var responseBody = await ExecuteRequest(url, method);
+            var responseBody = await ExecuteRequest(url, method, cancellationToken);
             ParseResponseNoData(responseBody, 204, url, method);
         }
 
-        public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon)
+        public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon, CancellationToken cancellationToken = default)
         {
             newCoupon.ValidateThrowException();
 
-            var url = new Uri(_baseUri, $"coupons").ToString();
+            var url = new Uri(_baseUri, "coupons").ToString();
             var method = HttpMethod.Post;
-            var responseBody = await ExecuteRequest(url, method, newCoupon, IgnoreNullValuesJsonSerializerOptions);
+            var responseBody = await ExecuteRequest(url, method, newCoupon, IgnoreNullValuesJsonSerializerOptions, cancellationToken);
             var coupon = ParseResponse<Coupon>(responseBody, 201, url, method);
             return coupon;
         }
 
-        public async Task<Coupon> UpdateCouponAsync(int couponId, UpdateCoupon updateCoupon)
+        public async Task<Coupon> UpdateCouponAsync(int couponId, UpdateCoupon updateCoupon, 
+            CancellationToken cancellationToken = default)
         {
             updateCoupon.ValidateThrowException();
 
             var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updateCoupon, IgnoreNullValuesJsonSerializerOptions);
+
+            var responseBody = await ExecuteRequest(url, method, updateCoupon, 
+                IgnoreNullValuesJsonSerializerOptions, cancellationToken);
+
             var coupon = ParseResponse<Coupon>(responseBody, 200, url, method);
             return coupon;
         }
 
-        public async Task<PartOutResult> GetPartOutValueFromPageAsync(string itemNo, Condition condition = Condition.New, 
+        public async Task<PartOutResult> GetPartOutValueFromPageAsync(string itemNo, Condition condition = Condition.New,
             bool includeInstructions = true, bool breakMinifigs = false, bool includeBox = false,
             bool includeExtraParts = false, bool breakSetsInSet = false, PartOutItemType itemType = PartOutItemType.Set,
-            string? currencyCode = null)
+            string? currencyCode = null, CancellationToken cancellationToken = default)
         {
             var split = itemNo.Split('-');
             var rawItemNumber = split[0];
@@ -809,22 +843,26 @@ namespace BricklinkSharp.Client
             {
                 if (!int.TryParse(split[1], out int temp))
                 {
-                    throw new ArgumentException($"{itemNo} '{itemNo}' has an invalid sequence number. The section after the '-' must be numeric.", 
+                    throw new ArgumentException($"{itemNo} '{itemNo}' has an invalid sequence number. The section after the '-' must be numeric.",
                         nameof(itemNo));
                 }
 
                 sequenceNumber = temp;
             }
 
-            var url = "https://www.bricklink.com/catalogPOV.asp?" + 
+            var url = "https://www.bricklink.com/catalogPOV.asp?" +
                       $"itemType={itemType.GetStringValueOrDefault()}&itemNo={rawItemNumber}&itemSeq={sequenceNumber}&itemQty=1&" +
                       $"breakType={(breakMinifigs ? "P" : "M")}&itemCondition={condition.GetStringValueOrDefault()}" +
                       $"&incInstr={(includeInstructions ? "Y" : "N")}&incBox={(includeBox ? "Y" : "N")}&" +
                       $"incParts={(includeExtraParts ? "Y" : "N")}&breakSets={(breakSetsInSet ? "Y" : "N")}";
 
-            var response = await _httpClient.GetAsync(url);
+            var response = await _httpClient.GetAsync(url, cancellationToken);
 
+#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
+            var htmlResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+#else
             var htmlResponse = await response.Content.ReadAsStringAsync();
+#endif
 
             var result = PartOutResponseParser.ParseResponse(htmlResponse, url);
             result.ItemNumber = $"{rawItemNumber}-{sequenceNumber}";

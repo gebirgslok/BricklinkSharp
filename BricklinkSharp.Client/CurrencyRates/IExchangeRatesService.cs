@@ -23,12 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BricklinkSharp.Client.CurrencyRates
 {
     internal interface IExchangeRatesService
     {
-        Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency);
+        Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
+            CancellationToken cancellationToken = default);
     }
 }

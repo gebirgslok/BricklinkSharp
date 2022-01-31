@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricklinkSharp.Client", "BricklinkSharp.Client\BricklinkSharp.Client.csproj", "{8D6AABC9-8A3C-4AD3-A39D-DF5E6157AC82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricklinkSharp.Client", "BricklinkSharp.Client\BricklinkSharp.Client.csproj", "{8D6AABC9-8A3C-4AD3-A39D-DF5E6157AC82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricklinkSharp.Demos", "BricklinkSharp.Demos\BricklinkSharp.Demos.csproj", "{1B2C43AB-61B1-4936-AAB9-162FB4C8F9C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricklinkSharp.Demos", "BricklinkSharp.Demos\BricklinkSharp.Demos.csproj", "{1B2C43AB-61B1-4936-AAB9-162FB4C8F9C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BricklinkSharp.Client.Tests", "BricklinkSharp.Client.Tests\BricklinkSharp.Client.Tests.csproj", "{95F6204B-1978-48C5-8D8F-1EA1D28183E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BricklinkSharp.Client.Tests", "BricklinkSharp.Client.Tests\BricklinkSharp.Client.Tests.csproj", "{95F6204B-1978-48C5-8D8F-1EA1D28183E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

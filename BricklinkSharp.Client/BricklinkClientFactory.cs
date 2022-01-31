@@ -26,15 +26,23 @@
 using System.Net.Http;
 using BricklinkSharp.Client.CurrencyRates;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public static class BricklinkClientFactory
 {
-    public static class BricklinkClientFactory
+    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient)
     {
-        public static IBricklinkClient Build()
-        {
-            var httpClient = new HttpClient();
-            var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
-            return new BricklinkClient(httpClient, exchangeRatesService);
-        }
+        var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
+        return new BricklinkClient(httpClient, exchangeRatesService, disposeHttpClient);
+    }
+
+    public static IBricklinkClient Build(HttpClient httpClient)
+    {
+        return Build(httpClient, false);
+    }
+
+    public static IBricklinkClient Build()
+    {
+        return Build(new HttpClient(), true);
     }
 }

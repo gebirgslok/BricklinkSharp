@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BricklinkSharp.Client.CurrencyRates
@@ -73,7 +74,8 @@ namespace BricklinkSharp.Client.CurrencyRates
             return response.Rates[currencyUpper];
         }
 
-        public async Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency)
+        public async Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
+            CancellationToken cancellationToken = default)
         {
             if (_cachedResponse == null || (DateTime.Now - _cachedResponse.Date) >= TimeSpan.FromHours(24))
             {
@@ -84,10 +86,15 @@ namespace BricklinkSharp.Client.CurrencyRates
                     throw new BricklinkMissingCredentialsException(new List<string>{ "Exchangeratesapi.io - API Access Key" });
                 }
 
-                var response = await _httpClient.GetAsync($"http://api.exchangeratesapi.io/v1/latest?access_key={key}");
+                var response = await _httpClient.GetAsync($"http://api.exchangeratesapi.io/v1/latest?access_key={key}", 
+                    cancellationToken);
                 response.EnsureSuccessStatusCode();
 
+#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
+                var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
+#else
                 var contentAsString = await response.Content.ReadAsStringAsync();
+#endif
                 _cachedResponse = JsonSerializer.Deserialize<ExchangeRatesApiResponse>(contentAsString);
             }
 

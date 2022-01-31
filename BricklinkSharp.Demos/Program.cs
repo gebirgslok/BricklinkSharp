@@ -25,6 +25,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
@@ -32,7 +33,7 @@ namespace BricklinkSharp.Demos
 {
     internal static class Program
     {
-        static async Task Main()
+        static async Task<int> Main()
         {
             BricklinkClientConfiguration.Instance.TokenValue = "<Your Token>";
             BricklinkClientConfiguration.Instance.TokenSecret = "<Your Token Secret>";
@@ -102,6 +103,7 @@ namespace BricklinkSharp.Demos
 
             await PartOutValueDemos.GetPartOutValueFromPageDemo();
             Console.ReadKey(true);
+            return 0;
         }
     }
 }
