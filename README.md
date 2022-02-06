@@ -8,6 +8,9 @@
 BricklinkSharp is a strongly-typed, easy-to-use C# client for the [bricklink](https://www.bricklink.com/v2/main.page) marketplace that gets you started with just a few lines of code. It features OAuth1 authentication, error handling and parsing of JSON data into typed instances.
 It supports all .NET platforms compatible with *.NET standard 2.0*.
 
+## Related projects
+- [RebrickableSharp](https://github.com/gebirgslok/RebrickableSharp) - Easy-to-use C# client for the Rebrickable (LEGO) API.
+
 ## Changelog
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
