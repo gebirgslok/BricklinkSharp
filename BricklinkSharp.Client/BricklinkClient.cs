@@ -520,7 +520,7 @@ namespace BricklinkSharp.Client
 
             var method = HttpMethod.Get;
             var responseBody = await ExecuteRequest(url, method, cancellationToken);
-            var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, method);
+            var itemMappings = ParseResponseArrayAllowEmpty<ItemMapping>(responseBody, 200, url, method);
             return itemMappings;
         }
 
