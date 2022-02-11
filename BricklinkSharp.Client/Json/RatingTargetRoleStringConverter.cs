@@ -31,18 +31,18 @@ using BricklinkSharp.Client.Extensions;
 
 namespace BricklinkSharp.Client.Json
 {
-    internal class RatingTargeRoleStringConverter : JsonConverter<RatingTargeRole>
+    internal class RatingTargetRoleStringConverter : JsonConverter<RatingTargetRole>
     {
-        public override RatingTargeRole Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override RatingTargetRole Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var stringValue = reader.GetString();
-            return stringValue == "S" ? RatingTargeRole.Seller : RatingTargeRole.Buyer;
+            return stringValue == "S" ? RatingTargetRole.Seller : RatingTargetRole.Buyer;
         }
 
-        public override void Write(Utf8JsonWriter writer, RatingTargeRole value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, RatingTargetRole value, JsonSerializerOptions options)
         {
-            var ratingTargeRoleString = value.ToDomainString();
-            writer.WriteStringValue(ratingTargeRoleString);
+            var ratingTargetRoleString = value.ToDomainString();
+            writer.WriteStringValue(ratingTargetRoleString);
         }
     }
 }

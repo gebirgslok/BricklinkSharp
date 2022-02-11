@@ -171,12 +171,12 @@ namespace BricklinkSharp.Client.Tests.Extensions
         }
 
         [Test]
-        public void ToDomainString_RatingTargeRole()
+        public void ToDomainString_RatingTargetRole()
         {
-            Assert.AreEqual("S", RatingTargeRole.Seller.ToDomainString());
-            Assert.AreEqual("B", RatingTargeRole.Buyer.ToDomainString());
+            Assert.AreEqual("S", RatingTargetRole.Seller.ToDomainString());
+            Assert.AreEqual("B", RatingTargetRole.Buyer.ToDomainString());
 
-            RatingTargeRole? nullHolder = null;
+            RatingTargetRole? nullHolder = null;
             Assert.IsNull(nullHolder?.ToDomainString());
         }
 

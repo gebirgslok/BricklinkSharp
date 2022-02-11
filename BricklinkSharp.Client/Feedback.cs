@@ -46,8 +46,8 @@ namespace BricklinkSharp.Client
         [JsonPropertyName("date_rated")]
         public DateTime CreatedOn { get; set; }
 
-        [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(RatingTargeRoleStringConverter))]
-        public RatingTargeRole RatingTargeRole { get; set; }
+        [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(RatingTargetRoleStringConverter))]
+        public RatingTargetRole RatingTargetRole { get; set; }
 
         [JsonPropertyName("reply")]
         public string? Reply { get; set; }

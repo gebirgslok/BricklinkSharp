@@ -171,13 +171,13 @@ namespace BricklinkSharp.Client.Extensions
             };
         }
 
-        internal static string ToDomainString(this RatingTargeRole e)
+        internal static string ToDomainString(this RatingTargetRole e)
         {
             return e switch
             {
-                RatingTargeRole.Seller => "S",
-                RatingTargeRole.Buyer => "B",
-                _ => throw new ArgumentOutOfRangeException(nameof(RatingTargeRole), e, null)
+                RatingTargetRole.Seller => "S",
+                RatingTargetRole.Buyer => "B",
+                _ => throw new ArgumentOutOfRangeException(nameof(RatingTargetRole), e, null)
             };
         }
 
