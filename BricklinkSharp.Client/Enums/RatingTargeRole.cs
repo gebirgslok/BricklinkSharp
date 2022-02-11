@@ -23,11 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum PriceGuideType
+    public enum RatingTargeRole
     {
-        Sold = 0,
-        Stock = 1
+        Seller = 0,
+        Buyer = 1
     }
 }

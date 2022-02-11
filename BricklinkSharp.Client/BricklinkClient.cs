@@ -37,6 +37,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using BricklinkSharp.Client.CurrencyRates;
+using BricklinkSharp.Client.Enums;
 using BricklinkSharp.Client.Extensions;
 using BricklinkSharp.Client.OAuth;
 
@@ -243,7 +244,7 @@ namespace BricklinkSharp.Client
 
         public async Task<CatalogItem> GetItemAsync(ItemType type, string no, CancellationToken cancellationToken)
         {
-            var typeString = type.GetStringValueOrDefault();
+            var typeString = type.ToDomainString();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}").ToString();
 
             var method = HttpMethod.Get;
@@ -255,7 +256,7 @@ namespace BricklinkSharp.Client
 
         public async Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId, CancellationToken cancellationToken)
         {
-            var typeString = type.GetStringValueOrDefault();
+            var typeString = type.ToDomainString();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/images/{colorId}").ToString();
 
             var method = HttpMethod.Get;
@@ -313,7 +314,7 @@ namespace BricklinkSharp.Client
         public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
             int colorId = 0, CancellationToken cancellationToken = default)
         {
-            var typeString = type.GetStringValueOrDefault();
+            var typeString = type.ToDomainString();
 
             var url = new Uri(_baseUri,
                 colorId > 0 ?
@@ -332,7 +333,7 @@ namespace BricklinkSharp.Client
             bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null,
             CancellationToken cancellationToken = default)
         {
-            var typeString = type.GetStringValueOrDefault();
+            var typeString = type.ToDomainString();
             var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/subsets"));
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["color_id"] = colorId.ToString();
@@ -355,12 +356,12 @@ namespace BricklinkSharp.Client
             string? countryCode = null, string? region = null, string? currencyCode = null,
             CancellationToken cancellationToken = default)
         {
-            var typeString = type.GetStringValueOrDefault();
+            var typeString = type.ToDomainString();
             var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/price"));
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["color_id"] = colorId.ToString();
-            query.AddIfNotNull("guide_type", priceGuideType, pg => pg!.ToString().ToLower());
-            query.AddIfNotNull("new_or_used", condition, c => c!.GetStringValueOrDefault());
+            query.AddIfNotNull("guide_type", priceGuideType?.ToDomainString());
+            query.AddIfNotNull("new_or_used", condition?.ToDomainString());
 
             query.AddIfNotNull("country_code", countryCode);
             query.AddIfNotNull("region", region);
@@ -378,7 +379,7 @@ namespace BricklinkSharp.Client
         public async Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
             CancellationToken cancellationToken = default)
         {
-            var typeString = type.GetStringValueOrDefault();
+            var typeString = type.ToDomainString();
             var url = new Uri(_baseUri, $"items/{typeString}/{no}/colors").ToString();
 
             var method = HttpMethod.Get;
@@ -441,8 +442,8 @@ namespace BricklinkSharp.Client
         {
             var builder = new UriBuilder(new Uri(_baseUri, "inventories"));
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query.AddIfNotNull("item_type", BuildIncludeExcludeParameter(includedItemTypes, excludedItemTypes, t => t.GetStringValueOrDefault()));
-            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.GetStringValueOrDefault()));
+            query.AddIfNotNull("item_type", BuildIncludeExcludeParameter(includedItemTypes, excludedItemTypes, t => t.ToDomainString()));
+            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.ToDomainString()));
             query.AddIfNotNull("category_id", BuildIncludeExcludeParameter(includedCategoryIds, excludedCategoryIds, categoryId => categoryId.ToString()));
             query.AddIfNotNull("color_id", BuildIncludeExcludeParameter(includedColorIds, excludedColorIds, colorId => colorId.ToString()));
             builder.Query = query.ToString();
@@ -634,8 +635,8 @@ namespace BricklinkSharp.Client
         {
             var builder = new UriBuilder(new Uri(_baseUri, "orders"));
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query.Add("direction", direction.GetStringValueOrDefault());
-            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.GetStringValueOrDefault()));
+            query.Add("direction", direction.ToDomainString());
+            query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.ToDomainString()));
             query.Add("filed", filed.ToString());
             builder.Query = query.ToString();
             var url = builder.ToString();
@@ -708,7 +709,7 @@ namespace BricklinkSharp.Client
             var responseBody = await ExecuteRequest(url, method, new
             {
                 field = "status",
-                value = status.GetStringValueOrDefault()
+                value = status.ToDomainString()
             }, cancellationToken: cancellationToken);
 
             ParseResponseNoData(responseBody, 200, url, method);
@@ -723,7 +724,7 @@ namespace BricklinkSharp.Client
             var responseBody = await ExecuteRequest(url, method, new
             {
                 field = "payment_status",
-                value = status.ToString()
+                value = status.ToDomainString()
             }, cancellationToken: cancellationToken);
 
             ParseResponseNoData(responseBody, 200, url, HttpMethod.Put);
@@ -770,11 +771,11 @@ namespace BricklinkSharp.Client
         {
             var builder = new UriBuilder(new Uri(_baseUri, "coupons"));
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query.Add("direction", direction.GetStringValueOrDefault());
+            query.Add("direction", direction.ToDomainString());
 
             query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedCouponStatusTypes,
                 excludedCouponStatusTypes,
-                f => f.GetStringValueOrDefault()));
+                f => f.ToDomainString()));
 
             builder.Query = query.ToString();
             var url = builder.ToString();
@@ -850,9 +851,11 @@ namespace BricklinkSharp.Client
                 sequenceNumber = temp;
             }
 
+            var s = condition.ToDomainString();
+
             var url = "https://www.bricklink.com/catalogPOV.asp?" +
-                      $"itemType={itemType.GetStringValueOrDefault()}&itemNo={rawItemNumber}&itemSeq={sequenceNumber}&itemQty=1&" +
-                      $"breakType={(breakMinifigs ? "P" : "M")}&itemCondition={condition.GetStringValueOrDefault()}" +
+                      $"itemType={itemType.ToDomainString()}&itemNo={rawItemNumber}&itemSeq={sequenceNumber}&itemQty=1&" +
+                      $"breakType={(breakMinifigs ? "P" : "M")}&itemCondition={condition.ToDomainString()}" +
                       $"&incInstr={(includeInstructions ? "Y" : "N")}&incBox={(includeBox ? "Y" : "N")}&" +
                       $"incParts={(includeExtraParts ? "Y" : "N")}&breakSets={(breakSetsInSet ? "Y" : "N")}";
 

@@ -23,9 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BricklinkSharp.Client.Json;
 using System;
 using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Enums;
+using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client
 {

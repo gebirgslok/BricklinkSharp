@@ -26,6 +26,7 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Enums;
 using BricklinkSharp.Client.Extensions;
 
 namespace BricklinkSharp.Client.Json
@@ -47,7 +48,7 @@ namespace BricklinkSharp.Client.Json
 
         public override void Write(Utf8JsonWriter writer, CouponStatus value, JsonSerializerOptions options)
         {
-            var typeString = value.GetStringValueOrDefault().ToUpperInvariant();
+            var typeString = value.ToDomainString();
             writer.WriteStringValue(typeString);
         }
     }

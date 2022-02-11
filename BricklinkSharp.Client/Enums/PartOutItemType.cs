@@ -23,20 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum AppearsAs
+    public enum PartOutItemType
     {
-        [StringValue("R")]
-        Regular = 0,
-
-        [StringValue("A")]
-        Alternate = 1,
-
-        [StringValue("C")]
-        Counterpart = 2,
-
-        [StringValue("E")]
-        Extra = 3
+        Set = 0,
+        Minifig = 1,
+        Gear = 2,
     }
 }

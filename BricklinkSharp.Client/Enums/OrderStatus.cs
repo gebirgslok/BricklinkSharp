@@ -23,21 +23,25 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum CouponStatus
+    public enum OrderStatus
     {
-        [StringValue("O")]
-        Open = 0,
-
-        [StringValue("A")]
-        Redeemed = 1,
-
-        [StringValue("D")]
-        Declined = 2,
-
-        [StringValue("E")]
-        Expired = 3
+        Pending = 0,
+        Updated = 1,
+        Processing = 2,
+        Ready = 3,
+        Paid = 4,
+        Packed = 5,
+        Shipped = 6,
+        Received = 7,
+        Completed = 8,
+        Ocr = 9,
+        Npb = 10,
+        Npx = 11,
+        Nrs = 12,
+        Nss = 13,
+        Cancelled = 14,
+        Purged = 15
     }
 }

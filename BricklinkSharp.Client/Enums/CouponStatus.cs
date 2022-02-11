@@ -23,17 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum ShippingArea
+    public enum CouponStatus
     {
-        [StringValue("D")]
-        Domestic = 0,
-
-        [StringValue("I")]
-        International = 1,
-
-        [StringValue("B")]
-        Both = 2
+        Open = 0,
+        Redeemed = 1,
+        Declined = 2,
+        Expired = 3
     }
 }

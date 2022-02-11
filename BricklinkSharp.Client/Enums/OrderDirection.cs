@@ -23,17 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum Completeness
+    public enum OrderDirection
     {
-        [StringValue("C")]
-        Complete = 0,
-
-        [StringValue("B")]
-        Incomplete = 1,
-
-        [StringValue("S")]
-        Sealed = 2
+        In = 0,
+        Out = 1
     }
 }

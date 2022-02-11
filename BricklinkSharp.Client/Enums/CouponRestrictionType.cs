@@ -23,19 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    [Serializable]
-    internal class StringValueAttribute : Attribute
+    public enum CouponRestrictionType
     {
-        public string Value { get; }
-
-        public StringValueAttribute(string value)
-        {
-            Value = value;
-        }
+        ApplyToSpecifiedItemType = 0,
+        ExcludeSpecifiedType = 1
     }
 }

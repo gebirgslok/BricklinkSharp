@@ -23,16 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum PaymentStatus
+    public enum DiscountType
     {
-        None = 0,
-        Sent = 1,
-        Received = 2,
-        Clearing = 3,
-        Returned = 4,
-        Bounced = 5,
-        Completed = 6
+        Fixed = 0,
+        Percentage = 1
     }
 }

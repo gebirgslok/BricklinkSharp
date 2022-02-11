@@ -23,15 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum CouponRestrictionType
+    public enum Completeness
     {
-        [StringValue("A")]
-        ApplyToSpecifiedItemType = 0,
-
-        [StringValue("E")]
-        ExcludeSpecifiedType = 1
+        Complete = 0,
+        Incomplete = 1,
+        Sealed = 2
     }
 }
