@@ -18,7 +18,7 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 ### vnext
 > :warning: This version contains changes which might has breaking behavior and requires some minor migration
  - Fixed a typo in **RatingTargetRole** (previous RatingTargeRole without "t") which has breaking behaviour when using it.
- - Fixed https://github.com/gebirgslok/BricklinkSharp/issues/5 along with many performance improvements, thanks to [xramcire](https://github.com/xramcire)
+ - Fixed [Error with EnumExtensions](https://github.com/gebirgslok/BricklinkSharp/issues/5) along with many performance improvements, thanks to [xramcire](https://github.com/xramcire)
    - With that change all **Enums** moved to *BricklinkSharp.Client.Enums* namespace, which requires to add an additional *using*.
 
 ### 1.3.0
