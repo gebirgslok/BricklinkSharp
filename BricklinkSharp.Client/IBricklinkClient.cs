@@ -94,7 +94,7 @@ public interface IBricklinkClient : IDisposable
 
     Task CreateInventoriesAsync(NewInventory[] newInventories, CancellationToken cancellationToken = default);
 
-    Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updatedInventory, 
+    Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updateInventory, 
         CancellationToken cancellationToken = default);
 
     Task DeleteInventoryAsync(int inventoryId, CancellationToken cancellationToken = default);

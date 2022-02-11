@@ -28,8 +28,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client
 {

@@ -490,14 +490,19 @@ namespace BricklinkSharp.Client
             ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
         }
 
-        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updatedInventory,
+        public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updateInventory,
             CancellationToken cancellationToken = default)
         {
-            updatedInventory.ValidateThrowException();
+            updateInventory.ValidateThrowException();
             var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
             var method = HttpMethod.Put;
-            var responseBody = await ExecuteRequest(url, method, updatedInventory, IgnoreNullValuesJsonSerializerOptions, cancellationToken);
+
+            var responseBody = await ExecuteRequest(url, 
+                method, 
+                updateInventory, 
+                IgnoreNullValuesJsonSerializerOptions, 
+                cancellationToken);
 
             var data = ParseResponse<Inventory>(responseBody, 200, url, method);
             return data;
