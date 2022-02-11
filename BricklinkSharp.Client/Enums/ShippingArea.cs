@@ -23,26 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum InventoryStatusType
+    public enum ShippingArea
     {
-        [StringValue("Y")]
-        Available = 0,
-
-        [StringValue("S")]
-        InStockRoomA = 1,
-
-        [StringValue("B")]
-        InStockRoomB = 2,
-
-        [StringValue("C")]
-        InStockRoomC = 3,
-
-        [StringValue("N")]
-        Unavailable = 4,
-
-        [StringValue("R")]
-        Reserved = 5
+        Domestic = 0,
+        International = 1,
+        Both = 2
     }
 }

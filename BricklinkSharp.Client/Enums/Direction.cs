@@ -23,56 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum OrderStatus
+    public enum Direction
     {
-        [StringValue("PENDING")]
-        Pending = 0,
-
-        [StringValue("UPDATED")]
-        Updated = 1,
-
-        [StringValue("PROCESSING")]
-        Processing = 2,
-
-        [StringValue("READY")]
-        Ready = 3,
-
-        [StringValue("PAID")]
-        Paid = 4,
-
-        [StringValue("PACKED")]
-        Packed = 5,
-
-        [StringValue("SHIPPED")]
-        Shipped = 6,
-
-        [StringValue("RECEIVED")]
-        Received = 7,
-
-        [StringValue("COMPLETED")]
-        Completed = 8,
-
-        [StringValue("OCR")]
-        Ocr = 9,
-
-        [StringValue("NPB")]
-        Npb = 10,
-
-        [StringValue("NPX")]
-        Npx = 11,
-
-        [StringValue("NRS")]
-        Nrs = 12,
-
-        [StringValue("NSS")]
-        Nss = 13,
-
-        [StringValue("CANCELLED")]
-        Cancelled = 14,
-
-        [StringValue("PURGED")]
-        Purged = 15
+        Out = 1,
+        In = 0
     }
 }

@@ -23,47 +23,18 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client.Enums
 {
-    public enum PartOutItemType
-    {
-        [StringValue("S")]
-        Set = 0,
-
-        [StringValue("M")]
-        Minifig = 1,
-
-        [StringValue("G")]
-        Gear = 2,
-    }
-
     public enum ItemType
     {
-        [StringValue("minifig")]
         Minifig = 0,
-
-        [StringValue("part")]
         Part = 1,
-
-        [StringValue("set")]
         Set = 2,
-
-        [StringValue("book")]
         Book = 3,
-
-        [StringValue("gear")]
         Gear = 4,
-
-        [StringValue("catalog")]
         Catalog = 5,
-
-        [StringValue("instruction")]
         Instruction = 6,
-
-        [StringValue("unsorted_lot")]
         UnsortedLot = 7,
-
-        [StringValue("original_box")]
         OriginalBox = 8
     }
 }

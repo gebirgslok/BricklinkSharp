@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
+using BricklinkSharp.Client.Enums;
 
 namespace BricklinkSharp.Demos
 {
