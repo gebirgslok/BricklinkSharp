@@ -27,15 +27,14 @@ using System;
 using System.Text.Json.Serialization;
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace BricklinkSharp.Client
-{
-    [Serializable]
-    public class InventoryItem : ItemBase
-    {
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+namespace BricklinkSharp.Client;
 
-        [JsonPropertyName("category_id")]
-        public int CategoryId { get; set; }
-    }
+[Serializable]
+public class InventoryItem : ItemBase
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("category_id")]
+    public int CategoryId { get; set; }
 }

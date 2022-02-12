@@ -28,47 +28,46 @@ using System.Linq;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class FeedbackDemos
 {
-    internal static class FeedbackDemos
+    public static async Task GetFeedbackListDemo()
     {
-        public static async Task GetFeedbackListDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
+        using var client = BricklinkClientFactory.Build();
 
-            var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
-            Console.WriteLine("Received feedback ('In'):");
-            PrintHelper.PrintAsJson(feedbackInList);
+        var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
+        Console.WriteLine("Received feedback ('In'):");
+        PrintHelper.PrintAsJson(feedbackInList);
 
-            var feedbackOutList = await client.GetFeedbackListAsync(Direction.Out);
-            Console.WriteLine("Posted feedback ('Out'):");
-            PrintHelper.PrintAsJson(feedbackOutList);
-        }
+        var feedbackOutList = await client.GetFeedbackListAsync(Direction.Out);
+        Console.WriteLine("Posted feedback ('Out'):");
+        PrintHelper.PrintAsJson(feedbackOutList);
+    }
 
-        public static async Task GetFeedbackDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
-            var id = feedbackInList.First().FeedbackId;
+    public static async Task GetFeedbackDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
+        var id = feedbackInList.First().FeedbackId;
 
-            var feedback = await client.GetFeedbackAsync(id);
+        var feedback = await client.GetFeedbackAsync(id);
 
-            PrintHelper.PrintAsJson(feedback);
-        }
+        PrintHelper.PrintAsJson(feedback);
+    }
 
-        public static async Task PostFeedbackDemo(int orderId)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Awesome transaction, praise!");
+    public static async Task PostFeedbackDemo(int orderId)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Awesome transaction, praise!");
 
-            Console.WriteLine("Posted feedback:");
-            PrintHelper.PrintAsJson(feedback);
-        }
+        Console.WriteLine("Posted feedback:");
+        PrintHelper.PrintAsJson(feedback);
+    }
 
-        public static async Task ReplyFeedbackDemo(int feedbackId)
-        {
-            using var client = BricklinkClientFactory.Build();
-            await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
-        }
+    public static async Task ReplyFeedbackDemo(int feedbackId)
+    {
+        using var client = BricklinkClientFactory.Build();
+        await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
     }
 }

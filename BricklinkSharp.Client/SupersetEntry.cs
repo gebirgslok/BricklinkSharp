@@ -27,17 +27,16 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
-{
-    [Serializable]
-    public class SupersetEntry : SuperSubSetEntryBase
-    {
-        [JsonPropertyName("appears_as"), JsonConverter(typeof(AppearsAsStringConverter))]
-        public AppearsAs AppearsAs { get; set; }
+namespace BricklinkSharp.Client;
 
-        public override string ToString()
-        {
-            return $"{base.ToString()}, appears as: {AppearsAs}";
-        }
+[Serializable]
+public class SupersetEntry : SuperSubSetEntryBase
+{
+    [JsonPropertyName("appears_as"), JsonConverter(typeof(AppearsAsStringConverter))]
+    public AppearsAs AppearsAs { get; set; }
+
+    public override string ToString()
+    {
+        return $"{base.ToString()}, appears as: {AppearsAs}";
     }
 }

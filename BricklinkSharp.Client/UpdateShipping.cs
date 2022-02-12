@@ -26,25 +26,24 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class UpdateShipping
 {
-    [Serializable]
-    public class UpdateShipping
+    [JsonPropertyName("date_shipped")]
+    public DateTime? DateShipped { get; set; }
+
+    [JsonPropertyName("tracking_no")]
+    public string? TrackingNo { get; set; }
+
+    [JsonPropertyName("tracking_link")]
+    public string? TrackingLink { get; set; }
+
+    [JsonPropertyName("method_id")]
+    public int? MethodId { get; set; }
+
+    internal UpdateShipping()
     {
-        [JsonPropertyName("date_shipped")]
-        public DateTime? DateShipped { get; set; }
-
-        [JsonPropertyName("tracking_no")]
-        public string? TrackingNo { get; set; }
-
-        [JsonPropertyName("tracking_link")]
-        public string? TrackingLink { get; set; }
-
-        [JsonPropertyName("method_id")]
-        public int? MethodId { get; set; }
-
-        internal UpdateShipping()
-        {
-        }
     }
 }

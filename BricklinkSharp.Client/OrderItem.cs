@@ -27,63 +27,61 @@ using BricklinkSharp.Client.Json;
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+//[Serializable]
+//public class ItemsBatchList
+//{
+//    public IReadOnlyList<OrderItem[]>
+//}
+
+[Serializable]
+public class OrderItem
 {
-    //[Serializable]
-    //public class ItemsBatchList
-    //{
-    //    public IReadOnlyList<OrderItem[]>
-    //}
+    [JsonPropertyName("inventory_id")]
+    public int InventoryId { get; set; }
 
-    [Serializable]
-    public class OrderItem
-    {
-        [JsonPropertyName("inventory_id")]
-        public int InventoryId { get; set; }
+    [JsonPropertyName("item")]
+    public InventoryItem Item { get; set; } = null!;
 
-        [JsonPropertyName("item")]
-        public InventoryItem Item { get; set; } = null!;
+    [JsonPropertyName("color_id")]
+    public int ColorId { get; set; }
 
-        [JsonPropertyName("color_id")]
-        public int ColorId { get; set; }
+    [JsonPropertyName("color_name")]
+    public string? ColorName { get; set; }
 
-        [JsonPropertyName("color_name")]
-        public string? ColorName { get; set; }
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
 
-        [JsonPropertyName("quantity")]
-        public int Quantity { get; set; }
+    [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
+    public Condition Condition { get; set; }
 
-        [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
-        public Condition Condition { get; set; }
+    [JsonPropertyName("completeness"), JsonConverter(typeof(CompletenessStringConverter))]
+    public Completeness Completeness { get; set; }
 
-        [JsonPropertyName("completeness"), JsonConverter(typeof(CompletenessStringConverter))]
-        public Completeness Completeness { get; set; }
+    [JsonPropertyName("unit_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal UnitPrice { get; set; }
 
-        [JsonPropertyName("unit_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal UnitPrice { get; set; }
+    [JsonPropertyName("unit_price_final"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal UnitPriceFinal { get; set; }
 
-        [JsonPropertyName("unit_price_final"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal UnitPriceFinal { get; set; }
+    [JsonPropertyName("disp_unit_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal DisplayUnitPrice { get; set; }
 
-        [JsonPropertyName("disp_unit_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal DisplayUnitPrice { get; set; }
+    [JsonPropertyName("disp_unit_price_final"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal DisplayUnitPriceFinal { get; set; }
 
-        [JsonPropertyName("disp_unit_price_final"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal DisplayUnitPriceFinal { get; set; }
+    [JsonPropertyName("currency_code")]
+    public string CurrencyCode { get; set; } = null!;
 
-        [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; } = null!;
+    [JsonPropertyName("disp_currency_code")]
+    public string DisplayCurrencyCode { get; set; } = null!;
 
-        [JsonPropertyName("disp_currency_code")]
-        public string DisplayCurrencyCode { get; set; } = null!;
+    [JsonPropertyName("remarks")]
+    public string? Remarks { get; set; }
 
-        [JsonPropertyName("remarks")]
-        public string? Remarks { get; set; }
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
 
-        [JsonPropertyName("description")]
-        public string? Description { get; set; }
-
-        [JsonPropertyName("weight"), JsonConverter(typeof(DoubleStringConverter))]
-        public double Weight { get; set; }
-    }
+    [JsonPropertyName("weight"), JsonConverter(typeof(DoubleStringConverter))]
+    public double Weight { get; set; }
 }

@@ -26,24 +26,23 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class Name
 {
-    [Serializable]
-    public class Name
+    [JsonPropertyName("full")]
+    public string FullName { get; set; } = null!;
+
+    [JsonPropertyName("first")]
+    public string? FirstName { get; set; }
+
+    [JsonPropertyName("last")]
+    public string? LastName { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("full")]
-        public string FullName { get; set; } = null!;
-
-        [JsonPropertyName("first")]
-        public string? FirstName { get; set; }
-
-        [JsonPropertyName("last")]
-        public string? LastName { get; set; }
-
-        public override string ToString()
-        {
-            return $"{FullName}{Environment.NewLine}" +
-                $"(First name: {FirstName ?? "Null"}, Last name: {LastName ?? "Null"})";
-        }
+        return $"{FullName}{Environment.NewLine}" +
+               $"(First name: {FirstName ?? "Null"}, Last name: {LastName ?? "Null"})";
     }
 }

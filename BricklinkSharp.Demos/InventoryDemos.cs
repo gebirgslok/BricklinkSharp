@@ -28,68 +28,33 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class InventoryDemos
 {
-    internal static class InventoryDemos
+    public static async Task UpdatedInventoryDemo(int id)
     {
-        public static async Task UpdatedInventoryDemo(int id)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var inventory = await client.UpdateInventoryAsync(id, new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
+        using var client = BricklinkClientFactory.Build();
+        var inventory = await client.UpdateInventoryAsync(id, new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
             
-            PrintHelper.PrintAsJson(inventory);
-        }
+        PrintHelper.PrintAsJson(inventory);
+    }
 
-        public static async Task DeleteInventoryDemo(int id)
-        {
-            using var client = BricklinkClientFactory.Build();
-            await client.DeleteInventoryAsync(id);
-            Console.WriteLine($"Successfully deleted inventory with ID = {id}.");
-        }
+    public static async Task DeleteInventoryDemo(int id)
+    {
+        using var client = BricklinkClientFactory.Build();
+        await client.DeleteInventoryAsync(id);
+        Console.WriteLine($"Successfully deleted inventory with ID = {id}.");
+    }
 
-        public static async Task CreateInventoriesDemo()
+    public static async Task CreateInventoriesDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var newInventories = new NewInventory[]
         {
-            using var client = BricklinkClientFactory.Build();
-            var newInventories = new NewInventory[]
+            new NewInventory
             {
-                new NewInventory
-                {
-                    ColorId = 2,
-                    Condition = Condition.Used,
-                    Item = new ItemBase
-                    {
-                        Number = "3003",
-                        Type = ItemType.Part
-                    },
-                    Quantity = 5,
-                    UnitPrice = 0.01M,
-                    Remarks = "Good used condition"
-                },
-
-                new NewInventory
-                {
-                    ColorId = 3,
-                    Condition = Condition.Used,
-                    Item = new ItemBase
-                    {
-                        Number = "3003",
-                        Type = ItemType.Part
-                    },
-                    Quantity = 5,
-                    UnitPrice = 0.01M,
-                    Remarks = "Good used condition"
-                }
-            };
-
-            await client.CreateInventoriesAsync(newInventories);
-        }
-
-        public static async Task<Inventory> CreateInventoryDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var newInventory = new NewInventory
-            {
-                ColorId = 1,
+                ColorId = 2,
                 Condition = Condition.Used,
                 Item = new ItemBase
                 {
@@ -98,29 +63,63 @@ namespace BricklinkSharp.Demos
                 },
                 Quantity = 5,
                 UnitPrice = 0.01M,
-                Description = "Good used condition"
-            };
+                Remarks = "Good used condition"
+            },
 
-            var inventory = await client.CreateInventoryAsync(newInventory);
-            PrintHelper.PrintAsJson(inventory);
-            return inventory;
-        }
+            new NewInventory
+            {
+                ColorId = 3,
+                Condition = Condition.Used,
+                Item = new ItemBase
+                {
+                    Number = "3003",
+                    Type = ItemType.Part
+                },
+                Quantity = 5,
+                UnitPrice = 0.01M,
+                Remarks = "Good used condition"
+            }
+        };
 
-        public static async Task GetInventoryDemo()
+        await client.CreateInventoriesAsync(newInventories);
+    }
+
+    public static async Task<Inventory> CreateInventoryDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var newInventory = new NewInventory
         {
-            using var client = BricklinkClientFactory.Build();
-            var inventory = await client.GetInventoryAsync(1);
+            ColorId = 1,
+            Condition = Condition.Used,
+            Item = new ItemBase
+            {
+                Number = "3003",
+                Type = ItemType.Part
+            },
+            Quantity = 5,
+            UnitPrice = 0.01M,
+            Description = "Good used condition"
+        };
 
-            PrintHelper.PrintAsJson(inventory);
-        }
+        var inventory = await client.CreateInventoryAsync(newInventory);
+        PrintHelper.PrintAsJson(inventory);
+        return inventory;
+    }
 
-        public static async Task GetInventoryListDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var inventories = await client.GetInventoryListAsync(new List<ItemType> { ItemType.Part, ItemType.Minifig },
-                excludedStatusFlags: new List<InventoryStatusType> { InventoryStatusType.Reserved });
+    public static async Task GetInventoryDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var inventory = await client.GetInventoryAsync(1);
 
-            PrintHelper.PrintAsJson(inventories);
-        }
+        PrintHelper.PrintAsJson(inventory);
+    }
+
+    public static async Task GetInventoryListDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var inventories = await client.GetInventoryListAsync(new List<ItemType> { ItemType.Part, ItemType.Minifig },
+            excludedStatusFlags: new List<InventoryStatusType> { InventoryStatusType.Reserved });
+
+        PrintHelper.PrintAsJson(inventories);
     }
 }

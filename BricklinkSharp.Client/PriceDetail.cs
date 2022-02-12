@@ -27,32 +27,31 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class PriceDetail
 {
-    [Serializable]
-    public class PriceDetail
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+
+    [JsonPropertyName("unit_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal UnitPrice { get; set; }
+
+    [JsonPropertyName("shipping_available")]
+    public bool? IsShippingAvailable { get; set; }
+
+    [JsonPropertyName("seller_country_code")]
+    public string? SellerCountryCode { get; set; }
+
+    [JsonPropertyName("buyer_country_code")]
+    public string? BuyerCountryCode { get; set; }
+
+    [JsonPropertyName("date_ordered")]
+    public DateTime? OrderDate { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("quantity")]
-        public int Quantity { get; set; }
-
-        [JsonPropertyName("unit_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal UnitPrice { get; set; }
-
-        [JsonPropertyName("shipping_available")]
-        public bool? IsShippingAvailable { get; set; }
-
-        [JsonPropertyName("seller_country_code")]
-        public string? SellerCountryCode { get; set; }
-
-        [JsonPropertyName("buyer_country_code")]
-        public string? BuyerCountryCode { get; set; }
-
-        [JsonPropertyName("date_ordered")]
-        public DateTime? OrderDate { get; set; }
-
-        public override string ToString()
-        {
-            return $"Quantity: {Quantity}, unit price: {UnitPrice}";
-        }
+        return $"Quantity: {Quantity}, unit price: {UnitPrice}";
     }
 }

@@ -26,20 +26,19 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class KnownColor
 {
-    [Serializable]
-    public class KnownColor
+    [JsonPropertyName("color_id")]
+    public int ColorId { get; set; }
+
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("color_id")]
-        public int ColorId { get; set; }
-
-        [JsonPropertyName("quantity")]
-        public int Quantity { get; set; }
-
-        public override string ToString()
-        {
-            return $"Color ID: {ColorId}, quantity: {Quantity}";
-        }
+        return $"Color ID: {ColorId}, quantity: {Quantity}";
     }
 }

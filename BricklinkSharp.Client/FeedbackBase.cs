@@ -26,17 +26,16 @@
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class FeedbackBase
 {
-    public class FeedbackBase
-    {
-        [JsonPropertyName("order_id")]
-        public int OrderId { get; set; }
+    [JsonPropertyName("order_id")]
+    public int OrderId { get; set; }
 
-        [JsonPropertyName("rating"), JsonConverter(typeof(RatingTypeIntConverter))]
-        public RatingType Rating { get; set; }
+    [JsonPropertyName("rating"), JsonConverter(typeof(RatingTypeIntConverter))]
+    public RatingType Rating { get; set; }
 
-        [JsonPropertyName("comment")]
-        public string Comment { get; set; } = null!;
-    }
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; } = null!;
 }

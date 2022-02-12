@@ -23,12 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum Completeness
 {
-    public enum Completeness
-    {
-        Complete = 0,
-        Incomplete = 1,
-        Sealed = 2
-    }
+    Complete = 0,
+    Incomplete = 1,
+    Sealed = 2
 }

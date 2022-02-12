@@ -27,27 +27,26 @@ using System;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class SettingDemos
 {
-    internal static class SettingDemos
+    public static async Task<ShippingMethod[]> GetShippingMethodListDemo()
     {
-        public static async Task<ShippingMethod[]> GetShippingMethodListDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var shippingMethods = await client.GetShippingMethodListAsync();
+        using var client = BricklinkClientFactory.Build();
+        var shippingMethods = await client.GetShippingMethodListAsync();
 
-            PrintHelper.PrintAsJson(shippingMethods);
+        PrintHelper.PrintAsJson(shippingMethods);
 
-            return shippingMethods;
-        }
+        return shippingMethods;
+    }
 
-        public static async Task GetShippingMethodDemo(int id)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var shippingMethod = await client.GetShippingMethodAsync(id);
+    public static async Task GetShippingMethodDemo(int id)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var shippingMethod = await client.GetShippingMethodAsync(id);
 
-            PrintHelper.PrintAsJson(shippingMethod);
-            Console.WriteLine(shippingMethod.ToString());
-        }
+        PrintHelper.PrintAsJson(shippingMethod);
+        Console.WriteLine(shippingMethod.ToString());
     }
 }

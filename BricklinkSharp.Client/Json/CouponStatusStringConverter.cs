@@ -28,27 +28,26 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class CouponStatusStringConverter : JsonConverter<CouponStatus>
-    {
-        public override CouponStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var stringValue = reader.GetString();
-            return stringValue switch
-            {
-                "O" => CouponStatus.Open,
-                "A" => CouponStatus.Redeemed,
-                "D" => CouponStatus.Declined,
-                "E" => CouponStatus.Expired,
-                _ => CouponStatus.Expired,
-            };
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, CouponStatus value, JsonSerializerOptions options)
+internal class CouponStatusStringConverter : JsonConverter<CouponStatus>
+{
+    public override CouponStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var stringValue = reader.GetString();
+        return stringValue switch
         {
-            var typeString = value.ToDomainString();
-            writer.WriteStringValue(typeString);
-        }
+            "O" => CouponStatus.Open,
+            "A" => CouponStatus.Redeemed,
+            "D" => CouponStatus.Declined,
+            "E" => CouponStatus.Expired,
+            _ => CouponStatus.Expired,
+        };
+    }
+
+    public override void Write(Utf8JsonWriter writer, CouponStatus value, JsonSerializerOptions options)
+    {
+        var typeString = value.ToDomainString();
+        writer.WriteStringValue(typeString);
     }
 }

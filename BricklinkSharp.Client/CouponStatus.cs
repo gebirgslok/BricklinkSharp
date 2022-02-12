@@ -23,13 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum CouponStatus
 {
-    public enum CouponStatus
-    {
-        Open = 0,
-        Redeemed = 1,
-        Declined = 2,
-        Expired = 3
-    }
+    Open = 0,
+    Redeemed = 1,
+    Declined = 2,
+    Expired = 3
 }

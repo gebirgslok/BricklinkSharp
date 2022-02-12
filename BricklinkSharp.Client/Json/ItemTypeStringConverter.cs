@@ -28,33 +28,32 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
+namespace BricklinkSharp.Client.Json;
+
+internal class ItemTypeStringConverter : JsonConverter<ItemType>
 {
-    internal class ItemTypeStringConverter : JsonConverter<ItemType>
+    public override ItemType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override ItemType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var stringValue = reader.GetString();
+
+        if (stringValue == null)
         {
-            var stringValue = reader.GetString();
-
-            if (stringValue == null)
-            {
-                throw new NullReferenceException(nameof(stringValue));
-            }
-
-            var removedUnderscore = stringValue.Replace("_", string.Empty);
-
-            if (Enum.TryParse(removedUnderscore, true, out ItemType result))
-            {
-                return result;
-            }
-
-            return 0;
+            throw new NullReferenceException(nameof(stringValue));
         }
 
-        public override void Write(Utf8JsonWriter writer, ItemType value, JsonSerializerOptions options)
+        var removedUnderscore = stringValue.Replace("_", string.Empty);
+
+        if (Enum.TryParse(removedUnderscore, true, out ItemType result))
         {
-            var typeString = value.ToDomainString().ToUpperInvariant();
-            writer.WriteStringValue(typeString);
+            return result;
         }
+
+        return 0;
+    }
+
+    public override void Write(Utf8JsonWriter writer, ItemType value, JsonSerializerOptions options)
+    {
+        var typeString = value.ToDomainString().ToUpperInvariant();
+        writer.WriteStringValue(typeString);
     }
 }

@@ -26,17 +26,16 @@
 using System.Text.Json.Serialization;
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class Rating
 {
-    public class Rating
-    {
-        [JsonPropertyName("PRAISE")]
-        public int NumOfPraises { get; set; }
+    [JsonPropertyName("PRAISE")]
+    public int NumOfPraises { get; set; }
 
-        [JsonPropertyName("NEUTRAL")]
-        public int NumOfNeutrals { get; set; }
+    [JsonPropertyName("NEUTRAL")]
+    public int NumOfNeutrals { get; set; }
 
-        [JsonPropertyName("COMPLAINT")]
-        public int NumOfComplaints { get; set; }
-    }
+    [JsonPropertyName("COMPLAINT")]
+    public int NumOfComplaints { get; set; }
 }

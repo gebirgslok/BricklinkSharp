@@ -28,32 +28,31 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class AppearsAsStringConverter : JsonConverter<AppearsAs>
-    {
-        public override AppearsAs Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var stringValue = reader.GetString();
-            switch (stringValue)
-            {
-                case "A":
-                    return AppearsAs.Alternate;
-                case "R":
-                    return AppearsAs.Regular;
-                case "E":
-                    return AppearsAs.Extra;
-                case "C":
-                    return AppearsAs.Counterpart;
-                default:
-                    return AppearsAs.Regular;
-            }
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, AppearsAs value, JsonSerializerOptions options)
+internal class AppearsAsStringConverter : JsonConverter<AppearsAs>
+{
+    public override AppearsAs Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var stringValue = reader.GetString();
+        switch (stringValue)
         {
-            var typeString = value.ToDomainString();
-            writer.WriteStringValue(typeString);
+            case "A":
+                return AppearsAs.Alternate;
+            case "R":
+                return AppearsAs.Regular;
+            case "E":
+                return AppearsAs.Extra;
+            case "C":
+                return AppearsAs.Counterpart;
+            default:
+                return AppearsAs.Regular;
         }
+    }
+
+    public override void Write(Utf8JsonWriter writer, AppearsAs value, JsonSerializerOptions options)
+    {
+        var typeString = value.ToDomainString();
+        writer.WriteStringValue(typeString);
     }
 }

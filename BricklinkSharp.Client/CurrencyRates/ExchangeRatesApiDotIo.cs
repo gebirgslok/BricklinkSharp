@@ -31,74 +31,73 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BricklinkSharp.Client.CurrencyRates
+namespace BricklinkSharp.Client.CurrencyRates;
+
+// Calls https://exchangeratesapi.io/ Foreign exchange rate service
+internal class ExchangeRatesApiDotIo : IExchangeRatesService
 {
-    // Calls https://exchangeratesapi.io/ Foreign exchange rate service
-    internal class ExchangeRatesApiDotIo : IExchangeRatesService
+    class ExchangeRatesApiResponse
     {
-        class ExchangeRatesApiResponse
+        [JsonPropertyName("rates")]
+        public Dictionary<string, decimal> Rates { get; set; } = new Dictionary<string, decimal>();
+
+        [JsonPropertyName("base")]
+        public string Base { get; set; } = null!;
+
+        [JsonPropertyName("date")]
+        public DateTime Date { get; set; }
+    }
+
+    private readonly HttpClient _httpClient;
+
+    private static ExchangeRatesApiResponse? _cachedResponse;
+
+    public ExchangeRatesApiDotIo(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
+    private static decimal GetRate(string currency, ExchangeRatesApiResponse response)
+    {
+        var currencyUpper = currency.ToUpperInvariant();
+
+        if (currencyUpper == "EUR")
         {
-            [JsonPropertyName("rates")]
-            public Dictionary<string, decimal> Rates { get; set; } = new Dictionary<string, decimal>();
-
-            [JsonPropertyName("base")]
-            public string Base { get; set; } = null!;
-
-            [JsonPropertyName("date")]
-            public DateTime Date { get; set; }
+            return 1.0M;
         }
 
-        private readonly HttpClient _httpClient;
-
-        private static ExchangeRatesApiResponse? _cachedResponse;
-
-        public ExchangeRatesApiDotIo(HttpClient httpClient)
+        if (!response.Rates.ContainsKey(currencyUpper))
         {
-            _httpClient = httpClient;
+            throw new CurrencyNotSupportedException(currencyUpper);
         }
 
-        private static decimal GetRate(string currency, ExchangeRatesApiResponse response)
-        {
-            var currencyUpper = currency.ToUpperInvariant();
+        return response.Rates[currencyUpper];
+    }
 
-            if (currencyUpper == "EUR")
+    public async Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
+        CancellationToken cancellationToken = default)
+    {
+        if (_cachedResponse == null || (DateTime.Now - _cachedResponse.Date) >= TimeSpan.FromHours(24))
+        {
+            var key = ExchangeRatesApiDotIoConfiguration.Instance.ApiKey;
+
+            if (key == null)
             {
-                return 1.0M;
+                throw new BricklinkMissingCredentialsException(new List<string>{ "Exchangeratesapi.io - API Access Key" });
             }
 
-            if (!response.Rates.ContainsKey(currencyUpper))
-            {
-                throw new CurrencyNotSupportedException(currencyUpper);
-            }
-
-            return response.Rates[currencyUpper];
-        }
-
-        public async Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
-            CancellationToken cancellationToken = default)
-        {
-            if (_cachedResponse == null || (DateTime.Now - _cachedResponse.Date) >= TimeSpan.FromHours(24))
-            {
-                var key = ExchangeRatesApiDotIoConfiguration.Instance.ApiKey;
-
-                if (key == null)
-                {
-                    throw new BricklinkMissingCredentialsException(new List<string>{ "Exchangeratesapi.io - API Access Key" });
-                }
-
-                var response = await _httpClient.GetAsync($"http://api.exchangeratesapi.io/v1/latest?access_key={key}", 
-                    cancellationToken);
-                response.EnsureSuccessStatusCode();
+            var response = await _httpClient.GetAsync($"http://api.exchangeratesapi.io/v1/latest?access_key={key}", 
+                cancellationToken);
+            response.EnsureSuccessStatusCode();
 
 #if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
                 var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
 #else
-                var contentAsString = await response.Content.ReadAsStringAsync();
+            var contentAsString = await response.Content.ReadAsStringAsync();
 #endif
-                _cachedResponse = JsonSerializer.Deserialize<ExchangeRatesApiResponse>(contentAsString);
-            }
-
-            return GetRate(toCurrency, _cachedResponse!) / GetRate(fromCurrency, _cachedResponse!);
+            _cachedResponse = JsonSerializer.Deserialize<ExchangeRatesApiResponse>(contentAsString);
         }
+
+        return GetRate(toCurrency, _cachedResponse!) / GetRate(fromCurrency, _cachedResponse!);
     }
 }

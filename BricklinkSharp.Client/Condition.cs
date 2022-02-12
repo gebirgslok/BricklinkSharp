@@ -23,11 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum Condition
 {
-    public enum Condition
-    {
-        New = 0,
-        Used = 1
-    }
+    New = 0,
+    Used = 1
 }

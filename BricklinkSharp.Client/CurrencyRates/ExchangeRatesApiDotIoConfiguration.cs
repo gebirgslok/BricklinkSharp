@@ -23,18 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.CurrencyRates
+namespace BricklinkSharp.Client.CurrencyRates;
+
+public class ExchangeRatesApiDotIoConfiguration
 {
-    public class ExchangeRatesApiDotIoConfiguration
+    private static ExchangeRatesApiDotIoConfiguration? _instance;
+
+    public static ExchangeRatesApiDotIoConfiguration Instance => _instance ??= new ExchangeRatesApiDotIoConfiguration();
+
+    public string? ApiKey { get; set;  }
+
+    private ExchangeRatesApiDotIoConfiguration()
     {
-        private static ExchangeRatesApiDotIoConfiguration? _instance;
-
-        public static ExchangeRatesApiDotIoConfiguration Instance => _instance ??= new ExchangeRatesApiDotIoConfiguration();
-
-        public string? ApiKey { get; set;  }
-
-        private ExchangeRatesApiDotIoConfiguration()
-        {
-        }
     }
 }

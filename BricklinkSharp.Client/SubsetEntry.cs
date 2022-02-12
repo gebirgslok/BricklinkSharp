@@ -26,23 +26,22 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class SubsetEntry : SuperSubSetEntryBase
 {
-    [Serializable]
-    public class SubsetEntry : SuperSubSetEntryBase
+    [JsonPropertyName("color_id")]
+    public int ColorId { get; set; }
+
+    [JsonPropertyName("extra_quantity")]
+    public int ExtraQuantity { get; set; }
+
+    [JsonPropertyName("is_alternate")]
+    public bool IsAlternate { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("color_id")]
-        public int ColorId { get; set; }
-
-        [JsonPropertyName("extra_quantity")]
-        public int ExtraQuantity { get; set; }
-
-        [JsonPropertyName("is_alternate")]
-        public bool IsAlternate { get; set; }
-
-        public override string ToString()
-        {
-            return $"{base.ToString()}, color ID: {ColorId}";
-        }
+        return $"{base.ToString()}, color ID: {ColorId}";
     }
 }

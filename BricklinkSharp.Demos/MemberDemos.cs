@@ -26,16 +26,15 @@
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
-{
-    internal static class MemberDemos
-    {
-        public static async Task GetMemberRatingDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var rating = await client.GetMemberRatingAsync("bluser");
+namespace BricklinkSharp.Demos;
 
-            PrintHelper.PrintAsJson(rating);
-        }
+internal static class MemberDemos
+{
+    public static async Task GetMemberRatingDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var rating = await client.GetMemberRatingAsync("bluser");
+
+        PrintHelper.PrintAsJson(rating);
     }
 }

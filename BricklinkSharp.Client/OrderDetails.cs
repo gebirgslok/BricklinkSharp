@@ -27,48 +27,47 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class OrderDetails : OrderBase
 {
-    [Serializable]
-    public class OrderDetails : OrderBase
-    {
-        [JsonPropertyName("store_name")]
-        public string? StoreName { get; set; }
+    [JsonPropertyName("store_name")]
+    public string? StoreName { get; set; }
 
-        [JsonPropertyName("buyer_email")]
-        public string BuyerEmail { get; set; } = null!;
+    [JsonPropertyName("buyer_email")]
+    public string BuyerEmail { get; set; } = null!;
 
-        [JsonPropertyName("buyer_order_count")]
-        public int BuyerOrderCount { get; set; }
+    [JsonPropertyName("buyer_order_count")]
+    public int BuyerOrderCount { get; set; }
 
-        [JsonPropertyName("require_insurance")]
-        public bool RequireInsurance { get; set; }
+    [JsonPropertyName("require_insurance")]
+    public bool RequireInsurance { get; set; }
 
-        [JsonPropertyName("is_invoiced")]
-        public bool IsInvoiced { get; set; }
+    [JsonPropertyName("is_invoiced")]
+    public bool IsInvoiced { get; set; }
 
-        [JsonPropertyName("is_filed")]
-        public bool IsFiled { get; set; }
+    [JsonPropertyName("is_filed")]
+    public bool IsFiled { get; set; }
 
-        [JsonPropertyName("drive_thru_sent")]
-        public bool WasDriveThruSent { get; set; }
+    [JsonPropertyName("drive_thru_sent")]
+    public bool WasDriveThruSent { get; set; }
 
-        [JsonPropertyName("salesTax_collected_by_bl")]
-        public bool WasSalesTaxCollectedByBricklink { get; set; }
+    [JsonPropertyName("salesTax_collected_by_bl")]
+    public bool WasSalesTaxCollectedByBricklink { get; set; }
 
-        [JsonPropertyName("remarks")]
-        public string? Remarks { get; set; }
+    [JsonPropertyName("remarks")]
+    public string? Remarks { get; set; }
 
-        [JsonPropertyName("total_weight"), JsonConverter(typeof(DoubleStringConverter))]
-        public double TotalWeight { get; set; }
+    [JsonPropertyName("total_weight"), JsonConverter(typeof(DoubleStringConverter))]
+    public double TotalWeight { get; set; }
 
-        [JsonPropertyName("shipping")]
-        public Shipping Shipping { get; set; } = null!;
+    [JsonPropertyName("shipping")]
+    public Shipping Shipping { get; set; } = null!;
 
-        [JsonPropertyName("cost")]
-        public Cost Cost { get; set; } = null!;
+    [JsonPropertyName("cost")]
+    public Cost Cost { get; set; } = null!;
 
-        [JsonPropertyName("disp_cost")]
-        public Cost DisplayCost { get; set; } = null!;
-    }
+    [JsonPropertyName("disp_cost")]
+    public Cost DisplayCost { get; set; } = null!;
 }

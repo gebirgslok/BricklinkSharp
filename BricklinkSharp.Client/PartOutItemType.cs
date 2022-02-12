@@ -23,12 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum PartOutItemType
 {
-    public enum PartOutItemType
-    {
-        Set = 0,
-        Minifig = 1,
-        Gear = 2,
-    }
+    Set = 0,
+    Minifig = 1,
+    Gear = 2,
 }

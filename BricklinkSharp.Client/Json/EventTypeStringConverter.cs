@@ -28,25 +28,24 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
+namespace BricklinkSharp.Client.Json;
+
+internal class EventTypeStringConverter : JsonConverter<EventType>
 {
-    internal class EventTypeStringConverter : JsonConverter<EventType>
+    public override EventType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override EventType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var stringValue = reader.GetString();
+
+        if (Enum.TryParse(stringValue, true, out EventType result))
         {
-            var stringValue = reader.GetString();
-
-            if (Enum.TryParse(stringValue, true, out EventType result))
-            {
-                return result;
-            }
-
-            return 0;
+            return result;
         }
 
-        public override void Write(Utf8JsonWriter writer, EventType value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value.ToDomainString());
-        }
+        return 0;
+    }
+
+    public override void Write(Utf8JsonWriter writer, EventType value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToDomainString());
     }
 }

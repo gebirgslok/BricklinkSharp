@@ -26,14 +26,13 @@
 using System;
 using System.Text.Json;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class PrintHelper
 {
-    internal static class PrintHelper
+    public static void PrintAsJson(object data)
     {
-        public static void PrintAsJson(object data)
-        {
-            var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-            Console.WriteLine(json);
-        }
+        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+        Console.WriteLine(json);
     }
 }

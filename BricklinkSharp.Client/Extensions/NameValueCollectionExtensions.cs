@@ -26,16 +26,15 @@
 using System;
 using System.Collections.Specialized;
 
-namespace BricklinkSharp.Client.Extensions
+namespace BricklinkSharp.Client.Extensions;
+
+internal static class NameValueCollectionExtensions
 {
-    internal static class NameValueCollectionExtensions
+    public static void AddIfNotNull<T>(this NameValueCollection collection, string key, T value, Func<T, string>? toString = null)
     {
-        public static void AddIfNotNull<T>(this NameValueCollection collection, string key, T value, Func<T, string>? toString = null)
+        if (value != null)
         {
-            if (value != null)
-            {
-                collection[key] = toString == null ? value.ToString() : toString.Invoke(value);
-            }
+            collection[key] = toString == null ? value.ToString() : toString.Invoke(value);
         }
     }
 }

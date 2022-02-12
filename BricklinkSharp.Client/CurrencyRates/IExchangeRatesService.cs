@@ -26,11 +26,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BricklinkSharp.Client.CurrencyRates
+namespace BricklinkSharp.Client.CurrencyRates;
+
+internal interface IExchangeRatesService
 {
-    internal interface IExchangeRatesService
-    {
-        Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
-            CancellationToken cancellationToken = default);
-    }
+    Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
+        CancellationToken cancellationToken = default);
 }

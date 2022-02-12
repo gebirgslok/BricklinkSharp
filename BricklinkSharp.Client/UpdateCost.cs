@@ -26,34 +26,33 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class UpdateCost
 {
-    [Serializable]
-    public class UpdateCost
+    [JsonPropertyName("credit")]
+    public decimal? Credit { get; set; }
+
+    [JsonPropertyName("insurance")]
+    public decimal? Insurance { get; set; }
+
+    [JsonPropertyName("etc1")]
+    public decimal? Etc1 { get; set; }
+
+    [JsonPropertyName("etc2")]
+    public decimal? Etc2 { get; set; }
+
+    [JsonPropertyName("shipping")]
+    public decimal? Shipping { get; set; }
+
+    internal bool AllPropertiesUnset => Credit != null &&
+                                        Insurance != null &&
+                                        Shipping != null &&
+                                        Etc1 != null &&
+                                        Etc2 != null;
+
+    internal UpdateCost()
     {
-        [JsonPropertyName("credit")]
-        public decimal? Credit { get; set; }
-
-        [JsonPropertyName("insurance")]
-        public decimal? Insurance { get; set; }
-
-        [JsonPropertyName("etc1")]
-        public decimal? Etc1 { get; set; }
-
-        [JsonPropertyName("etc2")]
-        public decimal? Etc2 { get; set; }
-
-        [JsonPropertyName("shipping")]
-        public decimal? Shipping { get; set; }
-
-        internal bool AllPropertiesUnset => Credit != null &&
-                                  Insurance != null &&
-                                  Shipping != null &&
-                                  Etc1 != null &&
-                                  Etc2 != null;
-
-        internal UpdateCost()
-        {
-        }
     }
 }

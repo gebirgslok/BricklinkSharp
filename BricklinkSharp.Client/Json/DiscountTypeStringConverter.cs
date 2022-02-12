@@ -28,28 +28,27 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class DiscountTypeStringConverter : JsonConverter<DiscountType>
-    {
-        public override DiscountType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var stringValue = reader.GetString();
-            switch (stringValue)
-            {
-                case "F":
-                    return DiscountType.Fixed;
-                case "S":
-                    return DiscountType.Percentage;
-                default:
-                    return DiscountType.Fixed;
-            }
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, DiscountType value, JsonSerializerOptions options)
+internal class DiscountTypeStringConverter : JsonConverter<DiscountType>
+{
+    public override DiscountType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var stringValue = reader.GetString();
+        switch (stringValue)
         {
-            var typeString = value.ToDomainString();
-            writer.WriteStringValue(typeString);
+            case "F":
+                return DiscountType.Fixed;
+            case "S":
+                return DiscountType.Percentage;
+            default:
+                return DiscountType.Fixed;
         }
+    }
+
+    public override void Write(Utf8JsonWriter writer, DiscountType value, JsonSerializerOptions options)
+    {
+        var typeString = value.ToDomainString();
+        writer.WriteStringValue(typeString);
     }
 }

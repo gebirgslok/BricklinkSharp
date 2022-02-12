@@ -23,18 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum ItemType
 {
-    public enum ItemType
-    {
-        Minifig = 0,
-        Part = 1,
-        Set = 2,
-        Book = 3,
-        Gear = 4,
-        Catalog = 5,
-        Instruction = 6,
-        UnsortedLot = 7,
-        OriginalBox = 8
-    }
+    Minifig = 0,
+    Part = 1,
+    Set = 2,
+    Book = 3,
+    Gear = 4,
+    Catalog = 5,
+    Instruction = 6,
+    UnsortedLot = 7,
+    OriginalBox = 8
 }

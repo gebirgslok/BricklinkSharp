@@ -26,38 +26,37 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class Address
 {
-    [Serializable]
-    public class Address
+    [JsonPropertyName("name")]
+    public Name Name { get; set; } = null!;
+
+    [JsonPropertyName("full")]
+    public string FullAddressAsString { get; set; } = null!;
+
+    [JsonPropertyName("address1")]
+    public string? Address1 { get; set; }
+
+    [JsonPropertyName("address2")]
+    public string? Address2 { get; set; }
+
+    [JsonPropertyName("country_code")]
+    public string CountryCode { get; set; } = null!;
+
+    [JsonPropertyName("city")]
+    public string? City { get; set; }
+
+    [JsonPropertyName("state")]
+    public string? State { get; set; }
+
+    [JsonPropertyName("postal_code")]
+    public string? PostalCode { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("name")]
-        public Name Name { get; set; } = null!;
-
-        [JsonPropertyName("full")]
-        public string FullAddressAsString { get; set; } = null!;
-
-        [JsonPropertyName("address1")]
-        public string? Address1 { get; set; }
-
-        [JsonPropertyName("address2")]
-        public string? Address2 { get; set; }
-
-        [JsonPropertyName("country_code")]
-        public string CountryCode { get; set; } = null!;
-
-        [JsonPropertyName("city")]
-        public string? City { get; set; }
-
-        [JsonPropertyName("state")]
-        public string? State { get; set; }
-
-        [JsonPropertyName("postal_code")]
-        public string? PostalCode { get; set; }
-
-        public override string ToString()
-        {
-            return FullAddressAsString;
-        }
+        return FullAddressAsString;
     }
 }

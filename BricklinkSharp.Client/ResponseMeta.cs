@@ -27,23 +27,22 @@ using System;
 using System.Text.Json.Serialization;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+internal class ResponseMeta
 {
-    [Serializable]
-    internal class ResponseMeta
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = null!;
+
+    [JsonPropertyName("message")]
+    public string Message { get; set; } = null!;
+
+    [JsonPropertyName("code")]
+    public int Code { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("description")]
-        public string Description { get; set; } = null!;
-
-        [JsonPropertyName("message")]
-        public string Message { get; set; } = null!;
-
-        [JsonPropertyName("code")]
-        public int Code { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Code}, message: {Message}, description: {Description}";
-        }
+        return $"{Code}, message: {Message}, description: {Description}";
     }
 }

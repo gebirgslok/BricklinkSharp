@@ -25,56 +25,55 @@
 
 using System;
 
-namespace BricklinkSharp.Client.OAuth
+namespace BricklinkSharp.Client.OAuth;
+
+internal class WebParameter : IComparable<WebParameter>, IComparable
 {
-    internal class WebParameter : IComparable<WebParameter>, IComparable
+    public string Name { get;  }
+
+    public string Value { get; }
+
+    public WebParameter(string name, string value)
     {
-        public string Name { get;  }
+        Name = name;
+        Value = value;
+    }
 
-        public string Value { get; }
+    public override string ToString()
+    {
+        return $"{Name}={Value}";
+    }
 
-        public WebParameter(string name, string value)
+    public int CompareTo(WebParameter? other)
+    {
+        if (ReferenceEquals(this, other))
         {
-            Name = name;
-            Value = value;
+            return 0;
         }
 
-        public override string ToString()
+        if (other is null)
         {
-            return $"{Name}={Value}";
+            return 1;
         }
 
-        public int CompareTo(WebParameter? other)
+        var nameComparison = string.Compare(Name, other.Name, StringComparison.Ordinal);
+
+        if (nameComparison != 0)
         {
-            if (ReferenceEquals(this, other))
-            {
-                return 0;
-            }
-
-            if (other is null)
-            {
-                return 1;
-            }
-
-            var nameComparison = string.Compare(Name, other.Name, StringComparison.Ordinal);
-
-            if (nameComparison != 0)
-            {
-                return nameComparison;
-            }
-
-            return string.Compare(Value, other.Value, StringComparison.Ordinal);
+            return nameComparison;
         }
 
-        public int CompareTo(object? obj)
-        {
-            if (obj is WebParameter webParameter)
-            {
-                return CompareTo(webParameter);
-            }
+        return string.Compare(Value, other.Value, StringComparison.Ordinal);
+    }
 
-            throw new ArgumentException($"{nameof(obj)} must be of type {typeof(WebParameter)}," +
-                $"received {obj?.GetType().ToString() ?? "Null"}.");
+    public int CompareTo(object? obj)
+    {
+        if (obj is WebParameter webParameter)
+        {
+            return CompareTo(webParameter);
         }
+
+        throw new ArgumentException($"{nameof(obj)} must be of type {typeof(WebParameter)}," +
+                                    $"received {obj?.GetType().ToString() ?? "Null"}.");
     }
 }

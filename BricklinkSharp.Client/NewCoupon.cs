@@ -26,19 +26,18 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
-{
-    [Serializable]
-    public class NewCoupon : CouponBase
-    {
-        [JsonPropertyName("buyer_name")]
-        public string BuyerName { get; set; }
+namespace BricklinkSharp.Client;
 
-        public NewCoupon(string buyerName, string remarks)
-        {
-            BuyerName = buyerName;
-            Remarks = remarks;
-            AppliesTo = new CouponAppliesTo();
-        }
+[Serializable]
+public class NewCoupon : CouponBase
+{
+    [JsonPropertyName("buyer_name")]
+    public string BuyerName { get; set; }
+
+    public NewCoupon(string buyerName, string remarks)
+    {
+        BuyerName = buyerName;
+        Remarks = remarks;
+        AppliesTo = new CouponAppliesTo();
     }
 }

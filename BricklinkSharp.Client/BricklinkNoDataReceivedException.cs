@@ -26,17 +26,16 @@
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client
-{
-    public class BricklinkNoDataReceivedException : BricklinkException
-    {
-        internal BricklinkNoDataReceivedException(string url, HttpMethod httpMethod) : 
-            base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
-        {
-        }
+namespace BricklinkSharp.Client;
 
-        private BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+public class BricklinkNoDataReceivedException : BricklinkException
+{
+    internal BricklinkNoDataReceivedException(string url, HttpMethod httpMethod) : 
+        base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
+    {
+    }
+
+    private BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

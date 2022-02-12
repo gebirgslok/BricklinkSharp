@@ -28,69 +28,68 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class CouponDemos
 {
-    internal static class CouponDemos
+    internal static async Task UpdateCouponDemo(int couponId)
     {
-        internal static async Task UpdateCouponDemo(int couponId)
+        using var client = BricklinkClientFactory.Build();
+        var updateCoupon = new UpdateCoupon
         {
-            using var client = BricklinkClientFactory.Build();
-            var updateCoupon = new UpdateCoupon
+            DiscountType = DiscountType.Fixed,
+            DiscountAmount = 2.0m
+        };
+
+        updateCoupon.AppliesTo.ItemType = ItemType.Part;
+
+        var coupon = await client.UpdateCouponAsync(couponId, updateCoupon);
+
+        PrintHelper.PrintAsJson(coupon);
+    }
+
+    internal static async Task CreateCouponDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var newCoupon = new NewCoupon("bluser", "Special gift for you")
+        {
+            DiscountType = DiscountType.Percentage,
+            DiscountRate = 10
+        };
+        newCoupon.AppliesTo.ExceptOnSale = true;
+        newCoupon.AppliesTo.RestrictionType = CouponRestrictionType.ApplyToSpecifiedItemType;
+        newCoupon.AppliesTo.ItemType = null;
+
+        var coupon = await client.CreateCouponAsync(newCoupon);
+
+        PrintHelper.PrintAsJson(coupon);
+    }
+
+    internal static async Task DeleteCouponDemo(int couponId)
+    {
+        using var client = BricklinkClientFactory.Build();
+        await client.DeleteCouponAsync(couponId);
+
+        Console.WriteLine($"Coupon ID = {couponId} successfully deleted.");
+    }
+
+    internal static async Task GetCouponDemo(int couponId)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var coupon = await client.GetCouponAsync(couponId);
+
+        PrintHelper.PrintAsJson(coupon);
+    }
+
+    internal static async Task GetCouponsDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var coupons = await client.GetCouponsAsync(Direction.Out,
+            includedCouponStatusTypes: new List<CouponStatus> 
             {
-                DiscountType = DiscountType.Fixed,
-                DiscountAmount = 2.0m
-            };
+                CouponStatus.Open
+            });
 
-            updateCoupon.AppliesTo.ItemType = ItemType.Part;
-
-            var coupon = await client.UpdateCouponAsync(couponId, updateCoupon);
-
-            PrintHelper.PrintAsJson(coupon);
-        }
-
-        internal static async Task CreateCouponDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var newCoupon = new NewCoupon("bluser", "Special gift for you")
-            {
-                DiscountType = DiscountType.Percentage,
-                DiscountRate = 10
-            };
-            newCoupon.AppliesTo.ExceptOnSale = true;
-            newCoupon.AppliesTo.RestrictionType = CouponRestrictionType.ApplyToSpecifiedItemType;
-            newCoupon.AppliesTo.ItemType = null;
-
-            var coupon = await client.CreateCouponAsync(newCoupon);
-
-            PrintHelper.PrintAsJson(coupon);
-        }
-
-        internal static async Task DeleteCouponDemo(int couponId)
-        {
-            using var client = BricklinkClientFactory.Build();
-            await client.DeleteCouponAsync(couponId);
-
-            Console.WriteLine($"Coupon ID = {couponId} successfully deleted.");
-        }
-
-        internal static async Task GetCouponDemo(int couponId)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var coupon = await client.GetCouponAsync(couponId);
-
-            PrintHelper.PrintAsJson(coupon);
-        }
-
-        internal static async Task GetCouponsDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var coupons = await client.GetCouponsAsync(Direction.Out,
-                includedCouponStatusTypes: new List<CouponStatus> 
-                {
-                    CouponStatus.Open
-                });
-
-            PrintHelper.PrintAsJson(coupons);
-        }
+        PrintHelper.PrintAsJson(coupons);
     }
 }

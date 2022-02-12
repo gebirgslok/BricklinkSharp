@@ -28,149 +28,148 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class NewInventory : InventoryBase
 {
-    [Serializable]
-    public class NewInventory : InventoryBase
+    [JsonPropertyName("item")]
+    public ItemBase Item { get; set; } = null!;
+
+    private int GetTieredPricePropertiesSetCount()
     {
-        [JsonPropertyName("item")]
-        public ItemBase Item { get; set; } = null!;
+        var count = 0;
 
-        private int GetTieredPricePropertiesSetCount()
+        if (TierPrice1 > 0.0M)
         {
-            var count = 0;
-
-            if (TierPrice1 > 0.0M)
-            {
-                count += 1;
-            }
-
-            if (TierPrice2 > 0.0M)
-            {
-                count += 1;
-            }
-
-            if (TierPrice3 > 0.0M)
-            {
-                count += 1;
-            }
-
-            if (TierQuantity1 > 0)
-            {
-                count += 1;
-            }
-
-            if (TierQuantity2 > 0)
-            {
-                count += 1;
-            }
-
-            if (TierQuantity3 > 0)
-            {
-                count += 1;
-            }
-
-            return count;
+            count += 1;
         }
 
-        internal void ValidateThrowException()
+        if (TierPrice2 > 0.0M)
         {
-            if (Item.Type != ItemType.Set && Completeness != Completeness.Complete)
+            count += 1;
+        }
+
+        if (TierPrice3 > 0.0M)
+        {
+            count += 1;
+        }
+
+        if (TierQuantity1 > 0)
+        {
+            count += 1;
+        }
+
+        if (TierQuantity2 > 0)
+        {
+            count += 1;
+        }
+
+        if (TierQuantity3 > 0)
+        {
+            count += 1;
+        }
+
+        return count;
+    }
+
+    internal void ValidateThrowException()
+    {
+        if (Item.Type != ItemType.Set && Completeness != Completeness.Complete)
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+                {
+                    {"Item.Type", Item.Type},
+                    {nameof(Completeness), Completeness}
+                },
+                $"{Completeness} can only be applied to items of type {ItemType.Set}.", 
+                GetType());
+        }
+
+        if (IsStockRoom && string.IsNullOrEmpty(StockRoomId))
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+                {
+                    {nameof(StockRoomId), "Null"}
+                },
+                $"{nameof(StockRoomId)} cannot be Null if {nameof(IsStockRoom)} is true.",
+                GetType());
+        }
+
+        if (IsStockRoom && StockRoomId != "A" && StockRoomId != "B" && StockRoomId != "C")
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+                {
+                    {nameof(StockRoomId), StockRoomId!}
+                },
+                $"{nameof(StockRoomId)} must be either A, B or C (set to: {StockRoomId}.",
+                GetType());
+        }
+
+        var setCount = GetTieredPricePropertiesSetCount();
+
+        if (setCount > 0 && setCount < 6)
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+                {
+                    {nameof(TierQuantity1), TierQuantity1},
+                    {nameof(TierQuantity2), TierQuantity2},
+                    {nameof(TierQuantity3), TierQuantity3},
+                    {nameof(TierPrice1), TierPrice1},
+                    {nameof(TierPrice2), TierPrice2},
+                    {nameof(TierPrice3), TierPrice3},
+                },
+                $"All properties ({nameof(TierPrice1)}-{nameof(TierPrice3)}, {nameof(TierQuantity1)}-{nameof(TierQuantity3)}) must be set" +
+                "when using tiered pricing.",
+                GetType());
+        }
+
+        if (setCount == 6)
+        {
+            var invalidParameters = new Dictionary<string, object>();
+            if (TierQuantity2 >= TierQuantity1)
             {
-                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
-                    {
-                        {"Item.Type", Item.Type},
-                        {nameof(Completeness), Completeness}
-                    },
-                    $"{Completeness} can only be applied to items of type {ItemType.Set}.", 
+                invalidParameters.Add(nameof(TierQuantity2), TierQuantity2);
+            }
+
+            if (TierQuantity3 >= TierQuantity2)
+            {
+                invalidParameters.Add(nameof(TierQuantity3), TierQuantity3);
+            }
+
+            if (TierPrice1 >= UnitPrice)
+            {
+                invalidParameters.Add(nameof(TierPrice1), TierPrice1);
+            }
+
+            if (TierPrice2 >= TierPrice1)
+            {
+                invalidParameters.Add(nameof(TierPrice2), TierPrice2);
+            }
+
+            if (TierPrice3 >= TierPrice2)
+            {
+                invalidParameters.Add(nameof(TierPrice3), TierPrice3);
+            }
+
+            if (invalidParameters.Any())
+            {
+                throw new BricklinkInvalidParameterException(invalidParameters, 
+                    "Following rules apply for tiered pricing: " + Environment.NewLine +
+                    $"{nameof(UnitPrice)} > {nameof(TierPrice1)} > {nameof(TierPrice2)} > {nameof(TierPrice3)}," + Environment.NewLine +
+                    $"{nameof(TierQuantity1)} < {nameof(TierQuantity2)} < {nameof(TierQuantity3)}.",
                     GetType());
             }
+        }
 
-            if (IsStockRoom && string.IsNullOrEmpty(StockRoomId))
-            {
-                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
-                    {
-                        {nameof(StockRoomId), "Null"}
-                    },
-                    $"{nameof(StockRoomId)} cannot be Null if {nameof(IsStockRoom)} is true.",
-                    GetType());
-            }
-
-            if (IsStockRoom && StockRoomId != "A" && StockRoomId != "B" && StockRoomId != "C")
-            {
-                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
-                    {
-                        {nameof(StockRoomId), StockRoomId!}
-                    },
-                    $"{nameof(StockRoomId)} must be either A, B or C (set to: {StockRoomId}.",
-                    GetType());
-            }
-
-            var setCount = GetTieredPricePropertiesSetCount();
-
-            if (setCount > 0 && setCount < 6)
-            {
-                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
-                    {
-                        {nameof(TierQuantity1), TierQuantity1},
-                        {nameof(TierQuantity2), TierQuantity2},
-                        {nameof(TierQuantity3), TierQuantity3},
-                        {nameof(TierPrice1), TierPrice1},
-                        {nameof(TierPrice2), TierPrice2},
-                        {nameof(TierPrice3), TierPrice3},
-                    },
-                    $"All properties ({nameof(TierPrice1)}-{nameof(TierPrice3)}, {nameof(TierQuantity1)}-{nameof(TierQuantity3)}) must be set" +
-                    "when using tiered pricing.",
-                    GetType());
-            }
-
-            if (setCount == 6)
-            {
-                var invalidParameters = new Dictionary<string, object>();
-                if (TierQuantity2 >= TierQuantity1)
+        if (Bulk < 1)
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                 {
-                    invalidParameters.Add(nameof(TierQuantity2), TierQuantity2);
-                }
-
-                if (TierQuantity3 >= TierQuantity2)
-                {
-                    invalidParameters.Add(nameof(TierQuantity3), TierQuantity3);
-                }
-
-                if (TierPrice1 >= UnitPrice)
-                {
-                    invalidParameters.Add(nameof(TierPrice1), TierPrice1);
-                }
-
-                if (TierPrice2 >= TierPrice1)
-                {
-                    invalidParameters.Add(nameof(TierPrice2), TierPrice2);
-                }
-
-                if (TierPrice3 >= TierPrice2)
-                {
-                    invalidParameters.Add(nameof(TierPrice3), TierPrice3);
-                }
-
-                if (invalidParameters.Any())
-                {
-                    throw new BricklinkInvalidParameterException(invalidParameters, 
-                        "Following rules apply for tiered pricing: " + Environment.NewLine +
-                        $"{nameof(UnitPrice)} > {nameof(TierPrice1)} > {nameof(TierPrice2)} > {nameof(TierPrice3)}," + Environment.NewLine +
-                        $"{nameof(TierQuantity1)} < {nameof(TierQuantity2)} < {nameof(TierQuantity3)}.",
-                        GetType());
-                }
-            }
-
-            if (Bulk < 1)
-            {
-                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
-                    {
-                        {nameof(Bulk), Bulk}
-                    }, 
-                    $"{nameof(Bulk)} must be > 0.",
-                    GetType());
-            }
+                    {nameof(Bulk), Bulk}
+                }, 
+                $"{nameof(Bulk)} must be > 0.",
+                GetType());
         }
     }
 }

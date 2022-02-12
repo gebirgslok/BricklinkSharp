@@ -28,162 +28,161 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class CatalogDemos
 {
-    internal static class CatalogDemos
+    public static async Task GetKnownColorsDemo()
     {
-        public static async Task GetKnownColorsDemo()
+        using var client = BricklinkClientFactory.Build();
+        var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
+
+        PrintHelper.PrintAsJson(knownColors);
+    }
+
+    public static async Task GetPriceGuideDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1,
+            priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
+
+        PrintHelper.PrintAsJson(priceGuide);
+    }
+
+    public static async Task GetSubsetsDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
+
+        PrintHelper.PrintAsJson(subsets);
+    }
+
+    public static async Task GetSupersetsDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var supersets = await client.GetSupersetsAsync(ItemType.Minifig, "aqu004", 0);
+
+        PrintHelper.PrintAsJson(supersets);
+    }
+
+    public static async Task GetSupersetsDemo2()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var colorId = 8; //Brown
+        var supersets = await client.GetSupersetsAsync(ItemType.Part, "40232", colorId);
+
+        PrintHelper.PrintAsJson(supersets);
+    }
+
+    public static async Task GetItemDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var catalogItem = await client.GetItemAsync(ItemType.Minifig, "sw0693");
+
+        PrintHelper.PrintAsJson(catalogItem);
+    }
+
+    public static async Task GetItemImageDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var catalogImage = await client.GetItemImageAsync(ItemType.Part, "2540", 8);
+
+        PrintHelper.PrintAsJson(catalogImage);
+    }
+
+    public static void GetPartImageForColorDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetPartImageForColor("2540", 10);
+
+        Console.WriteLine($"URL: {uri.AbsoluteUri}");
+    }
+
+    public static void GetBookImageDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+
+        var bookIds = new List<string>
         {
-            using var client = BricklinkClientFactory.Build();
-            var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
+            "DKPiratesNL", "5002772", "b65de2"
+        };
 
-            PrintHelper.PrintAsJson(knownColors);
-        }
-
-        public static async Task GetPriceGuideDemo()
+        foreach (var bookId in bookIds)
         {
-            using var client = BricklinkClientFactory.Build();
-            var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1,
-                priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
-
-            PrintHelper.PrintAsJson(priceGuide);
-        }
-
-        public static async Task GetSubsetsDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs: false);
-
-            PrintHelper.PrintAsJson(subsets);
-        }
-
-        public static async Task GetSupersetsDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var supersets = await client.GetSupersetsAsync(ItemType.Minifig, "aqu004", 0);
-
-            PrintHelper.PrintAsJson(supersets);
-        }
-
-        public static async Task GetSupersetsDemo2()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var colorId = 8; //Brown
-            var supersets = await client.GetSupersetsAsync(ItemType.Part, "40232", colorId);
-
-            PrintHelper.PrintAsJson(supersets);
-        }
-
-        public static async Task GetItemDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var catalogItem = await client.GetItemAsync(ItemType.Minifig, "sw0693");
-
-            PrintHelper.PrintAsJson(catalogItem);
-        }
-
-        public static async Task GetItemImageDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var catalogImage = await client.GetItemImageAsync(ItemType.Part, "2540", 8);
-
-            PrintHelper.PrintAsJson(catalogImage);
-        }
-
-        public static void GetPartImageForColorDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetPartImageForColor("2540", 10);
-
+            var uri = client.GetBookImage(bookId);
             Console.WriteLine($"URL: {uri.AbsoluteUri}");
         }
+    }
 
-        public static void GetBookImageDemo()
+    public static void GetGearImageDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+
+        var gearIds = new List<string>
         {
-            using var client = BricklinkClientFactory.Build();
+            "BioGMC041", "GMRacer1", "flyermariode"
+        };
 
-            var bookIds = new List<string>
-            {
-                "DKPiratesNL", "5002772", "b65de2"
-            };
-
-            foreach (var bookId in bookIds)
-            {
-                var uri = client.GetBookImage(bookId);
-                Console.WriteLine($"URL: {uri.AbsoluteUri}");
-            }
-        }
-
-        public static void GetGearImageDemo()
+        foreach (var gearId in gearIds)
         {
-            using var client = BricklinkClientFactory.Build();
-
-            var gearIds = new List<string>
-            {
-                "BioGMC041", "GMRacer1", "flyermariode"
-            };
-
-            foreach (var gearId in gearIds)
-            {
-                var uri = client.GetGearImage(gearId);
-                Console.WriteLine($"URL: {uri.AbsoluteUri}");
-            }
-        }
-
-        public static void GetCatalogImageDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-
-            var catalogIds = new List<string>
-            {
-                "c58dk2", "c77de", "c84uk"
-            };
-
-            foreach (var catalogId in catalogIds)
-            {
-                var uri = client.GetCatalogImage(catalogId);
-                Console.WriteLine($"URL: {uri.AbsoluteUri}");
-            }
-        }
-
-        public static void GetInstructionImageDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-
-            var instructionIds = new List<string>
-            {
-                "1518-1", "2996-1", "4128-1"
-            };
-
-            foreach (var instructionId in instructionIds)
-            {
-                var uri = client.GetInstructionImage(instructionId);
-                Console.WriteLine($"URL: {uri.AbsoluteUri}");
-            }
-        }
-
-        public static void GetOriginalBoxImageDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-
-            var boxIds = new List<string>
-            {
-                "2964-1", "3552-1", "4709-1"
-            };
-
-            foreach (var boxId in boxIds)
-            {
-                var uri = client.GetOriginalBoxImage(boxId);
-                Console.WriteLine($"URL: {uri.AbsoluteUri}");
-            }
-        }
-
-        public static void EnsureImageUrlSchemeDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.EnsureImageUrlScheme("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https");
-
+            var uri = client.GetGearImage(gearId);
             Console.WriteLine($"URL: {uri.AbsoluteUri}");
         }
+    }
+
+    public static void GetCatalogImageDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+
+        var catalogIds = new List<string>
+        {
+            "c58dk2", "c77de", "c84uk"
+        };
+
+        foreach (var catalogId in catalogIds)
+        {
+            var uri = client.GetCatalogImage(catalogId);
+            Console.WriteLine($"URL: {uri.AbsoluteUri}");
+        }
+    }
+
+    public static void GetInstructionImageDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+
+        var instructionIds = new List<string>
+        {
+            "1518-1", "2996-1", "4128-1"
+        };
+
+        foreach (var instructionId in instructionIds)
+        {
+            var uri = client.GetInstructionImage(instructionId);
+            Console.WriteLine($"URL: {uri.AbsoluteUri}");
+        }
+    }
+
+    public static void GetOriginalBoxImageDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+
+        var boxIds = new List<string>
+        {
+            "2964-1", "3552-1", "4709-1"
+        };
+
+        foreach (var boxId in boxIds)
+        {
+            var uri = client.GetOriginalBoxImage(boxId);
+            Console.WriteLine($"URL: {uri.AbsoluteUri}");
+        }
+    }
+
+    public static void EnsureImageUrlSchemeDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.EnsureImageUrlScheme("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https");
+
+        Console.WriteLine($"URL: {uri.AbsoluteUri}");
     }
 }

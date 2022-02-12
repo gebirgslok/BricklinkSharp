@@ -27,45 +27,44 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class PriceGuide
 {
-    [Serializable]
-    public class PriceGuide
+    [JsonPropertyName("item")]
+    public ItemBase Item { get; set; } = null!;
+
+    [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
+    public Condition Condition { get; set; }
+
+    [JsonPropertyName("currency_code")]
+    public string CurrencyCode { get; set; } = null!;
+
+    [JsonPropertyName("min_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal MinPrice { get; set; }
+
+    [JsonPropertyName("max_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal MaxPrice { get; set; }
+
+    [JsonPropertyName("avg_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal AveragePrice { get; set; }
+
+    [JsonPropertyName("qty_avg_price"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal QuantityAveragePrice { get; set; }
+
+    [JsonPropertyName("unit_quantity")]
+    public int UnitQuantity { get; set; }
+
+    [JsonPropertyName("total_quantity")]
+    public int TotalQuantity { get; set; }
+
+    [JsonPropertyName("price_detail")]
+    public PriceDetail[]? PriceDetails { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("item")]
-        public ItemBase Item { get; set; } = null!;
-
-        [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
-        public Condition Condition { get; set; }
-
-        [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; } = null!;
-
-        [JsonPropertyName("min_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal MinPrice { get; set; }
-
-        [JsonPropertyName("max_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal MaxPrice { get; set; }
-
-        [JsonPropertyName("avg_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal AveragePrice { get; set; }
-
-        [JsonPropertyName("qty_avg_price"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal QuantityAveragePrice { get; set; }
-
-        [JsonPropertyName("unit_quantity")]
-        public int UnitQuantity { get; set; }
-
-        [JsonPropertyName("total_quantity")]
-        public int TotalQuantity { get; set; }
-
-        [JsonPropertyName("price_detail")]
-        public PriceDetail[]? PriceDetails { get; set; }
-
-        public override string ToString()
-        {
-            return $"({Item.Type}, {Item.Number}): {Condition}, {CurrencyCode}, min: {MinPrice}, " + 
-                   $"max: {MaxPrice}, avg: {AveragePrice}, qty_avg: {QuantityAveragePrice}";
-        }
+        return $"({Item.Type}, {Item.Number}): {Condition}, {CurrencyCode}, min: {MinPrice}, " + 
+               $"max: {MaxPrice}, avg: {AveragePrice}, qty_avg: {QuantityAveragePrice}";
     }
 }

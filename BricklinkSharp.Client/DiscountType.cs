@@ -23,11 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum DiscountType
 {
-    public enum DiscountType
-    {
-        Fixed = 0,
-        Percentage = 1
-    }
+    Fixed = 0,
+    Percentage = 1
 }

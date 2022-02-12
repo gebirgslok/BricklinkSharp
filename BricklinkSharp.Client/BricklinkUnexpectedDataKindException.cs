@@ -27,36 +27,35 @@ using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class BricklinkUnexpectedDataKindException : BricklinkException
 {
-    public class BricklinkUnexpectedDataKindException : BricklinkException
+    public string? ExpectedDataKind { get; }
+
+    public string? ReceivedDataKind { get; }
+
+    internal BricklinkUnexpectedDataKindException(string expectedDataKind, string receivedDataKind,
+        string url, HttpMethod httpMethod) : 
+        base($"Received unexpected JSON data kind for request '{httpMethod}' {url}:" +
+             Environment.NewLine +
+             $"Expected = {expectedDataKind}, received = {receivedDataKind}.", url, httpMethod)
     {
-        public string? ExpectedDataKind { get; }
+        ExpectedDataKind = expectedDataKind;
+        ReceivedDataKind = receivedDataKind;
+    }
 
-        public string? ReceivedDataKind { get; }
+    private BricklinkUnexpectedDataKindException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        ExpectedDataKind = info.GetString(nameof(ExpectedDataKind));
+        ReceivedDataKind = info.GetString(nameof(ReceivedDataKind));
+    }
 
-        internal BricklinkUnexpectedDataKindException(string expectedDataKind, string receivedDataKind,
-            string url, HttpMethod httpMethod) : 
-            base($"Received unexpected JSON data kind for request '{httpMethod}' {url}:" +
-                 Environment.NewLine +
-                 $"Expected = {expectedDataKind}, received = {receivedDataKind}.", url, httpMethod)
-        {
-            ExpectedDataKind = expectedDataKind;
-            ReceivedDataKind = receivedDataKind;
-        }
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(ExpectedDataKind), ExpectedDataKind);
+        info.AddValue(nameof(ReceivedDataKind), ReceivedDataKind);
 
-        private BricklinkUnexpectedDataKindException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            ExpectedDataKind = info.GetString(nameof(ExpectedDataKind));
-            ReceivedDataKind = info.GetString(nameof(ReceivedDataKind));
-        }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(ExpectedDataKind), ExpectedDataKind);
-            info.AddValue(nameof(ReceivedDataKind), ReceivedDataKind);
-
-            base.GetObjectData(info, context);
-        }
+        base.GetObjectData(info, context);
     }
 }

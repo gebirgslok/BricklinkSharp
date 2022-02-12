@@ -27,39 +27,38 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class ShippingMethod
 {
-    [Serializable]
-    public class ShippingMethod
+    [JsonPropertyName("method_id")]
+    public int MethodId { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("note")]
+    public string? Note { get; set; }
+
+    [JsonPropertyName("insurance")]
+    public bool HasInsurance { get; set; }
+
+    [JsonPropertyName("is_default")]
+    public bool IsDefault { get; set; }
+
+    [JsonPropertyName("area"), JsonConverter(typeof(ShippingAreaStringConverter))]
+    public ShippingArea Area { get; set; }
+
+    [JsonPropertyName("is_available")]
+    public bool IsAvailable { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("method_id")]
-        public int MethodId { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
-
-        [JsonPropertyName("note")]
-        public string? Note { get; set; }
-
-        [JsonPropertyName("insurance")]
-        public bool HasInsurance { get; set; }
-
-        [JsonPropertyName("is_default")]
-        public bool IsDefault { get; set; }
-
-        [JsonPropertyName("area"), JsonConverter(typeof(ShippingAreaStringConverter))]
-        public ShippingArea Area { get; set; }
-
-        [JsonPropertyName("is_available")]
-        public bool IsAvailable { get; set; }
-
-        public override string ToString()
-        {
-            return $"{nameof(MethodId)}: {MethodId}, {nameof(ShippingArea)}: {Area}, {nameof(Name)}: {Name}" +
-                   Environment.NewLine +
-                   $"{nameof(Note)}: {Note ?? "null"}" +
-                   Environment.NewLine +
-                   $"{nameof(HasInsurance)}: {HasInsurance}, {nameof(IsDefault)}: {IsDefault}, {nameof(IsAvailable)}: {IsAvailable}";
-        }
+        return $"{nameof(MethodId)}: {MethodId}, {nameof(ShippingArea)}: {Area}, {nameof(Name)}: {Name}" +
+               Environment.NewLine +
+               $"{nameof(Note)}: {Note ?? "null"}" +
+               Environment.NewLine +
+               $"{nameof(HasInsurance)}: {HasInsurance}, {nameof(IsDefault)}: {IsDefault}, {nameof(IsAvailable)}: {IsAvailable}";
     }
 }

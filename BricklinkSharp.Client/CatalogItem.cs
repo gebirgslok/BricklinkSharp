@@ -28,50 +28,49 @@ using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
 #nullable enable
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class CatalogItem : ItemBase
 {
-    [Serializable]
-    public class CatalogItem : ItemBase
+    [JsonPropertyName("name")] 
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("category_id")]
+    public int CategoryId { get; set; }
+
+    [JsonPropertyName("alternate_no")]
+    public string? AlternateNo { get; set; }
+
+    [JsonPropertyName("image_url")]
+    public string? ImageUrl { get; set; }
+
+    [JsonPropertyName("thumbnail_url")]
+    public string? ThumbnailUrl { get; set; }
+
+    [JsonPropertyName("weight"), JsonConverter(typeof(DoubleStringConverter))]
+    public double Weight { get; set; }
+
+    [JsonPropertyName("dim_x"), JsonConverter(typeof(DoubleStringConverter))]
+    public double DimX { get; set; }
+
+    [JsonPropertyName("dim_y"), JsonConverter(typeof(DoubleStringConverter))]
+    public double DimY { get; set; }
+
+    [JsonPropertyName("dim_z"), JsonConverter(typeof(DoubleStringConverter))]
+    public double DimZ { get; set; }
+
+    [JsonPropertyName("year_released")]
+    public int YearReleased { get; set; }
+
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+
+    [JsonPropertyName("is_obsolete")]
+    public bool IsObsolete { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("name")] 
-        public string Name { get; set; } = null!;
-
-        [JsonPropertyName("category_id")]
-        public int CategoryId { get; set; }
-
-        [JsonPropertyName("alternate_no")]
-        public string? AlternateNo { get; set; }
-
-        [JsonPropertyName("image_url")]
-        public string? ImageUrl { get; set; }
-
-        [JsonPropertyName("thumbnail_url")]
-        public string? ThumbnailUrl { get; set; }
-
-        [JsonPropertyName("weight"), JsonConverter(typeof(DoubleStringConverter))]
-        public double Weight { get; set; }
-
-        [JsonPropertyName("dim_x"), JsonConverter(typeof(DoubleStringConverter))]
-        public double DimX { get; set; }
-
-        [JsonPropertyName("dim_y"), JsonConverter(typeof(DoubleStringConverter))]
-        public double DimY { get; set; }
-
-        [JsonPropertyName("dim_z"), JsonConverter(typeof(DoubleStringConverter))]
-        public double DimZ { get; set; }
-
-        [JsonPropertyName("year_released")]
-        public int YearReleased { get; set; }
-
-        [JsonPropertyName("description")]
-        public string? Description { get; set; }
-
-        [JsonPropertyName("is_obsolete")]
-        public bool IsObsolete { get; set; }
-
-        public override string ToString()
-        {
-            return $"{base.ToString()}: {Name}";
-        }
+        return $"{base.ToString()}: {Name}";
     }
 }

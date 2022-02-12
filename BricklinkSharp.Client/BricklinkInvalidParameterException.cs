@@ -30,53 +30,52 @@ using System.Text;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class BricklinkInvalidParameterException : Exception
 {
-    public class BricklinkInvalidParameterException : Exception
+    public Dictionary<string, object>? InvalidParameters { get; }
+
+    public Type? TypeOfDataObject { get; }
+
+    internal BricklinkInvalidParameterException(Dictionary<string, object> invalidParameters,
+        string? baseMessage = null,
+        Type? typeOfDataObject = null) : base(BuildMessage(baseMessage, invalidParameters, typeOfDataObject))
     {
-        public Dictionary<string, object>? InvalidParameters { get; }
+        InvalidParameters = invalidParameters;
+        TypeOfDataObject = typeOfDataObject;
+    }
 
-        public Type? TypeOfDataObject { get; }
+    private static string BuildMessage(string? baseMessage, Dictionary<string, object> invalidParameters, Type? typeOfDataObject)
+    {
+        var builder = new StringBuilder();
 
-        internal BricklinkInvalidParameterException(Dictionary<string, object> invalidParameters,
-            string? baseMessage = null,
-            Type? typeOfDataObject = null) : base(BuildMessage(baseMessage, invalidParameters, typeOfDataObject))
+        if (baseMessage != null)
         {
-            InvalidParameters = invalidParameters;
-            TypeOfDataObject = typeOfDataObject;
+            builder.AppendLine(baseMessage);
         }
 
-        private static string BuildMessage(string? baseMessage, Dictionary<string, object> invalidParameters, Type? typeOfDataObject)
+        if (typeOfDataObject == null)
         {
-            var builder = new StringBuilder();
-
-            if (baseMessage != null)
-            {
-                builder.AppendLine(baseMessage);
-            }
-
-            if (typeOfDataObject == null)
-            {
-                builder.AppendLine("The following parameters are invalid:");
-            }
-            else
-            {
-                builder.AppendLine($"The following parameters ({typeOfDataObject.Name}) are invalid:");
-            }
-
-            var count = 0;
-            foreach (var o in invalidParameters)
-            {
-                var separator = count <= invalidParameters.Count - 1 ? ',' : '.';
-                builder.AppendLine($"{o.Key}: {o.Value ?? "null"}{separator}");
-                count += 1;
-            }
-
-            return builder.ToString();
+            builder.AppendLine("The following parameters are invalid:");
+        }
+        else
+        {
+            builder.AppendLine($"The following parameters ({typeOfDataObject.Name}) are invalid:");
         }
 
-        internal BricklinkInvalidParameterException(SerializationInfo info, StreamingContext context) : base(info, context)
+        var count = 0;
+        foreach (var o in invalidParameters)
         {
+            var separator = count <= invalidParameters.Count - 1 ? ',' : '.';
+            builder.AppendLine($"{o.Key}: {o.Value ?? "null"}{separator}");
+            count += 1;
         }
+
+        return builder.ToString();
+    }
+
+    internal BricklinkInvalidParameterException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

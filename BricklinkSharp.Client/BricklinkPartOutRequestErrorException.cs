@@ -28,57 +28,56 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class BricklinkPartOutRequestErrorException : BricklinkException
 {
-    public class BricklinkPartOutRequestErrorException : BricklinkException
+    public List<string> Errors { get; }
+
+    internal BricklinkPartOutRequestErrorException(List<string> errors, string url) : base(BuildMessage(errors), url, HttpMethod.Get)
     {
-        public List<string> Errors { get; }
+        Errors = errors;
+    }
 
-        internal BricklinkPartOutRequestErrorException(List<string> errors, string url) : base(BuildMessage(errors), url, HttpMethod.Get)
+    internal BricklinkPartOutRequestErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        Errors = new List<string>();
+
+        var count = info.GetInt32("Count");
+
+        for (var i = 0; i < count; i++)
         {
-            Errors = errors;
-        }
+            var message = info.GetString($"Error{i}");
 
-        internal BricklinkPartOutRequestErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            Errors = new List<string>();
-
-            var count = info.GetInt32("Count");
-
-            for (var i = 0; i < count; i++)
+            if (message != null)
             {
-                var message = info.GetString($"Error{i}");
-
-                if (message != null)
-                {
-                    Errors.Add(message);
-                }
+                Errors.Add(message);
             }
         }
+    }
 
-        private static string BuildMessage(List<string> errors)
+    private static string BuildMessage(List<string> errors)
+    {
+        var builder = new StringBuilder("The Part-Out value request returned a global error page. The following error(s) occurred:");
+
+        for (var i = 0; i < errors.Count; i++)
         {
-            var builder = new StringBuilder("The Part-Out value request returned a global error page. The following error(s) occurred:");
-
-            for (var i = 0; i < errors.Count; i++)
-            {
-                builder.AppendLine();
-                builder.Append($"{i} - {errors[i]}");
-            }
-
-            return builder.ToString();
+            builder.AppendLine();
+            builder.Append($"{i} - {errors[i]}");
         }
 
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Count", Errors.Count);
+        return builder.ToString();
+    }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("Count", Errors.Count);
             
-            for (var i = 0; i < Errors.Count; i++)
-            {
-                info.AddValue($"Error{i}", Errors[i]);
-            }
-
-            base.GetObjectData(info, context);
+        for (var i = 0; i < Errors.Count; i++)
+        {
+            info.AddValue($"Error{i}", Errors[i]);
         }
+
+        base.GetObjectData(info, context);
     }
 }

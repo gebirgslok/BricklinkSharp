@@ -28,30 +28,29 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class CompletenessStringConverter : JsonConverter<Completeness>
-    {
-        public override Completeness Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var stringValue = reader.GetString();
-            switch (stringValue)
-            {
-                case "C":
-                    return Completeness.Complete;
-                case "B":
-                    return Completeness.Incomplete;
-                case "S":
-                    return Completeness.Sealed;
-                default:
-                    return Completeness.Complete;
-            }
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, Completeness value, JsonSerializerOptions options)
+internal class CompletenessStringConverter : JsonConverter<Completeness>
+{
+    public override Completeness Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var stringValue = reader.GetString();
+        switch (stringValue)
         {
-            var typeString = value.ToDomainString();
-            writer.WriteStringValue(typeString);
+            case "C":
+                return Completeness.Complete;
+            case "B":
+                return Completeness.Incomplete;
+            case "S":
+                return Completeness.Sealed;
+            default:
+                return Completeness.Complete;
         }
+    }
+
+    public override void Write(Utf8JsonWriter writer, Completeness value, JsonSerializerOptions options)
+    {
+        var typeString = value.ToDomainString();
+        writer.WriteStringValue(typeString);
     }
 }

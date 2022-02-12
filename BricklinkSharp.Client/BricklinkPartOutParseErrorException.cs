@@ -26,32 +26,31 @@
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class BricklinkPartOutParseErrorException : BricklinkException
 {
-    public class BricklinkPartOutParseErrorException : BricklinkException
+    public string? Branch { get; }
+
+    public string? Stage { get; }
+
+    internal BricklinkPartOutParseErrorException(string message, string stage, string branch, string url) : base(message, url, HttpMethod.Get)
     {
-        public string? Branch { get; }
+        Stage = stage;
+        Branch = branch;
+    }
 
-        public string? Stage { get; }
+    internal BricklinkPartOutParseErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        Stage = info.GetString(nameof(Stage));
+        Branch = info.GetString(nameof(Branch));
+    }
 
-        internal BricklinkPartOutParseErrorException(string message, string stage, string branch, string url) : base(message, url, HttpMethod.Get)
-        {
-            Stage = stage;
-            Branch = branch;
-        }
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(Stage), Stage);
+        info.AddValue(nameof(Branch), Branch);
 
-        internal BricklinkPartOutParseErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            Stage = info.GetString(nameof(Stage));
-            Branch = info.GetString(nameof(Branch));
-        }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(Stage), Stage);
-            info.AddValue(nameof(Branch), Branch);
-
-            base.GetObjectData(info, context);
-        }
+        base.GetObjectData(info, context);
     }
 }

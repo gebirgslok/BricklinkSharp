@@ -26,14 +26,13 @@
 using System.Text.Json.Serialization;
 // ReSharper disable UnusedType.Global
 
-namespace BricklinkSharp.Client
-{
-    public class MemberRating
-    {
-        [JsonPropertyName("user_name")]
-        public string Username { get; set; } = null!;
+namespace BricklinkSharp.Client;
 
-        [JsonPropertyName("rating")]
-        public Rating Rating { get; set; } = null!;
-    }
+public class MemberRating
+{
+    [JsonPropertyName("user_name")]
+    public string Username { get; set; } = null!;
+
+    [JsonPropertyName("rating")]
+    public Rating Rating { get; set; } = null!;
 }

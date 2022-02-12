@@ -29,202 +29,201 @@ using System.Threading.Tasks;
 using BricklinkSharp.Client.CurrencyRates;
 using NUnit.Framework;
 
-namespace BricklinkSharp.Client.Tests
+namespace BricklinkSharp.Client.Tests;
+
+public class BricklinkClientTests
 {
-    public class BricklinkClientTests
+    private static async Task<bool> CheckUriExistsAsync(Uri uri)
     {
-        private static async Task<bool> CheckUriExistsAsync(Uri uri)
+        try
         {
-            try
-            {
-                using var client = new HttpClient();
-                using var request = new HttpRequestMessage(HttpMethod.Head, uri);
-                var message = await client.SendAsync(request);
-                var data = await message.Content.ReadAsByteArrayAsync();
-                return data.Length == 0;
-            }
-            catch
-            {
-                return false;
-            }
+            using var client = new HttpClient();
+            using var request = new HttpRequestMessage(HttpMethod.Head, uri);
+            var message = await client.SendAsync(request);
+            var data = await message.Content.ReadAsByteArrayAsync();
+            return data.Length == 0;
         }
-
-        private static async Task GetPartOutValueFromPageAsync_ItemExists(string itemNumber, PartOutItemType itemType)
+        catch
         {
-            using var client = BricklinkClientFactory.Build();
-
-            var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: itemType);
-
-            Assert.True(result.Average6MonthsSalesValueUsd > 0.0M);
-            Assert.True(result.CurrentSalesValueUsd > 0.0M);
-            Assert.True(result.IncludedItemsCount > 0);
-            Assert.True(result.IncludedLotsCount > 0);
+            return false;
         }
+    }
 
-        [TestCase("aqu017")]
-        [TestCase("aqu017-1")]
-        [TestCase("hol183")]
-        public async Task GetPartOutValueFromPageAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
-        {
-            await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
-        }
+    private static async Task GetPartOutValueFromPageAsync_ItemExists(string itemNumber, PartOutItemType itemType)
+    {
+        using var client = BricklinkClientFactory.Build();
 
-        [TestCase("1212adsa")]
-        public void GetPartOutValueFromPageAsync_ItemDoesNotExist(string itemNumber)
-        {
-            Assert.ThrowsAsync<BricklinkPartOutRequestErrorException>(async () =>
-            {
-                using var client = BricklinkClientFactory.Build();
-                await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set);
-            });
-        }
+        var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: itemType);
 
-        [TestCase("21322-1", "EUR", true)]
-        [TestCase("21322-1", "SEK", false)]
-        public async Task GetPartOutValueAsync_WithExchangeRate_ItemTypeIsSet_ItemExists(string itemNumber, string currencyCode, bool shouldLessThanUsd)
+        Assert.True(result.Average6MonthsSalesValueUsd > 0.0M);
+        Assert.True(result.CurrentSalesValueUsd > 0.0M);
+        Assert.True(result.IncludedItemsCount > 0);
+        Assert.True(result.IncludedLotsCount > 0);
+    }
+
+    [TestCase("aqu017")]
+    [TestCase("aqu017-1")]
+    [TestCase("hol183")]
+    public async Task GetPartOutValueFromPageAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
+    {
+        await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
+    }
+
+    [TestCase("1212adsa")]
+    public void GetPartOutValueFromPageAsync_ItemDoesNotExist(string itemNumber)
+    {
+        Assert.ThrowsAsync<BricklinkPartOutRequestErrorException>(async () =>
         {
             using var client = BricklinkClientFactory.Build();
+            await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set);
+        });
+    }
 
-            ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
+    [TestCase("21322-1", "EUR", true)]
+    [TestCase("21322-1", "SEK", false)]
+    public async Task GetPartOutValueAsync_WithExchangeRate_ItemTypeIsSet_ItemExists(string itemNumber, string currencyCode, bool shouldLessThanUsd)
+    {
+        using var client = BricklinkClientFactory.Build();
 
-            var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set, currencyCode: currencyCode);
+        ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
 
-            Assert.True(shouldLessThanUsd ? 
-                result.CurrentSalesValueUsd > result.CurrentSalesValueMyCurreny : 
-                result.CurrentSalesValueUsd < result.CurrentSalesValueMyCurreny);
+        var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 
-            Assert.True(shouldLessThanUsd ?
-                result.Average6MonthsSalesValueUsd > result.Average6MonthsSalesValueMyCurrency :
-                result.Average6MonthsSalesValueUsd < result.Average6MonthsSalesValueMyCurrency);
-        }
+        Assert.True(shouldLessThanUsd ? 
+            result.CurrentSalesValueUsd > result.CurrentSalesValueMyCurreny : 
+            result.CurrentSalesValueUsd < result.CurrentSalesValueMyCurreny);
 
-        [TestCase("1610")]
-        [TestCase("1610-2")]
-        [TestCase("1498")]
-        [TestCase("9446")]
-        public async Task GetPartOutValueAsync_ItemTypeIsSet_ItemExists(string itemNumber)
-        {
-            await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Set);
-        }
+        Assert.True(shouldLessThanUsd ?
+            result.Average6MonthsSalesValueUsd > result.Average6MonthsSalesValueMyCurrency :
+            result.Average6MonthsSalesValueUsd < result.Average6MonthsSalesValueMyCurrency);
+    }
 
-        [TestCase("6031641")]
-        [TestCase("6043191-1")]
-        public async Task GetPartOutValueAsync_ItemTypeIsGear_ItemExists(string itemNumber)
-        {
-            await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Gear);
-        }
+    [TestCase("1610")]
+    [TestCase("1610-2")]
+    [TestCase("1498")]
+    [TestCase("9446")]
+    public async Task GetPartOutValueAsync_ItemTypeIsSet_ItemExists(string itemNumber)
+    {
+        await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Set);
+    }
 
-        [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https")]
-        [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "http")]
-        public void EnsureImageUrlScheme(string url, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.EnsureImageUrlScheme(url, scheme);
+    [TestCase("6031641")]
+    [TestCase("6043191-1")]
+    public async Task GetPartOutValueAsync_ItemTypeIsGear_ItemExists(string itemNumber)
+    {
+        await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Gear);
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/34/43898pb006.png", uri.AbsoluteUri);
-        }
+    [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "https")]
+    [TestCase("//img.bricklink.com/ItemImage/PN/34/43898pb006.png", "http")]
+    public void EnsureImageUrlScheme(string url, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.EnsureImageUrlScheme(url, scheme);
 
-        [TestCase("2540", 10, "https")]
-        [TestCase("2540", 10, "http")]
-        [TestCase("43898pb006", 34, "https")]
-        public async Task GetPartImageForColorAsync(string partNo, int colorId, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetPartImageForColor(partNo, colorId, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/34/43898pb006.png", uri.AbsoluteUri);
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/{colorId}/{partNo}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("2540", 10, "https")]
+    [TestCase("2540", 10, "http")]
+    [TestCase("43898pb006", 34, "https")]
+    public async Task GetPartImageForColorAsync(string partNo, int colorId, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetPartImageForColor(partNo, colorId, scheme);
 
-        [TestCase("soc130", "https")]
-        [TestCase("soc130", "http")]
-        [TestCase("85863pb095", "https")]
-        [TestCase("sw1093", "https")]
-        public async Task GetMinifigImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetMinifigImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/{colorId}/{partNo}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/MN/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("soc130", "https")]
+    [TestCase("soc130", "http")]
+    [TestCase("85863pb095", "https")]
+    [TestCase("sw1093", "https")]
+    public async Task GetMinifigImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetMinifigImage(number, scheme);
 
-        [TestCase("723-1", "https")]
-        [TestCase("723-1", "http")]
-        [TestCase("7774-1", "https")]
-        [TestCase("6090-1", "https")]
-        public async Task GetSetImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetSetImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/MN/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/SN/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("723-1", "https")]
+    [TestCase("723-1", "http")]
+    [TestCase("7774-1", "https")]
+    [TestCase("6090-1", "https")]
+    public async Task GetSetImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetSetImage(number, scheme);
 
-        [TestCase("DKPiratesNL", "https")]
-        [TestCase("DKPiratesNL", "http")]
-        [TestCase("5002772", "https")]
-        [TestCase("b65de2", "http")]
-        public async Task GetBookImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetBookImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/SN/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/BN/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("DKPiratesNL", "https")]
+    [TestCase("DKPiratesNL", "http")]
+    [TestCase("5002772", "https")]
+    [TestCase("b65de2", "http")]
+    public async Task GetBookImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetBookImage(number, scheme);
 
-        [TestCase("BioGMC041", "https")]
-        [TestCase("BioGMC041", "http")]
-        [TestCase("GMRacer1", "https")]
-        [TestCase("flyermariode", "http")]
-        public async Task GetGearImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetGearImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/BN/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/GN/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("BioGMC041", "https")]
+    [TestCase("BioGMC041", "http")]
+    [TestCase("GMRacer1", "https")]
+    [TestCase("flyermariode", "http")]
+    public async Task GetGearImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetGearImage(number, scheme);
 
-        [TestCase("c58dk2", "https")]
-        [TestCase("c58dk2", "http")]
-        [TestCase("c77de", "https")]
-        [TestCase("c84uk", "http")]
-        public async Task GetCatalogImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetCatalogImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/GN/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/CN/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("c58dk2", "https")]
+    [TestCase("c58dk2", "http")]
+    [TestCase("c77de", "https")]
+    [TestCase("c84uk", "http")]
+    public async Task GetCatalogImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetCatalogImage(number, scheme);
 
-        [TestCase("1518-1", "https")]
-        [TestCase("1518-1", "http")]
-        [TestCase("2996-1", "https")]
-        [TestCase("4128-1", "http")]
-        public async Task GetInstructionImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetInstructionImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/CN/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/IN/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("1518-1", "https")]
+    [TestCase("1518-1", "http")]
+    [TestCase("2996-1", "https")]
+    [TestCase("4128-1", "http")]
+    public async Task GetInstructionImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetInstructionImage(number, scheme);
 
-        [TestCase("2964-1", "https")]
-        [TestCase("3552-1", "http")]
-        [TestCase("3552-1", "https")]
-        [TestCase("4709-1", "http")]
-        public async Task GetOriginalBoxImage(string number, string scheme)
-        {
-            using var client = BricklinkClientFactory.Build();
-            var uri = client.GetOriginalBoxImage(number, scheme);
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/IN/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
+    }
 
-            Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/ON/0/{number}.png", uri.AbsoluteUri);
-            Assert.IsTrue(await CheckUriExistsAsync(uri));
-        }
+    [TestCase("2964-1", "https")]
+    [TestCase("3552-1", "http")]
+    [TestCase("3552-1", "https")]
+    [TestCase("4709-1", "http")]
+    public async Task GetOriginalBoxImage(string number, string scheme)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var uri = client.GetOriginalBoxImage(number, scheme);
+
+        Assert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/ON/0/{number}.png", uri.AbsoluteUri);
+        Assert.IsTrue(await CheckUriExistsAsync(uri));
     }
 }

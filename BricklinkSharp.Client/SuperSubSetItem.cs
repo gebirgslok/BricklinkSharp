@@ -29,26 +29,25 @@ using BricklinkSharp.Client.Json;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class SuperSubSetItem
 {
-    [Serializable]
-    public class SuperSubSetItem
+    [JsonPropertyName("no")]
+    public string Number { get; set; } = null!;
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
+    public ItemType Type { get; set; }
+
+    [JsonPropertyName("category_id")]
+    public int CategoryId { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("no")]
-        public string Number { get; set; } = null!;
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
-
-        [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
-        public ItemType Type { get; set; }
-
-        [JsonPropertyName("category_id")]
-        public int CategoryId { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Type}, {Number}, {Name}";
-        }
+        return $"{Type}, {Number}, {Name}";
     }
 }

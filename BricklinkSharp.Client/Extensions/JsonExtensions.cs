@@ -27,42 +27,41 @@ using System;
 using System.Linq;
 using System.Text.Json;
 
-namespace BricklinkSharp.Client.Extensions
+namespace BricklinkSharp.Client.Extensions;
+
+internal static class JsonExtensions
 {
-    internal static class JsonExtensions
+    internal static bool IsEmpty(this JsonElement element)
     {
-        internal static bool IsEmpty(this JsonElement element)
+        if (element.ValueKind == JsonValueKind.Undefined)
         {
-            if (element.ValueKind == JsonValueKind.Undefined)
-            {
-                return true;
-            }
-
-            if (element.ValueKind == JsonValueKind.Array)
-            {
-                return !element.EnumerateArray().Any();
-            }
-
-            return !element.EnumerateObject().Any();
+            return true;
         }
 
-        internal static T ToObject<T>(this JsonElement element)
+        if (element.ValueKind == JsonValueKind.Array)
         {
-            var json = element.GetRawText();
-
-            if (json == null)
-            {
-                throw new NullReferenceException(nameof(json));
-            }
-
-            var obj = JsonSerializer.Deserialize<T>(json);
-
-            if (obj == null)
-            {
-                throw new NullReferenceException(nameof(obj));
-            }
-
-            return obj;
+            return !element.EnumerateArray().Any();
         }
+
+        return !element.EnumerateObject().Any();
+    }
+
+    internal static T ToObject<T>(this JsonElement element)
+    {
+        var json = element.GetRawText();
+
+        if (json == null)
+        {
+            throw new NullReferenceException(nameof(json));
+        }
+
+        var obj = JsonSerializer.Deserialize<T>(json);
+
+        if (obj == null)
+        {
+            throw new NullReferenceException(nameof(obj));
+        }
+
+        return obj;
     }
 }

@@ -27,19 +27,18 @@ using System.Text.Json.Serialization;
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public abstract class SuperSubSetEntryBase
 {
-    public abstract class SuperSubSetEntryBase
+    [JsonPropertyName("item")]
+    public SuperSubSetItem Item { get; set; } = null!;
+
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("item")]
-        public SuperSubSetItem Item { get; set; } = null!;
-
-        [JsonPropertyName("quantity")]
-        public int Quantity { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Quantity}x({Item})";
-        }
+        return $"{Quantity}x({Item})";
     }
 }

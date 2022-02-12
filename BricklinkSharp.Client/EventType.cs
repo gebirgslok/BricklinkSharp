@@ -23,12 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum EventType
 {
-    public enum EventType
-    {
-        Order = 0,
-        Message = 1,
-        Feedback = 2
-    }
+    Order = 0,
+    Message = 1,
+    Feedback = 2
 }

@@ -26,24 +26,23 @@
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class ColorDemos
 {
-    internal static class ColorDemos
+    public static async Task GetColorDemo()
     {
-        public static async Task GetColorDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var color = await client.GetColorAsync(15);
+        using var client = BricklinkClientFactory.Build();
+        var color = await client.GetColorAsync(15);
 
-            PrintHelper.PrintAsJson(color);
-        }
+        PrintHelper.PrintAsJson(color);
+    }
 
-        public static async Task GetColorListDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var colors = await client.GetColorListAsync();
+    public static async Task GetColorListDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var colors = await client.GetColorListAsync();
 
-            PrintHelper.PrintAsJson(colors);
-        }
+        PrintHelper.PrintAsJson(colors);
     }
 }

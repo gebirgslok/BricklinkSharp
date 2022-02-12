@@ -26,15 +26,14 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
-{
-    [Serializable]
-    public class Subset
-    {
-        [JsonPropertyName("entries")]
-        public SubsetEntry[]? Entries { get; set; }
+namespace BricklinkSharp.Client;
 
-        [JsonPropertyName("match_no")]
-        public int MatchNo { get; set; }
-    }
+[Serializable]
+public class Subset
+{
+    [JsonPropertyName("entries")]
+    public SubsetEntry[]? Entries { get; set; }
+
+    [JsonPropertyName("match_no")]
+    public int MatchNo { get; set; }
 }

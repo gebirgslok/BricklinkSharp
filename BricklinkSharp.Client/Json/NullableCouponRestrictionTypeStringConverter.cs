@@ -28,36 +28,35 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
+namespace BricklinkSharp.Client.Json;
+
+internal class NullableCouponRestrictionTypeStringConverter : JsonConverter<CouponRestrictionType?>
 {
-    internal class NullableCouponRestrictionTypeStringConverter : JsonConverter<CouponRestrictionType?>
+    public override CouponRestrictionType? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override CouponRestrictionType? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var stringValue = reader.GetString();
+
+        if (string.IsNullOrEmpty(stringValue))
         {
-            var stringValue = reader.GetString();
-
-            if (string.IsNullOrEmpty(stringValue))
-            {
-                return null;
-            }
-
-            return stringValue switch
-            {
-                "A" => CouponRestrictionType.ApplyToSpecifiedItemType,
-                "E" => CouponRestrictionType.ExcludeSpecifiedType,
-                _ => null,
-            };
+            return null;
         }
 
-        public override void Write(Utf8JsonWriter writer, CouponRestrictionType? value, JsonSerializerOptions options)
+        return stringValue switch
         {
-            if (value == null)
-            {
-                return;
-            }
+            "A" => CouponRestrictionType.ApplyToSpecifiedItemType,
+            "E" => CouponRestrictionType.ExcludeSpecifiedType,
+            _ => null,
+        };
+    }
 
-            var typeString = value?.ToDomainString();
-            writer.WriteStringValue(typeString);
+    public override void Write(Utf8JsonWriter writer, CouponRestrictionType? value, JsonSerializerOptions options)
+    {
+        if (value == null)
+        {
+            return;
         }
+
+        var typeString = value?.ToDomainString();
+        writer.WriteStringValue(typeString);
     }
 }

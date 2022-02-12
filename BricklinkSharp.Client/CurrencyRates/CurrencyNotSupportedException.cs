@@ -25,28 +25,27 @@
 
 using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client.CurrencyRates
+namespace BricklinkSharp.Client.CurrencyRates;
+
+public sealed class CurrencyNotSupportedException : System.Exception
 {
-    public sealed class CurrencyNotSupportedException : System.Exception
+    public string? CurrencyCode { get; }
+
+    internal CurrencyNotSupportedException(string currencyCode) : 
+        base($"The currency (code = {currencyCode} is not supported by the underlying exchange rate service.")
     {
-        public string? CurrencyCode { get; }
+        CurrencyCode = currencyCode;
+    }
 
-        internal CurrencyNotSupportedException(string currencyCode) : 
-            base($"The currency (code = {currencyCode} is not supported by the underlying exchange rate service.")
-        {
-            CurrencyCode = currencyCode;
-        }
+    private CurrencyNotSupportedException(SerializationInfo info, StreamingContext context) :
+        base(info, context)
+    {
+        CurrencyCode = info.GetString(nameof(CurrencyCode));
+    }
 
-        private CurrencyNotSupportedException(SerializationInfo info, StreamingContext context) :
-            base(info, context)
-        {
-            CurrencyCode = info.GetString(nameof(CurrencyCode));
-        }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(CurrencyCode), CurrencyCode);
-            base.GetObjectData(info, context);
-        }
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(CurrencyCode), CurrencyCode);
+        base.GetObjectData(info, context);
     }
 }

@@ -28,32 +28,31 @@ using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class Category
 {
-    [Serializable]
-    public class Category
+    [JsonPropertyName("category_id")]
+    public int CategoryId { get; set; }
+
+    [JsonPropertyName("category_name")]
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("parent_id")]
+    public int ParentId { get; set; }
+
+    [JsonIgnore]
+    [IgnoreDataMember]
+    public bool IsRoot => ParentId == 0;
+
+    public override string ToString()
     {
-        [JsonPropertyName("category_id")]
-        public int CategoryId { get; set; }
-
-        [JsonPropertyName("category_name")]
-        public string Name { get; set; } = null!;
-
-        [JsonPropertyName("parent_id")]
-        public int ParentId { get; set; }
-
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public bool IsRoot => ParentId == 0;
-
-        public override string ToString()
+        if (IsRoot)
         {
-            if (IsRoot)
-            {
-                return $"{CategoryId}-{Name} (root)";
-            }
-
-            return $"{CategoryId}-{Name} (parent ID {ParentId})";
+            return $"{CategoryId}-{Name} (root)";
         }
+
+        return $"{CategoryId}-{Name} (parent ID {ParentId})";
     }
 }

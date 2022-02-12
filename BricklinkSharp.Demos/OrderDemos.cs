@@ -28,130 +28,129 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class OrderDemos
 {
-    internal static class OrderDemos
+    public static async Task GetOrderDemo()
     {
-        public static async Task GetOrderDemo()
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[0].OrderId;
-            var order = await client.GetOrderAsync(orderId);
+            OrderStatus.Paid
+        });
+        var orderId = orders[0].OrderId;
+        var order = await client.GetOrderAsync(orderId);
 
-            PrintHelper.PrintAsJson(order);
-        }
+        PrintHelper.PrintAsJson(order);
+    }
 
-        public static async Task GetOrderItemsDemo()
+    public static async Task GetOrderItemsDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[0].OrderId;
-            var itemsBatchList = await client.GetOrderItemsAsync(orderId);
+            OrderStatus.Paid
+        });
+        var orderId = orders[0].OrderId;
+        var itemsBatchList = await client.GetOrderItemsAsync(orderId);
 
-            PrintHelper.PrintAsJson(itemsBatchList);
-        }
+        PrintHelper.PrintAsJson(itemsBatchList);
+    }
 
-        public static async Task GetOrderMessagesDemo()
+    public static async Task GetOrderMessagesDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[0].OrderId;
-            var messages = await client.GetOrderMessagesAsync(orderId);
+            OrderStatus.Paid
+        });
+        var orderId = orders[0].OrderId;
+        var messages = await client.GetOrderMessagesAsync(orderId);
 
-            PrintHelper.PrintAsJson(messages);
-        }
+        PrintHelper.PrintAsJson(messages);
+    }
 
-        public static async Task GetOrderFeedbackDemo()
+    public static async Task GetOrderFeedbackDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[orders.Length - 1].OrderId;
-            var feedbackArray = await client.GetOrderFeedbackAsync(orderId);
+            OrderStatus.Paid
+        });
+        var orderId = orders[orders.Length - 1].OrderId;
+        var feedbackArray = await client.GetOrderFeedbackAsync(orderId);
 
-            PrintHelper.PrintAsJson(feedbackArray);
-        }
+        PrintHelper.PrintAsJson(feedbackArray);
+    }
 
-        public static async Task UpdateOrderStatusDemo()
+    public static async Task UpdateOrderStatusDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[^1].OrderId;
-            var status = OrderStatus.Shipped;
-            await client.UpdateOrderStatusAsync(orderId, status);
+            OrderStatus.Paid
+        });
+        var orderId = orders[^1].OrderId;
+        var status = OrderStatus.Shipped;
+        await client.UpdateOrderStatusAsync(orderId, status);
 
-            Console.WriteLine($"Order status for order {orderId} successfully set to {status}.");
-        }
+        Console.WriteLine($"Order status for order {orderId} successfully set to {status}.");
+    }
 
-        public static async Task UpdatePaymentStatusDemo()
+    public static async Task UpdatePaymentStatusDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[^1].OrderId;
-            var status = PaymentStatus.Received;
-            await client.UpdatePaymentStatusAsync(orderId, status);
+            OrderStatus.Paid
+        });
+        var orderId = orders[^1].OrderId;
+        var status = PaymentStatus.Received;
+        await client.UpdatePaymentStatusAsync(orderId, status);
 
-            Console.WriteLine($"Payment status for order {orderId} successfully set to {status}.");
-        }
+        Console.WriteLine($"Payment status for order {orderId} successfully set to {status}.");
+    }
 
-        public static async Task SendDriveThruDemo()
+    public static async Task SendDriveThruDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[^1].OrderId;
-            await client.SendDriveThruAsync(orderId, true);
+            OrderStatus.Paid
+        });
+        var orderId = orders[^1].OrderId;
+        await client.SendDriveThruAsync(orderId, true);
 
-            Console.WriteLine($"'Thank you, drive thru!' for order {orderId} successfully set sent.");
-        }
+        Console.WriteLine($"'Thank you, drive thru!' for order {orderId} successfully set sent.");
+    }
 
-        public static async Task UpdateOrderDemo()
+    public static async Task UpdateOrderDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
-            var orderId = orders[^1].OrderId;
-            var patch = new UpdateOrder();
-            patch.Cost.Insurance = 2.5m;
-            patch.Shipping.DateShipped = DateTime.Now;
-            patch.Shipping.TrackingLink = "www.foo.bar";
-            patch.Remarks = "Demp call :)";
-            var updatedOrder = await client.UpdateOrderAsync(orderId, patch);
+            OrderStatus.Paid
+        });
+        var orderId = orders[^1].OrderId;
+        var patch = new UpdateOrder();
+        patch.Cost.Insurance = 2.5m;
+        patch.Shipping.DateShipped = DateTime.Now;
+        patch.Shipping.TrackingLink = "www.foo.bar";
+        patch.Remarks = "Demp call :)";
+        var updatedOrder = await client.UpdateOrderAsync(orderId, patch);
 
-            PrintHelper.PrintAsJson(updatedOrder);
-        }
+        PrintHelper.PrintAsJson(updatedOrder);
+    }
 
-        public static async Task GetOrdersDemo()
+    public static async Task GetOrdersDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
         {
-            using var client = BricklinkClientFactory.Build();
-            var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
-                {
-                    OrderStatus.Paid
-                });
+            OrderStatus.Paid
+        });
 
-            PrintHelper.PrintAsJson(orders);
-        }
+        PrintHelper.PrintAsJson(orders);
     }
 }

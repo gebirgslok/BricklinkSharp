@@ -23,11 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum RatingTargetRole
 {
-    public enum RatingTargetRole
-    {
-        Seller = 0,
-        Buyer = 1
-    }
+    Seller = 0,
+    Buyer = 1
 }

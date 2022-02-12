@@ -27,32 +27,31 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client.Json
+namespace BricklinkSharp.Client.Json;
+
+internal class ChangedQuantityStringConverter : JsonConverter<int?>
 {
-    internal class ChangedQuantityStringConverter : JsonConverter<int?>
+    public override int? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public override int? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var stringValue = reader.GetString();
+
+        if (int.TryParse(stringValue, out var value))
         {
-            var stringValue = reader.GetString();
-
-            if (int.TryParse(stringValue, out var value))
-            {
-                return value;
-            }
-
-            return null;
+            return value;
         }
 
-        public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
-        {
-            if (!value.HasValue || value.Value == 0)
-            {
-                return;
-            }
+        return null;
+    }
 
-            var q = value.Value;
-            var stringValue = value.Value > 0 ? $"+{q}" : q.ToString();
-            writer.WriteStringValue(stringValue);
+    public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
+    {
+        if (!value.HasValue || value.Value == 0)
+        {
+            return;
         }
+
+        var q = value.Value;
+        var stringValue = value.Value > 0 ? $"+{q}" : q.ToString();
+        writer.WriteStringValue(stringValue);
     }
 }

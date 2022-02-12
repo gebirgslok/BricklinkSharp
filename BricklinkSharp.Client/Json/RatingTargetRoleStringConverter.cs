@@ -28,20 +28,19 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class RatingTargetRoleStringConverter : JsonConverter<RatingTargetRole>
-    {
-        public override RatingTargetRole Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var stringValue = reader.GetString();
-            return stringValue == "S" ? RatingTargetRole.Seller : RatingTargetRole.Buyer;
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, RatingTargetRole value, JsonSerializerOptions options)
-        {
-            var ratingTargetRoleString = value.ToDomainString();
-            writer.WriteStringValue(ratingTargetRoleString);
-        }
+internal class RatingTargetRoleStringConverter : JsonConverter<RatingTargetRole>
+{
+    public override RatingTargetRole Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var stringValue = reader.GetString();
+        return stringValue == "S" ? RatingTargetRole.Seller : RatingTargetRole.Buyer;
+    }
+
+    public override void Write(Utf8JsonWriter writer, RatingTargetRole value, JsonSerializerOptions options)
+    {
+        var ratingTargetRoleString = value.ToDomainString();
+        writer.WriteStringValue(ratingTargetRoleString);
     }
 }

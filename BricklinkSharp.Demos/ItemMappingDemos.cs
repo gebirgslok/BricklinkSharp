@@ -27,28 +27,27 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class ItemMappingDemos
 {
-    internal static class ItemMappingDemos
+    public static async Task GetItemNumberDemo()
     {
-        public static async Task GetItemNumberDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var itemMapping = await client.GetItemNumberAsync("300301");
+        using var client = BricklinkClientFactory.Build();
+        var itemMapping = await client.GetItemNumberAsync("300301");
 
-            PrintHelper.PrintAsJson(itemMapping);
-        }
+        PrintHelper.PrintAsJson(itemMapping);
+    }
 
-        public static async Task GetElementIdDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var itemMapping = await client.GetElementIdAsync("3003", 1);
+    public static async Task GetElementIdDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var itemMapping = await client.GetElementIdAsync("3003", 1);
 
-            //Green Brick, Modified Facet 3 x 3 - No element ID exists
-            var empty = await client.GetElementIdAsync("2462", 6);
-            Debug.Assert(empty.Length == 0);
+        //Green Brick, Modified Facet 3 x 3 - No element ID exists
+        var empty = await client.GetElementIdAsync("2462", 6);
+        Debug.Assert(empty.Length == 0);
 
-            PrintHelper.PrintAsJson(itemMapping);
-        }
+        PrintHelper.PrintAsJson(itemMapping);
     }
 }

@@ -27,21 +27,20 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class Payment
 {
-    [Serializable]
-    public class Payment
-    {
-        [JsonPropertyName("method")]
-        public string Method { get; set; } = null!;
+    [JsonPropertyName("method")]
+    public string Method { get; set; } = null!;
 
-        [JsonPropertyName("status"), JsonConverter(typeof(PaymentStatusStringConverter))]
-        public PaymentStatus Status { get; set; }
+    [JsonPropertyName("status"), JsonConverter(typeof(PaymentStatusStringConverter))]
+    public PaymentStatus Status { get; set; }
 
-        [JsonPropertyName("date_paid")]
-        public DateTime DatePaid { get; set; }
+    [JsonPropertyName("date_paid")]
+    public DateTime DatePaid { get; set; }
 
-        [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; } = null!;
-    }
+    [JsonPropertyName("currency_code")]
+    public string CurrencyCode { get; set; } = null!;
 }

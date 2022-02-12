@@ -25,14 +25,13 @@
 
 using System;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class UpdateCoupon : CouponBase
 {
-    [Serializable]
-    public class UpdateCoupon : CouponBase
+    public UpdateCoupon()
     {
-        public UpdateCoupon()
-        {
-            AppliesTo = new CouponAppliesTo();
-        }
+        AppliesTo = new CouponAppliesTo();
     }
 }

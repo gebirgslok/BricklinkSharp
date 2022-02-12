@@ -28,28 +28,27 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Extensions;
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class ConditionStringConverter : JsonConverter<Condition>
-    {
-        public override Condition Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var stringValue = reader.GetString();
-            switch (stringValue)
-            {
-                case "N":
-                    return Condition.New;
-                case "U":
-                    return Condition.Used;
-                default:
-                    return Condition.New;
-            }
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, Condition value, JsonSerializerOptions options)
+internal class ConditionStringConverter : JsonConverter<Condition>
+{
+    public override Condition Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var stringValue = reader.GetString();
+        switch (stringValue)
         {
-            var typeString = value.ToDomainString();
-            writer.WriteStringValue(typeString);
+            case "N":
+                return Condition.New;
+            case "U":
+                return Condition.Used;
+            default:
+                return Condition.New;
         }
+    }
+
+    public override void Write(Utf8JsonWriter writer, Condition value, JsonSerializerOptions options)
+    {
+        var typeString = value.ToDomainString();
+        writer.WriteStringValue(typeString);
     }
 }

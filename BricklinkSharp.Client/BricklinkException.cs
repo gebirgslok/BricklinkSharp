@@ -27,37 +27,36 @@ using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public abstract class BricklinkException : Exception
 {
-    public abstract class BricklinkException : Exception
+    public string? RequestUrl { get; }
+
+    public HttpMethod? HttpMethod { get; }
+
+    protected internal BricklinkException(string message, string url, HttpMethod httpMethod) : base(message)
     {
-        public string? RequestUrl { get; }
+        RequestUrl = url;
+        HttpMethod = httpMethod;
+    }
 
-        public HttpMethod? HttpMethod { get; }
+    protected internal BricklinkException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        RequestUrl = info.GetString(nameof(RequestUrl));
+        var method = info.GetString("Method");
 
-        protected internal BricklinkException(string message, string url, HttpMethod httpMethod) : base(message)
+        if (method != null)
         {
-            RequestUrl = url;
-            HttpMethod = httpMethod;
+            HttpMethod = new HttpMethod(method);
         }
+    }
 
-        protected internal BricklinkException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            RequestUrl = info.GetString(nameof(RequestUrl));
-            var method = info.GetString("Method");
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(RequestUrl), RequestUrl);
+        info.AddValue("Method", HttpMethod?.Method);
 
-            if (method != null)
-            {
-                HttpMethod = new HttpMethod(method);
-            }
-        }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(RequestUrl), RequestUrl);
-            info.AddValue("Method", HttpMethod?.Method);
-
-            base.GetObjectData(info, context);
-        }
+        base.GetObjectData(info, context);
     }
 }

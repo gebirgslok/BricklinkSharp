@@ -29,93 +29,93 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public abstract class CouponBase
 {
-    [Serializable]
-    public abstract class CouponBase
+    [JsonPropertyName("remarks")]
+    public string? Remarks { get; set; }
+
+    [JsonPropertyName("applies_to")]
+    public CouponAppliesTo AppliesTo { get; set; } = null!;
+
+    [JsonPropertyName("discount_type"), JsonConverter(typeof(DiscountTypeStringConverter))]
+    public DiscountType DiscountType { get; set; }
+
+    [JsonPropertyName("discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal DiscountAmount { get; set; }
+
+    [JsonPropertyName("discount_rate")]
+    public int DiscountRate { get; set; }
+
+    [JsonPropertyName("max_discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal MaxDiscountAmount { get; set; }
+
+    [JsonPropertyName("tier_price1"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal TierPrice1 { get; set; }
+
+    [JsonPropertyName("tier_discount_rate1")]
+    public int TierDiscountRate1 { get; set; }
+
+    [JsonPropertyName("tier_price2"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal TierPrice2 { get; set; }
+
+    [JsonPropertyName("tier_discount_rate2")]
+    public int TierDiscountRate2 { get; set; }
+
+    [JsonPropertyName("tier_price3"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal TierPrice3 { get; set; }
+
+    [JsonPropertyName("tier_discount_rate3")]
+    public int TierDiscountRate3 { get; set; }
+
+    private int GetTieredPricePropertiesSetCount()
     {
-        [JsonPropertyName("remarks")]
-        public string? Remarks { get; set; }
+        var count = 0;
 
-        [JsonPropertyName("applies_to")]
-        public CouponAppliesTo AppliesTo { get; set; } = null!;
-
-        [JsonPropertyName("discount_type"), JsonConverter(typeof(DiscountTypeStringConverter))]
-        public DiscountType DiscountType { get; set; }
-
-        [JsonPropertyName("discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal DiscountAmount { get; set; }
-
-        [JsonPropertyName("discount_rate")]
-        public int DiscountRate { get; set; }
-
-        [JsonPropertyName("max_discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal MaxDiscountAmount { get; set; }
-
-        [JsonPropertyName("tier_price1"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal TierPrice1 { get; set; }
-
-        [JsonPropertyName("tier_discount_rate1")]
-        public int TierDiscountRate1 { get; set; }
-
-        [JsonPropertyName("tier_price2"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal TierPrice2 { get; set; }
-
-        [JsonPropertyName("tier_discount_rate2")]
-        public int TierDiscountRate2 { get; set; }
-
-        [JsonPropertyName("tier_price3"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal TierPrice3 { get; set; }
-
-        [JsonPropertyName("tier_discount_rate3")]
-        public int TierDiscountRate3 { get; set; }
-
-        private int GetTieredPricePropertiesSetCount()
+        if (TierPrice1 > 0.0M)
         {
-            var count = 0;
-
-            if (TierPrice1 > 0.0M)
-            {
-                count += 1;
-            }
-
-            if (TierPrice2 > 0.0M)
-            {
-                count += 1;
-            }
-
-            if (TierPrice3 > 0.0M)
-            {
-                count += 1;
-            }
-
-            if (TierDiscountRate1 > 0)
-            {
-                count += 1;
-            }
-
-            if (TierDiscountRate2 > 0)
-            {
-                count += 1;
-            }
-
-            if (TierDiscountRate3 > 0)
-            {
-                count += 1;
-            }
-
-            return count;
+            count += 1;
         }
 
-        internal void ValidateThrowException()
+        if (TierPrice2 > 0.0M)
         {
-            if (DiscountType == DiscountType.Percentage)
-            {
-                var setCount = GetTieredPricePropertiesSetCount();
+            count += 1;
+        }
 
-                if (setCount > 0 && setCount < 6)
-                {
-                    throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+        if (TierPrice3 > 0.0M)
+        {
+            count += 1;
+        }
+
+        if (TierDiscountRate1 > 0)
+        {
+            count += 1;
+        }
+
+        if (TierDiscountRate2 > 0)
+        {
+            count += 1;
+        }
+
+        if (TierDiscountRate3 > 0)
+        {
+            count += 1;
+        }
+
+        return count;
+    }
+
+    internal void ValidateThrowException()
+    {
+        if (DiscountType == DiscountType.Percentage)
+        {
+            var setCount = GetTieredPricePropertiesSetCount();
+
+            if (setCount > 0 && setCount < 6)
+            {
+                throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                     {
                         {nameof(TierDiscountRate1), TierDiscountRate1},
                         {nameof(TierDiscountRate2), TierDiscountRate2},
@@ -124,42 +124,41 @@ namespace BricklinkSharp.Client
                         {nameof(TierPrice2), TierPrice2},
                         {nameof(TierPrice3), TierPrice3},
                     },
-                        $"All properties ({nameof(TierPrice1)}-{nameof(TierPrice3)}, {nameof(TierDiscountRate1)}-{nameof(TierDiscountRate3)}) must be set" +
-                        "when using tiered pricing.",
-                        GetType());
+                    $"All properties ({nameof(TierPrice1)}-{nameof(TierPrice3)}, {nameof(TierDiscountRate1)}-{nameof(TierDiscountRate3)}) must be set" +
+                    "when using tiered pricing.",
+                    GetType());
+            }
+
+            if (setCount == 6)
+            {
+                var invalidParameters = new Dictionary<string, object>();
+                if (TierDiscountRate2 <= TierDiscountRate1)
+                {
+                    invalidParameters.Add(nameof(TierDiscountRate2), TierDiscountRate2);
                 }
 
-                if (setCount == 6)
+                if (TierDiscountRate3 <= TierDiscountRate2)
                 {
-                    var invalidParameters = new Dictionary<string, object>();
-                    if (TierDiscountRate2 <= TierDiscountRate1)
-                    {
-                        invalidParameters.Add(nameof(TierDiscountRate2), TierDiscountRate2);
-                    }
+                    invalidParameters.Add(nameof(TierDiscountRate3), TierDiscountRate3);
+                }
 
-                    if (TierDiscountRate3 <= TierDiscountRate2)
-                    {
-                        invalidParameters.Add(nameof(TierDiscountRate3), TierDiscountRate3);
-                    }
+                if (TierPrice2 <= TierPrice1)
+                {
+                    invalidParameters.Add(nameof(TierPrice2), TierPrice2);
+                }
 
-                    if (TierPrice2 <= TierPrice1)
-                    {
-                        invalidParameters.Add(nameof(TierPrice2), TierPrice2);
-                    }
+                if (TierPrice3 <= TierPrice2)
+                {
+                    invalidParameters.Add(nameof(TierPrice3), TierPrice3);
+                }
 
-                    if (TierPrice3 <= TierPrice2)
-                    {
-                        invalidParameters.Add(nameof(TierPrice3), TierPrice3);
-                    }
-
-                    if (invalidParameters.Any())
-                    {
-                        throw new BricklinkInvalidParameterException(invalidParameters,
-                            "Following rules apply for tiered pricing: " + Environment.NewLine +
-                            $"{nameof(TierPrice1)} < {nameof(TierPrice2)} < {nameof(TierPrice3)}," + Environment.NewLine +
-                            $"{nameof(TierDiscountRate1)} < {nameof(TierDiscountRate2)} < {nameof(TierDiscountRate3)}.",
-                            GetType());
-                    }
+                if (invalidParameters.Any())
+                {
+                    throw new BricklinkInvalidParameterException(invalidParameters,
+                        "Following rules apply for tiered pricing: " + Environment.NewLine +
+                        $"{nameof(TierPrice1)} < {nameof(TierPrice2)} < {nameof(TierPrice3)}," + Environment.NewLine +
+                        $"{nameof(TierDiscountRate1)} < {nameof(TierDiscountRate2)} < {nameof(TierDiscountRate3)}.",
+                        GetType());
                 }
             }
         }

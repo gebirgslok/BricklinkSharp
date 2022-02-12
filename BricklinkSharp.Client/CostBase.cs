@@ -27,23 +27,22 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class CostBase
 {
-    [Serializable]
-    public class CostBase
+    [JsonPropertyName("currency_code")]
+    public string CurrencyCode { get; set; } = null!;
+
+    [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Subtotal { get; set; }
+
+    [JsonPropertyName("grand_total"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal GrandTotal { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("currency_code")]
-        public string CurrencyCode { get; set; } = null!;
-
-        [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Subtotal { get; set; }
-
-        [JsonPropertyName("grand_total"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal GrandTotal { get; set; }
-
-        public override string ToString()
-        {
-            return $"{GrandTotal:F2} (subtotal {Subtotal:F2}) - {CurrencyCode}";
-        }
+        return $"{GrandTotal:F2} (subtotal {Subtotal:F2}) - {CurrencyCode}";
     }
 }

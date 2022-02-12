@@ -23,11 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum OrderDirection
 {
-    public enum OrderDirection
-    {
-        In = 0,
-        Out = 1
-    }
+    In = 0,
+    Out = 1
 }

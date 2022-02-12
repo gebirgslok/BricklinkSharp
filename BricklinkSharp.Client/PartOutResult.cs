@@ -26,51 +26,50 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class PartOutResult
 {
-    [Serializable]
-    public class PartOutResult
+    [JsonPropertyName("average_6months_sales_value_usd")]
+    public decimal Average6MonthsSalesValueUsd { get; }
+
+    [JsonPropertyName("average_6months_sales_value_my_currency")]
+    public decimal? Average6MonthsSalesValueMyCurrency { get; internal set; }
+
+    [JsonPropertyName("included_items_count")]
+    public int IncludedItemsCount { get; }
+
+    [JsonPropertyName("included_lots_count")]
+    public int IncludedLotsCount { get; }
+
+    [JsonPropertyName("not_included_items_count")]
+    public int NotIncludedItemsCount { get; }
+
+    [JsonPropertyName("not_included_lots_count")]
+    public int NotIncludeLotsCount { get; }
+
+    [JsonPropertyName("current_sales_value_usd")]
+    public decimal CurrentSalesValueUsd { get; }
+
+    [JsonPropertyName("current_sales_value_my_currency")]
+    public decimal? CurrentSalesValueMyCurreny { get; internal set; }
+
+    [JsonPropertyName("item_number")]
+    public string ItemNumber { get; internal set; } = string.Empty;
+
+    [JsonPropertyName("condition")]
+    public Condition Condition { get; internal set; }
+
+    internal PartOutResult(decimal average6MonthsSalesValueUsd, decimal currentSalesValueUsd, 
+        int includedItemsCount, int includedLotsCount, 
+        int notIncludedItemsCount, int notIncludeLotsCount)
     {
-        [JsonPropertyName("average_6months_sales_value_usd")]
-        public decimal Average6MonthsSalesValueUsd { get; }
-
-        [JsonPropertyName("average_6months_sales_value_my_currency")]
-        public decimal? Average6MonthsSalesValueMyCurrency { get; internal set; }
-
-        [JsonPropertyName("included_items_count")]
-        public int IncludedItemsCount { get; }
-
-        [JsonPropertyName("included_lots_count")]
-        public int IncludedLotsCount { get; }
-
-        [JsonPropertyName("not_included_items_count")]
-        public int NotIncludedItemsCount { get; }
-
-        [JsonPropertyName("not_included_lots_count")]
-        public int NotIncludeLotsCount { get; }
-
-        [JsonPropertyName("current_sales_value_usd")]
-        public decimal CurrentSalesValueUsd { get; }
-
-        [JsonPropertyName("current_sales_value_my_currency")]
-        public decimal? CurrentSalesValueMyCurreny { get; internal set; }
-
-        [JsonPropertyName("item_number")]
-        public string ItemNumber { get; internal set; } = string.Empty;
-
-        [JsonPropertyName("condition")]
-        public Condition Condition { get; internal set; }
-
-        internal PartOutResult(decimal average6MonthsSalesValueUsd, decimal currentSalesValueUsd, 
-            int includedItemsCount, int includedLotsCount, 
-            int notIncludedItemsCount, int notIncludeLotsCount)
-        {
-            Average6MonthsSalesValueUsd = average6MonthsSalesValueUsd;
-            CurrentSalesValueUsd = currentSalesValueUsd;
-            IncludedItemsCount = includedItemsCount;
-            IncludedLotsCount = includedLotsCount;
-            NotIncludedItemsCount = notIncludedItemsCount;
-            NotIncludeLotsCount = notIncludeLotsCount;
-        }
+        Average6MonthsSalesValueUsd = average6MonthsSalesValueUsd;
+        CurrentSalesValueUsd = currentSalesValueUsd;
+        IncludedItemsCount = includedItemsCount;
+        IncludedLotsCount = includedLotsCount;
+        NotIncludedItemsCount = notIncludedItemsCount;
+        NotIncludeLotsCount = notIncludeLotsCount;
     }
 }

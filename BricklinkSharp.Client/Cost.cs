@@ -26,38 +26,37 @@
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class Cost : CostBase
 {
-    public class Cost : CostBase
-    {
-        [JsonPropertyName("salesTax_collected_by_BL"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal SalesTaxCollectedByBricklink { get; set; }
+    [JsonPropertyName("salesTax_collected_by_BL"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal SalesTaxCollectedByBricklink { get; set; }
 
-        [JsonPropertyName("final_total"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal FinalTotal { get; set; }
+    [JsonPropertyName("final_total"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal FinalTotal { get; set; }
 
-        [JsonPropertyName("etc1"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Etc1 { get; set; }
+    [JsonPropertyName("etc1"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Etc1 { get; set; }
 
-        [JsonPropertyName("etc2"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Etc2 { get; set; }
+    [JsonPropertyName("etc2"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Etc2 { get; set; }
 
-        [JsonPropertyName("insurance"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Insurance { get; set; }
+    [JsonPropertyName("insurance"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Insurance { get; set; }
 
-        [JsonPropertyName("shipping"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Shipping { get; set; }
+    [JsonPropertyName("shipping"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Shipping { get; set; }
 
-        [JsonPropertyName("credit"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Credit { get; set; }
+    [JsonPropertyName("credit"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Credit { get; set; }
 
-        [JsonPropertyName("coupon"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal Coupon { get; set; }
+    [JsonPropertyName("coupon"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Coupon { get; set; }
 
-        [JsonPropertyName("vat_rate"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal VatRate { get; set; }
+    [JsonPropertyName("vat_rate"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal VatRate { get; set; }
 
-        [JsonPropertyName("vat_amount"), JsonConverter(typeof(DecimalStringConverter))]
-        public decimal VatAmount { get; set; }
-    }
+    [JsonPropertyName("vat_amount"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal VatAmount { get; set; }
 }

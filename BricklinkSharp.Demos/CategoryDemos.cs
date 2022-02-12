@@ -26,24 +26,23 @@
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class CategoryDemos
 {
-    internal static class CategoryDemos
+    public static async Task GetCategoryDemo()
     {
-        public static async Task GetCategoryDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var category = await client.GetCategoryAsync(1);
+        using var client = BricklinkClientFactory.Build();
+        var category = await client.GetCategoryAsync(1);
 
-            PrintHelper.PrintAsJson(category);
-        }
+        PrintHelper.PrintAsJson(category);
+    }
 
-        public static async Task GetCategoryListDemo()
-        {
-           using var client = BricklinkClientFactory.Build();
-            var categories = await client.GetCategoryListAsync();
+    public static async Task GetCategoryListDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var categories = await client.GetCategoryListAsync();
 
-            PrintHelper.PrintAsJson(categories);
-        }
+        PrintHelper.PrintAsJson(categories);
     }
 }

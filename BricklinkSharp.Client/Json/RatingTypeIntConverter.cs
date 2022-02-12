@@ -28,19 +28,18 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 // ReSharper disable UnusedType.Global
 
-namespace BricklinkSharp.Client.Json
-{
-    internal class RatingTypeIntConverter : JsonConverter<RatingType>
-    {
-        public override RatingType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var intVal = reader.GetInt32();
-            return (RatingType)intVal;
-        }
+namespace BricklinkSharp.Client.Json;
 
-        public override void Write(Utf8JsonWriter writer, RatingType value, JsonSerializerOptions options)
-        {
-            writer.WriteNumberValue((int)value);
-        }
+internal class RatingTypeIntConverter : JsonConverter<RatingType>
+{
+    public override RatingType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var intVal = reader.GetInt32();
+        return (RatingType)intVal;
+    }
+
+    public override void Write(Utf8JsonWriter writer, RatingType value, JsonSerializerOptions options)
+    {
+        writer.WriteNumberValue((int)value);
     }
 }

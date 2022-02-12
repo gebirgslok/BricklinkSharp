@@ -26,16 +26,15 @@
 using System.Threading.Tasks;
 using BricklinkSharp.Client;
 
-namespace BricklinkSharp.Demos
-{
-    internal static class PushNotificationDemos
-    {
-        public static async Task GetNotificationsDemo()
-        {
-            using var client = BricklinkClientFactory.Build();
-            var notifications = await client.GetNotificationsAsync();
+namespace BricklinkSharp.Demos;
 
-            PrintHelper.PrintAsJson(notifications);
-        }
+internal static class PushNotificationDemos
+{
+    public static async Task GetNotificationsDemo()
+    {
+        using var client = BricklinkClientFactory.Build();
+        var notifications = await client.GetNotificationsAsync();
+
+        PrintHelper.PrintAsJson(notifications);
     }
 }

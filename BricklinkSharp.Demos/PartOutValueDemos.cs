@@ -28,32 +28,31 @@ using System.Threading.Tasks;
 using BricklinkSharp.Client;
 using BricklinkSharp.Client.CurrencyRates;
 
-namespace BricklinkSharp.Demos
+namespace BricklinkSharp.Demos;
+
+internal static class PartOutValueDemos
 {
-    internal static class PartOutValueDemos
+    public static async Task GetPartOutValueFromPageDemo()
     {
-        public static async Task GetPartOutValueFromPageDemo()
+        string currencyCode = "EUR";
+        ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = "<Insert your API key here or comment these two lines and uncomment the Null-assignment>";
+
+        //string currencyCode = null;
+
+        using var client = BricklinkClientFactory.Build();
+        var items = new List<KeyValuePair<string, PartOutItemType>>
         {
-            string currencyCode = "EUR";
-            ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = "<Insert your API key here or comment these two lines and uncomment the Null-assignment>";
+            new KeyValuePair<string, PartOutItemType>("6031641", PartOutItemType.Gear),
+            new KeyValuePair<string, PartOutItemType>("75134", PartOutItemType.Set),
+            new KeyValuePair<string, PartOutItemType>("70142", PartOutItemType.Set)
+        };
 
-            //string currencyCode = null;
-
-            using var client = BricklinkClientFactory.Build();
-            var items = new List<KeyValuePair<string, PartOutItemType>>
-            {
-                new KeyValuePair<string, PartOutItemType>("6031641", PartOutItemType.Gear),
-                new KeyValuePair<string, PartOutItemType>("75134", PartOutItemType.Set),
-                new KeyValuePair<string, PartOutItemType>("70142", PartOutItemType.Set)
-            };
-
-            foreach (var kvp in items)
-            {
-                var number = kvp.Key;
-                var itemType = kvp.Value;
-                await client.GetPartOutValueFromPageAsync(number, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
-                    includeExtraParts: true, includeInstructions:true, itemType: itemType, currencyCode: currencyCode);
-            }
+        foreach (var kvp in items)
+        {
+            var number = kvp.Key;
+            var itemType = kvp.Value;
+            await client.GetPartOutValueFromPageAsync(number, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
+                includeExtraParts: true, includeInstructions:true, itemType: itemType, currencyCode: currencyCode);
         }
     }
 }

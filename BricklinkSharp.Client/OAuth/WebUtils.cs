@@ -28,19 +28,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BricklinkSharp.Client.OAuth
+namespace BricklinkSharp.Client.OAuth;
+
+internal static class WebUtils
 {
-    internal static class WebUtils
+    public static IEnumerable<WebParameter> ParseQueryString(Uri uri)
     {
-        public static IEnumerable<WebParameter> ParseQueryString(Uri uri)
-        {
-            var parsedQuery = HttpUtility.ParseQueryString(uri.Query);
+        var parsedQuery = HttpUtility.ParseQueryString(uri.Query);
 
-            var queryStringParameters = parsedQuery
-                .AllKeys
-                .SelectMany(parsedQuery.GetValues!, (key, value) => new { key, value });
+        var queryStringParameters = parsedQuery
+            .AllKeys
+            .SelectMany(parsedQuery.GetValues!, (key, value) => new { key, value });
 
-            return queryStringParameters.Select(p => new WebParameter(p.key!, p.value!));
-        }
+        return queryStringParameters.Select(p => new WebParameter(p.key!, p.value!));
     }
 }

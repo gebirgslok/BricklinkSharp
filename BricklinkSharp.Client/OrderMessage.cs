@@ -26,24 +26,23 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class OrderMessage
 {
-    [Serializable]
-    public class OrderMessage
-    {
-        [JsonPropertyName("subject")]
-        public string? Subject { get; set; } = null;
+    [JsonPropertyName("subject")]
+    public string? Subject { get; set; } = null;
 
-        [JsonPropertyName("body")]
-        public string Body { get; set; } = null!;
+    [JsonPropertyName("body")]
+    public string Body { get; set; } = null!;
 
-        [JsonPropertyName("from")]
-        public string From { get; set; } = null!;
+    [JsonPropertyName("from")]
+    public string From { get; set; } = null!;
 
-        [JsonPropertyName("to")]
-        public string To { get; set; } = null!;
+    [JsonPropertyName("to")]
+    public string To { get; set; } = null!;
 
-        [JsonPropertyName("dateSent")]
-        public DateTime DateSent { get; set; }
-    }
+    [JsonPropertyName("dateSent")]
+    public DateTime DateSent { get; set; }
 }

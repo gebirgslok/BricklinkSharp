@@ -29,31 +29,30 @@ using System.Runtime.Serialization;
 using System.Text;
 // ReSharper disable UnusedMember.Local
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class BricklinkMissingCredentialsException : Exception
 {
-    public class BricklinkMissingCredentialsException : Exception
+    internal BricklinkMissingCredentialsException(IReadOnlyList<string> missingParams) : base(BuildMessage(missingParams))
     {
-        internal BricklinkMissingCredentialsException(IReadOnlyList<string> missingParams) : base(BuildMessage(missingParams))
+    }
+
+    private static string BuildMessage(IReadOnlyList<string> missingParams)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("Missing credential parameter(s):");
+
+        for (var i = 0; i < missingParams.Count; i++)
         {
+            var missingParam = missingParams[i];
+            var isLast = i == missingParams.Count - 1;
+            builder.AppendLine($"Parameter = {missingParam}{(isLast ? "." : ", ")}");
         }
 
-        private static string BuildMessage(IReadOnlyList<string> missingParams)
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("Missing credential parameter(s):");
+        return builder.ToString();
+    }
 
-            for (var i = 0; i < missingParams.Count; i++)
-            {
-                var missingParam = missingParams[i];
-                var isLast = i == missingParams.Count - 1;
-                builder.AppendLine($"Parameter = {missingParam}{(isLast ? "." : ", ")}");
-            }
-
-            return builder.ToString();
-        }
-
-        private BricklinkMissingCredentialsException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+    private BricklinkMissingCredentialsException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

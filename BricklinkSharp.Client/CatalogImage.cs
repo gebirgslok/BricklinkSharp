@@ -29,22 +29,21 @@ using System.Text.Json.Serialization;
 
 #pragma warning disable 8632
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class CatalogImage : ItemBase
 {
-    [Serializable]
-    public class CatalogImage : ItemBase
+    [JsonPropertyName("thumbnail_url")]
+    public string? ThumbnailUrl { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("thumbnail_url")]
-        public string? ThumbnailUrl { get; set; }
-
-        public override string ToString()
+        if (ThumbnailUrl == null)
         {
-            if (ThumbnailUrl == null)
-            {
-                return base.ToString();
-            }
-
-            return $"{base.ToString()}: {ThumbnailUrl}";
+            return base.ToString();
         }
+
+        return $"{base.ToString()}: {ThumbnailUrl}";
     }
 }

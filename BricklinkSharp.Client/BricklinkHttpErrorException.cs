@@ -27,47 +27,46 @@ using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class BricklinkHttpErrorException : BricklinkException
 {
-    public class BricklinkHttpErrorException : BricklinkException
+    public int ExpectedCode { get; }
+
+    public int ReceivedCode { get; }
+
+    public string? Description { get; }
+
+    public string? RawMessage { get; }
+
+    internal BricklinkHttpErrorException(int receivedCode, int expectedCode, string description, string message, string url, HttpMethod httpMethod)
+        : base($"Received unexpected HTTP status code for request '{httpMethod}' {url}:" +
+               Environment.NewLine +
+               $"Expected = {expectedCode}, received = {receivedCode}." +
+               Environment.NewLine +
+               $"Description: {description}, message: {message}.", url, httpMethod)
     {
-        public int ExpectedCode { get; }
+        ExpectedCode = expectedCode;
+        ReceivedCode = receivedCode;
+        Description = description;
+        RawMessage = message;
+    }
 
-        public int ReceivedCode { get; }
+    private BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+        ExpectedCode = info.GetInt32(nameof(ExpectedCode));
+        ReceivedCode = info.GetInt32(nameof(ReceivedCode));
+        Description = info.GetString(nameof(Description));
+        RawMessage = info.GetString(nameof(RawMessage));
+    }
 
-        public string? Description { get; }
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(ExpectedCode), ExpectedCode);
+        info.AddValue(nameof(ReceivedCode), ReceivedCode);
+        info.AddValue(nameof(Description), Description);
+        info.AddValue(nameof(RawMessage), RawMessage);
 
-        public string? RawMessage { get; }
-
-        internal BricklinkHttpErrorException(int receivedCode, int expectedCode, string description, string message, string url, HttpMethod httpMethod)
-            : base($"Received unexpected HTTP status code for request '{httpMethod}' {url}:" +
-                   Environment.NewLine +
-                   $"Expected = {expectedCode}, received = {receivedCode}." +
-                   Environment.NewLine +
-                   $"Description: {description}, message: {message}.", url, httpMethod)
-        {
-            ExpectedCode = expectedCode;
-            ReceivedCode = receivedCode;
-            Description = description;
-            RawMessage = message;
-        }
-
-        private BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            ExpectedCode = info.GetInt32(nameof(ExpectedCode));
-            ReceivedCode = info.GetInt32(nameof(ReceivedCode));
-            Description = info.GetString(nameof(Description));
-            RawMessage = info.GetString(nameof(RawMessage));
-        }
-
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(ExpectedCode), ExpectedCode);
-            info.AddValue(nameof(ReceivedCode), ReceivedCode);
-            info.AddValue(nameof(Description), Description);
-            info.AddValue(nameof(RawMessage), RawMessage);
-
-            base.GetObjectData(info, context);
-        }
+        base.GetObjectData(info, context);
     }
 }

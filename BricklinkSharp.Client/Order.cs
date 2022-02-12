@@ -26,36 +26,35 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class UpdateOrder
 {
-    public class UpdateOrder
+    [JsonPropertyName("cost")]
+    public UpdateCost Cost { get; }
+
+    [JsonPropertyName("shipping")]
+    public UpdateShipping Shipping { get; }
+
+    [JsonPropertyName("remarks")]
+    public string? Remarks { get; set; }
+
+    [JsonPropertyName("is_filed")]
+    public bool? IsFiled { get; set; }
+
+    public UpdateOrder()
     {
-        [JsonPropertyName("cost")]
-        public UpdateCost Cost { get; }
-
-        [JsonPropertyName("shipping")]
-        public UpdateShipping Shipping { get; }
-
-        [JsonPropertyName("remarks")]
-        public string? Remarks { get; set; }
-
-        [JsonPropertyName("is_filed")]
-        public bool? IsFiled { get; set; }
-
-        public UpdateOrder()
-        {
-            Cost = new UpdateCost();
-            Shipping = new UpdateShipping();
-        }
+        Cost = new UpdateCost();
+        Shipping = new UpdateShipping();
     }
+}
 
-    [Serializable]
-    public class Order : OrderBase
-    {
-        [JsonPropertyName("cost")]
-        public CostBase Cost { get; set; } = null!;
+[Serializable]
+public class Order : OrderBase
+{
+    [JsonPropertyName("cost")]
+    public CostBase Cost { get; set; } = null!;
 
-        [JsonPropertyName("disp_cost")]
-        public CostBase DisplayCost { get; set; } = null!;
-    }
+    [JsonPropertyName("disp_cost")]
+    public CostBase DisplayCost { get; set; } = null!;
 }

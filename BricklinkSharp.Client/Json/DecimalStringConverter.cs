@@ -28,26 +28,25 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BricklinkSharp.Client.Json
+namespace BricklinkSharp.Client.Json;
+
+internal class DecimalStringConverter : JsonConverter<decimal>
 {
-    internal class DecimalStringConverter : JsonConverter<decimal>
+    private static readonly CultureInfo _culture = new CultureInfo("en-US");
+
+    public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        private static readonly CultureInfo _culture = new CultureInfo("en-US");
-
-        public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        var stringValue = reader.GetString();
+        if (decimal.TryParse(stringValue, NumberStyles.Any, _culture, out var value))
         {
-            var stringValue = reader.GetString();
-            if (decimal.TryParse(stringValue, NumberStyles.Any, _culture, out var value))
-            {
-                return value;
-            }
-
-            return 0.0M;
+            return value;
         }
 
-        public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value.ToString(_culture));
-        }
+        return 0.0M;
+    }
+
+    public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString(_culture));
     }
 }

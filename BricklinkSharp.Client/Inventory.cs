@@ -27,30 +27,29 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class Inventory : InventoryBase
 {
-    [Serializable]
-    public class Inventory : InventoryBase
-    {
-        [JsonPropertyName("inventory_id")]
-        public int InventoryId { get; set; }
+    [JsonPropertyName("inventory_id")]
+    public int InventoryId { get; set; }
 
-        [JsonPropertyName("item")]
-        public InventoryItem Item { get; set; } = null!;
+    [JsonPropertyName("item")]
+    public InventoryItem Item { get; set; } = null!;
 
-        [JsonPropertyName("color_name")]
-        public string? ColorName { get; set; }
+    [JsonPropertyName("color_name")]
+    public string? ColorName { get; set; }
 
-        [JsonPropertyName("bind_id")]
-        public int BindId { get; set; }
+    [JsonPropertyName("bind_id")]
+    public int BindId { get; set; }
 
-        [JsonPropertyName("date_created")]
-        public DateTime CreatedOn { get; set; }
+    [JsonPropertyName("date_created")]
+    public DateTime CreatedOn { get; set; }
 
-        [JsonPropertyName("sale_rate")]
-        public int SaleRate { get; set; }
+    [JsonPropertyName("sale_rate")]
+    public int SaleRate { get; set; }
 
-        [JsonPropertyName("my_weight"), JsonConverter(typeof(DoubleStringConverter))]
-        public double MyWeight { get; set; }
-    }
+    [JsonPropertyName("my_weight"), JsonConverter(typeof(DoubleStringConverter))]
+    public double MyWeight { get; set; }
 }

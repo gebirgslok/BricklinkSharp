@@ -29,27 +29,26 @@ using BricklinkSharp.Client.Json;
 
 // ReSharper disable UnusedType.Global
 // ReSharper disable once ClassNeverInstantiated.Global
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public class Feedback : FeedbackBase
 {
-    public class Feedback : FeedbackBase
-    {
-        [JsonPropertyName("feedback_id")]
-        public int FeedbackId { get; set; }
+    [JsonPropertyName("feedback_id")]
+    public int FeedbackId { get; set; }
 
-        [JsonPropertyName("from")]
-        public string From { get; set; } = null!;
+    [JsonPropertyName("from")]
+    public string From { get; set; } = null!;
 
-        [JsonPropertyName("to")]
-        public string To { get; set; } = null!;
+    [JsonPropertyName("to")]
+    public string To { get; set; } = null!;
 
-        [JsonPropertyName("date_rated")]
-        public DateTime CreatedOn { get; set; }
+    [JsonPropertyName("date_rated")]
+    public DateTime CreatedOn { get; set; }
 
-        [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(RatingTargetRoleStringConverter))]
-        public RatingTargetRole RatingTargetRole { get; set; }
+    [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(RatingTargetRoleStringConverter))]
+    public RatingTargetRole RatingTargetRole { get; set; }
 
-        [JsonPropertyName("reply")]
-        public string? Reply { get; set; }
+    [JsonPropertyName("reply")]
+    public string? Reply { get; set; }
 
-    }
 }

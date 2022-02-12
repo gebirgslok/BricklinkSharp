@@ -27,20 +27,19 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class ItemBase
 {
-    [Serializable]
-    public class ItemBase
+    [JsonPropertyName("no")]
+    public string Number { get; set; } = null!;
+
+    [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
+    public ItemType Type { get; set; }
+
+    public override string ToString()
     {
-        [JsonPropertyName("no")]
-        public string Number { get; set; } = null!;
-
-        [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
-        public ItemType Type { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Type} - {Number}";
-        }
+        return $"{Type} - {Number}";
     }
 }

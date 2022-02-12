@@ -27,18 +27,17 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class CouponAppliesTo
 {
-    [Serializable]
-    public class CouponAppliesTo
-    {
-        [JsonPropertyName("type"), JsonConverter(typeof(NullableCouponRestrictionTypeStringConverter))]
-        public CouponRestrictionType? RestrictionType { get; set; }
+    [JsonPropertyName("type"), JsonConverter(typeof(NullableCouponRestrictionTypeStringConverter))]
+    public CouponRestrictionType? RestrictionType { get; set; }
 
-        [JsonPropertyName("item_type"), JsonConverter(typeof(NullableItemTypeStringConverter))]
-        public ItemType? ItemType { get; set; }
+    [JsonPropertyName("item_type"), JsonConverter(typeof(NullableItemTypeStringConverter))]
+    public ItemType? ItemType { get; set; }
 
-        [JsonPropertyName("except_on_sale")]
-        public bool? ExceptOnSale { get; set; }
-    }
+    [JsonPropertyName("except_on_sale")]
+    public bool? ExceptOnSale { get; set; }
 }

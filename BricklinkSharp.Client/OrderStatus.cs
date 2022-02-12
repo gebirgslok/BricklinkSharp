@@ -23,25 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum OrderStatus
 {
-    public enum OrderStatus
-    {
-        Pending = 0,
-        Updated = 1,
-        Processing = 2,
-        Ready = 3,
-        Paid = 4,
-        Packed = 5,
-        Shipped = 6,
-        Received = 7,
-        Completed = 8,
-        Ocr = 9,
-        Npb = 10,
-        Npx = 11,
-        Nrs = 12,
-        Nss = 13,
-        Cancelled = 14,
-        Purged = 15
-    }
+    Pending = 0,
+    Updated = 1,
+    Processing = 2,
+    Ready = 3,
+    Paid = 4,
+    Packed = 5,
+    Shipped = 6,
+    Received = 7,
+    Completed = 8,
+    Ocr = 9,
+    Npb = 10,
+    Npx = 11,
+    Nrs = 12,
+    Nss = 13,
+    Cancelled = 14,
+    Purged = 15
 }

@@ -26,27 +26,26 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BricklinkSharp.Client.Extensions
+namespace BricklinkSharp.Client.Extensions;
+
+internal static class ListExtensions
 {
-    internal static class ListExtensions
+    internal static string ToConcatenatedString(this List<string> listOfStrings, char separator = ',')
     {
-        internal static string ToConcatenatedString(this List<string> listOfStrings, char separator = ',')
+        var builder = new StringBuilder();
+
+        for (var i = 0; i < listOfStrings.Count; i++)
         {
-            var builder = new StringBuilder();
+            var s = listOfStrings[i];
 
-            for (var i = 0; i < listOfStrings.Count; i++)
+            builder.Append(s);
+
+            if (i < listOfStrings.Count - 1)
             {
-                var s = listOfStrings[i];
-
-                builder.Append(s);
-
-                if (i < listOfStrings.Count - 1)
-                {
-                    builder.Append(separator);
-                }
+                builder.Append(separator);
             }
-
-            return builder.ToString();
         }
+
+        return builder.ToString();
     }
 }

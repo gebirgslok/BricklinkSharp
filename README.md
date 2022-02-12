@@ -15,11 +15,12 @@ It supports all .NET platforms compatible with *.NET standard 2.0*.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
-### vnext
+### 1.3.1
 > :warning: This version contains changes which might has breaking behavior and requires some minor migration
-- Fixed a typo in **RatingTargetRole** (previous RatingTargeRole without "t") which has breaking behaviorr when using it.
+ - Fixed a typo in **RatingTargetRole** (previous RatingTargeRole without "t") which has breaking behavior when using it.
+   - Fixed also property name *RatingTargetRole* in class **Feedback**.
  - Fixed [Error with EnumExtensions](https://github.com/gebirgslok/BricklinkSharp/issues/5) along with many performance improvements, thanks to [xramcire](https://github.com/xramcire)
-   - With that change all **Enums** moved to *BricklinkSharp.Client.Enums* namespace, which requires to add an additional *using*.
+ - Refactored all .cs files to use *File Scoped Namespaces*
 
 ### 1.3.0
  - Added CancellationToken support for all async methods

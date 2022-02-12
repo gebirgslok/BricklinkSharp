@@ -23,12 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum ShippingArea
 {
-    public enum ShippingArea
-    {
-        Domestic = 0,
-        International = 1,
-        Both = 2
-    }
+    Domestic = 0,
+    International = 1,
+    Both = 2
 }

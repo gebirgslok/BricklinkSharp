@@ -23,13 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum AppearsAs
 {
-    public enum AppearsAs
-    {
-        Regular = 0,
-        Alternate = 1,
-        Counterpart = 2,
-        Extra = 3
-    }
+    Regular = 0,
+    Alternate = 1,
+    Counterpart = 2,
+    Extra = 3
 }

@@ -27,33 +27,32 @@ using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public abstract class OrderBase
 {
-    [Serializable]
-    public abstract class OrderBase
-    {
-        [JsonPropertyName("order_id")]
-        public int OrderId { get; set; }
+    [JsonPropertyName("order_id")]
+    public int OrderId { get; set; }
 
-        [JsonPropertyName("date_ordered")]
-        public DateTime OrderDate { get; set; }
+    [JsonPropertyName("date_ordered")]
+    public DateTime OrderDate { get; set; }
 
-        [JsonPropertyName("seller_name")]
-        public string SellerName { get; set; } = null!;
+    [JsonPropertyName("seller_name")]
+    public string SellerName { get; set; } = null!;
 
-        [JsonPropertyName("buyer_name")]
-        public string BuyerName { get; set; } = null!;
+    [JsonPropertyName("buyer_name")]
+    public string BuyerName { get; set; } = null!;
 
-        [JsonPropertyName("total_count")]
-        public int TotalCount { get; set; }
+    [JsonPropertyName("total_count")]
+    public int TotalCount { get; set; }
 
-        [JsonPropertyName("unique_count")]
-        public int UniqueCount { get; set; }
+    [JsonPropertyName("unique_count")]
+    public int UniqueCount { get; set; }
 
-        [JsonPropertyName("status"), JsonConverter(typeof(OrderStatusStringConverter))]
-        public OrderStatus Status { get; set; }
+    [JsonPropertyName("status"), JsonConverter(typeof(OrderStatusStringConverter))]
+    public OrderStatus Status { get; set; }
 
-        [JsonPropertyName("payment")]
-        public Payment Payment { get; set; } = null!;
-    }
+    [JsonPropertyName("payment")]
+    public Payment Payment { get; set; } = null!;
 }
