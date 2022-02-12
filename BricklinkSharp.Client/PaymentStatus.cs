@@ -23,12 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum ShippingArea
+    public enum PaymentStatus
     {
-        Domestic = 0,
-        International = 1,
-        Both = 2
+        None = 0,
+        Sent = 1,
+        Received = 2,
+        Clearing = 3,
+        Returned = 4,
+        Bounced = 5,
+        Completed = 6
     }
 }

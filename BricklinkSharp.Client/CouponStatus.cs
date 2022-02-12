@@ -23,18 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum ItemType
+    public enum CouponStatus
     {
-        Minifig = 0,
-        Part = 1,
-        Set = 2,
-        Book = 3,
-        Gear = 4,
-        Catalog = 5,
-        Instruction = 6,
-        UnsortedLot = 7,
-        OriginalBox = 8
+        Open = 0,
+        Redeemed = 1,
+        Declined = 2,
+        Expired = 3
     }
 }

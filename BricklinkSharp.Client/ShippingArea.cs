@@ -23,13 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum AppearsAs
+    public enum ShippingArea
     {
-        Regular = 0,
-        Alternate = 1,
-        Counterpart = 2,
-        Extra = 3
+        Domestic = 0,
+        International = 1,
+        Both = 2
     }
 }

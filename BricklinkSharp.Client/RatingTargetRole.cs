@@ -23,15 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum InventoryStatusType
+    public enum RatingTargetRole
     {
-        Available = 0,
-        InStockRoomA = 1,
-        InStockRoomB = 2,
-        InStockRoomC = 3,
-        Unavailable = 4,
-        Reserved = 5
+        Seller = 0,
+        Buyer = 1
     }
 }

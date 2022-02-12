@@ -25,7 +25,6 @@
 
 using System;
 using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Enums;
 using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client

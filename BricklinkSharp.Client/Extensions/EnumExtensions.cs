@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-using BricklinkSharp.Client.Enums;
 
 namespace BricklinkSharp.Client.Extensions
 {

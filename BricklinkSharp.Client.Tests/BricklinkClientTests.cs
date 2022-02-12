@@ -27,7 +27,6 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BricklinkSharp.Client.CurrencyRates;
-using BricklinkSharp.Client.Enums;
 using NUnit.Framework;
 
 namespace BricklinkSharp.Client.Tests

@@ -23,11 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum RatingTargetRole
+    public enum PartOutItemType
     {
-        Seller = 0,
-        Buyer = 1
+        Set = 0,
+        Minifig = 1,
+        Gear = 2,
     }
 }

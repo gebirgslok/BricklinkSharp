@@ -37,7 +37,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using BricklinkSharp.Client.CurrencyRates;
-using BricklinkSharp.Client.Enums;
 using BricklinkSharp.Client.Extensions;
 using BricklinkSharp.Client.OAuth;
 

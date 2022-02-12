@@ -23,12 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum RatingType
+    public enum OrderDirection
     {
-        Praise = 0,
-        Neutral = 1,
-        Complaint = 2
+        In = 0,
+        Out = 1
     }
 }

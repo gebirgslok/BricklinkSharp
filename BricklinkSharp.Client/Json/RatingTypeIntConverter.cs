@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BricklinkSharp.Client.Enums;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;

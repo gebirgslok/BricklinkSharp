@@ -23,11 +23,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum CouponRestrictionType
+    public enum EventType
     {
-        ApplyToSpecifiedItemType = 0,
-        ExcludeSpecifiedType = 1
+        Order = 0,
+        Message = 1,
+        Feedback = 2
     }
 }

@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using BricklinkSharp.Client.Enums;
 using BricklinkSharp.Client.Extensions;
 using NUnit.Framework;
 

@@ -23,12 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Enums
+namespace BricklinkSharp.Client
 {
-    public enum PartOutItemType
+    public enum PriceGuideType
     {
-        Set = 0,
-        Minifig = 1,
-        Gear = 2,
+        Sold = 0,
+        Stock = 1
     }
 }
