@@ -18,7 +18,8 @@ variables:
   buildPlatform: "Any CPU"
   buildConfiguration: "Release"
   semVerDate: $(Get-Date -Format yyyyMMdd+HHmmss)
-  directoryBuildPropsPath: "$(System.DefaultWorkingDirectory)\Directory.Build.props"
+  buildScripsPath: "$(System.DefaultWorkingDirectory)/Build"
+  directoryBuildPropsPath: "$(System.DefaultWorkingDirectory)/Directory.Build.props"
 
 steps:
   - task: NuGetToolInstaller@1
@@ -33,19 +34,19 @@ steps:
   - task: PowerShell@2
     displayName: Update CSPROJ Files
     inputs:
-      filePath: '$(System.DefaultWorkingDirectory)\Build\patch-build-props.ps1'
+      filePath: "$(buildScripsPath)/patch-build-props.ps1"
       arguments: '-DirectoryBuildPropsPath $(directoryBuildPropsPath) -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(semVerDate)"'
 
   - task: PowerShell@2
     displayName: Update Build Number From Version
     inputs:
-      filePath: '$(System.DefaultWorkingDirectory)\Build\update-build-number-from-version.ps1'
-      arguments: '-PathToCsprojFile $(directoryBuildPropsPath)'
+      filePath: "$(buildScripsPath)/update-build-number-from-version.ps1"
+      arguments: "-PathToCsprojFile $(directoryBuildPropsPath)"
 
   - task: PowerShell@2
     displayName: Set GeneratePackageOnBuild Property = true in CSPROJ
     inputs:
-      filePath: '$(System.DefaultWorkingDirectory)\Build\update-csproj-generate-package-on-build.ps1'
+      filePath: "$(buildScripsPath)/update-csproj-generate-package-on-build.ps1"
       arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
 
   - task: VSBuild@1
