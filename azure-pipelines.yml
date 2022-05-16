@@ -1,46 +1,47 @@
 trigger:
-- master
+  - master
 
 schedules:
-- cron: "0 0 * * *"
-  displayName: Daily midnight build
-  branches:
-    include:
-    - main
+  - cron: "0 0 * * *"
+    displayName: Daily midnight build
+    branches:
+      include:
+        - main
 
 pool:
-  vmImage: 'windows-2022'
+  vmImage: "windows-2022"
 
 name: $(Build.Reason)_commit-$(Build.SourceVersion)_$(Date:yyyyMMdd_HHmmss)
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'  
+  solution: "**/*.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
   semVerDate: $(Get-Date -Format yyyyMMdd+HHmmss)
+  directoryBuildPropsPath: "$(System.DefaultWorkingDirectory)\Directory.Build.props"
 
 steps:
   - task: NuGetToolInstaller@1
-  
+
   - task: NuGetCommand@2
     displayName: Restore NuGet packages
     inputs:
-      command: 'restore'
-      restoreSolution: '**/*.sln'
-      feedsToUse: 'select'
+      command: "restore"
+      restoreSolution: "**/*.sln"
+      feedsToUse: "select"
 
   - task: PowerShell@2
     displayName: Update CSPROJ Files
     inputs:
-      filePath: '$(System.DefaultWorkingDirectory)\Build\update-csproj-versions.ps1'
-      arguments: '-SrcDirectory $(System.DefaultWorkingDirectory) -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(semVerDate)"'
-      
+      filePath: '$(System.DefaultWorkingDirectory)\Build\patch-build-props.ps1'
+      arguments: '-DirectoryBuildPropsPath $(directoryBuildPropsPath) -BuildId $(Build.BuildId) -InformationalVersionSuffix "$(semVerDate)"'
+
   - task: PowerShell@2
     displayName: Update Build Number From Version
     inputs:
       filePath: '$(System.DefaultWorkingDirectory)\Build\update-build-number-from-version.ps1'
-      arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
-      
+      arguments: '-PathToCsprojFile $(directoryBuildPropsPath)'
+
   - task: PowerShell@2
     displayName: Set GeneratePackageOnBuild Property = true in CSPROJ
     inputs:
@@ -50,28 +51,28 @@ steps:
   - task: VSBuild@1
     displayName: Build Solution
     inputs:
-      solution: '$(solution)'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
+      solution: "$(solution)"
+      platform: "$(buildPlatform)"
+      configuration: "$(buildConfiguration)"
 
   - task: CmdLine@2
     displayName: Run Unit Tests
     inputs:
-     script: |
-      setlocal
-      set ACCESS_KEY=$(EXCHANGE_RATES_API_ACCESS_KEY)
-      dotnet test -c $(buildConfiguration)
-      
+      script: |
+        setlocal
+        set ACCESS_KEY=$(EXCHANGE_RATES_API_ACCESS_KEY)
+        dotnet test -c $(buildConfiguration)
+
   - task: CopyFiles@2
     displayName: Copy Bin To ArtifactsStagingDirectory
     inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: BricklinkSharp.Client\bin\$(BuildConfiguration)\**
-        TargetFolder: '$(Build.ArtifactsStagingDirectory)'
+      SourceFolder: "$(System.DefaultWorkingDirectory)"
+      Contents: BricklinkSharp.Client\bin\$(BuildConfiguration)\**
+      TargetFolder: "$(Build.ArtifactsStagingDirectory)"
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Artifacts
     inputs:
-        PathtoPublish: '$(Build.ArtifactsStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
+      PathtoPublish: "$(Build.ArtifactsStagingDirectory)"
+      ArtifactName: "drop"
+      publishLocation: "Container"
