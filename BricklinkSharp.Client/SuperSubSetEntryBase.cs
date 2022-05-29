@@ -24,8 +24,6 @@
 #endregion
 
 using System.Text.Json.Serialization;
-// ReSharper disable MemberCanBeProtected.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace BricklinkSharp.Client;
 

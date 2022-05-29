@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 #if HAVE_JSON_DEFAULT_IGNORE_CONDITION
@@ -38,9 +36,6 @@ using System.Threading.Tasks;
 using System.Web;
 using BricklinkSharp.Client.CurrencyRates;
 using BricklinkSharp.Client.Extensions;
-using BricklinkSharp.Client.OAuth;
-
-#pragma warning disable 8602
 
 namespace BricklinkSharp.Client;
 
@@ -83,23 +78,6 @@ internal sealed class BricklinkClient : IBricklinkClient
 #endif
     };
 
-    private static void GetAuthorizationHeader(string url, string method, out string scheme, out string parameter)
-    {
-        BricklinkClientConfiguration.Instance.ValidateThrowException();
-
-        var request = new OAuthRequest(BricklinkClientConfiguration.Instance.ConsumerKey!,
-            BricklinkClientConfiguration.Instance.ConsumerSecret!,
-            BricklinkClientConfiguration.Instance.TokenValue!,
-            BricklinkClientConfiguration.Instance.TokenSecret!,
-            url,
-            method);
-
-        var header = request.GetAuthorizationHeader();
-        var schemeParameter = header.Split(' ');
-        scheme = schemeParameter[0];
-        parameter = schemeParameter[1];
-    }
-
     private static string? BuildIncludeExcludeParameter<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
         Func<T, string> toStringFunc)
     {
@@ -121,45 +99,6 @@ internal sealed class BricklinkClient : IBricklinkClient
         }
 
         return null;
-    }
-
-    private async Task<string> ExecuteRequest<TBody>(string url, HttpMethod httpMethod,
-        TBody body, JsonSerializerOptions? options = null, CancellationToken cancellationToken = default)
-    {
-        GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
-        using var message = new HttpRequestMessage(httpMethod, url);
-        message.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
-        var json = JsonSerializer.Serialize(body, options);
-        using var content = new StringContent(json, Encoding.Default, "application/json");
-        content.Headers.ContentType.CharSet = string.Empty;
-        message.Content = content;
-
-        var response = await _httpClient.SendAsync(message, cancellationToken);
-
-#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
-            var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
-#else
-        var contentAsString = await response.Content.ReadAsStringAsync();
-#endif
-        return contentAsString;
-    }
-
-    private async Task<string> ExecuteRequest(string url, HttpMethod httpMethod, CancellationToken cancellationToken = default)
-    {
-        GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
-        using var message = new HttpRequestMessage(httpMethod, url);
-        message.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
-        message.Content = null;
-
-        var response = await _httpClient.SendAsync(message, cancellationToken);
-
-#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
-            var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
-#else
-        var contentAsString = await response.Content.ReadAsStringAsync();
-#endif
-
-        return contentAsString;
     }
 
     private static JsonElement GetData(JsonDocument document, int expectedCode, string url, HttpMethod httpMethod)
@@ -241,25 +180,29 @@ internal sealed class BricklinkClient : IBricklinkClient
         _isDisposed = true;
     }
 
-    public async Task<CatalogItem> GetItemAsync(ItemType type, string no, CancellationToken cancellationToken)
+    public async Task<CatalogItem> GetItemAsync(ItemType type, string no, 
+        CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var url = new Uri(_baseUri, $"items/{typeString}/{no}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
 
         var data = ParseResponse<CatalogItem>(responseBody, 200, url, method);
         return data;
     }
 
-    public async Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId, CancellationToken cancellationToken)
+    public async Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId, 
+        CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var url = new Uri(_baseUri, $"items/{typeString}/{no}/images/{colorId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
 
         var data = ParseResponse<CatalogImage>(responseBody, 200, url, method);
         return data;
@@ -322,15 +265,17 @@ internal sealed class BricklinkClient : IBricklinkClient
             .ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, cancellationToken, 
+            cancellationToken: cancellationToken);
 
         var data = ParseResponse<Superset[]>(responseBody, 200, url, method);
         return data;
     }
 
-    public async Task<Subset[]> GetSubsetsAsync(ItemType type, string no, int colorId = 0, bool? includeOriginalBox = null,
-        bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null,
-        CancellationToken cancellationToken = default)
+    public async Task<Subset[]> GetSubsetsAsync(ItemType type, string no, 
+        int colorId = 0, bool? includeOriginalBox = null,
+        bool? includeInstruction = null, bool? breakMinifigs = null, 
+        bool? breakSubsets = null, CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/subsets"));
@@ -344,7 +289,8 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(builder.ToString(), method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
 
         var data = ParseResponse<Subset[]>(responseBody, 200, url, method);
         return data;
@@ -361,7 +307,6 @@ internal sealed class BricklinkClient : IBricklinkClient
         query["color_id"] = colorId.ToString();
         query.AddIfNotNull("guide_type", priceGuideType?.ToDomainString());
         query.AddIfNotNull("new_or_used", condition?.ToDomainString());
-
         query.AddIfNotNull("country_code", countryCode);
         query.AddIfNotNull("region", region);
         query.AddIfNotNull("currency_code", currencyCode);
@@ -369,7 +314,9 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(builder.ToString(), method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
 
         var data = ParseResponse<PriceGuide>(responseBody, 200, url, method);
         return data;
@@ -382,7 +329,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"items/{typeString}/{no}/colors").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, cancellationToken: cancellationToken);
 
         var data = ParseResponse<KnownColor[]>(responseBody, 200, url, method);
         return data;
@@ -393,7 +340,8 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, "colors").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
 
         var data = ParseResponse<Color[]>(responseBody, 200, url, method);
         return data;
@@ -404,7 +352,8 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"colors/{colorId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
         var data = ParseResponse<Color>(responseBody, 200, url, method);
         return data;
     }
@@ -414,7 +363,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, "categories").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, cancellationToken: cancellationToken);
         var data = ParseResponse<Category[]>(responseBody, 200, url, method);
         return data;
     }
@@ -424,7 +373,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"categories/{categoryId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, cancellationToken: cancellationToken);
         var data = ParseResponse<Category>(responseBody, 200, url, method);
         return data;
     }
@@ -449,7 +398,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var dataArray = ParseResponseArrayAllowEmpty<Inventory>(responseBody, 200, url, method);
         return dataArray;
     }
@@ -459,7 +411,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponse<Inventory>(responseBody, 200, url, method);
         return data;
     }
@@ -470,7 +425,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, "inventories").ToString();
 
         var method = HttpMethod.Post;
-        var responseBody = await ExecuteRequest(url, method, newInventory, cancellationToken: cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, newInventory, cancellationToken: cancellationToken);
         var data = ParseResponse<Inventory>(responseBody, 201, url, method);
         return data;
     }
@@ -485,7 +440,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, "inventories").ToString();
         var method = HttpMethod.Post;
 
-        var responseBody = await ExecuteRequest(url, method, newInventories, cancellationToken: cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, newInventories, cancellationToken: cancellationToken);
         ParseResponseNoData(responseBody, 201, url, HttpMethod.Post);
     }
 
@@ -497,7 +452,7 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var method = HttpMethod.Put;
 
-        var responseBody = await ExecuteRequest(url, 
+        var responseBody = await _httpClient.ExecuteRequest(url, 
             method, 
             updateInventory, 
             IgnoreNullValuesJsonSerializerOptions, 
@@ -510,7 +465,10 @@ internal sealed class BricklinkClient : IBricklinkClient
     public async Task DeleteInventoryAsync(int inventoryId, CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-        var responseBody = await ExecuteRequest(url, HttpMethod.Delete, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, HttpMethod.Delete, 
+            cancellationToken: cancellationToken);
+
         ParseResponseNoData(responseBody, 204, url, HttpMethod.Delete);
     }
 
@@ -524,7 +482,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var itemMappings = ParseResponseArrayAllowEmpty<ItemMapping>(responseBody, 200, url, method);
         return itemMappings;
     }
@@ -534,7 +495,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var itemMappings = ParseResponse<ItemMapping[]>(responseBody, 200, url, method);
         return itemMappings;
     }
@@ -544,7 +508,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponseArrayAllowEmpty<ShippingMethod>(responseBody, 200, url, method);
         return data;
     }
@@ -554,7 +521,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponse<ShippingMethod>(responseBody, 200, url, method);
         return data;
     }
@@ -564,7 +534,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, "notifications").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponseArrayAllowEmpty<Notification>(responseBody, 200, url, method);
         return data;
     }
@@ -574,7 +547,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"members/{username}/ratings").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponse<MemberRating>(responseBody, 200, url, method);
         return data;
     }
@@ -589,7 +565,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, method);
         return data;
     }
@@ -599,7 +578,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"feedback/{feedbackId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponse<Feedback>(responseBody, 200, url, method);
         return data;
     }
@@ -616,7 +598,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         };
 
         var method = HttpMethod.Post;
-        var responseBody = await ExecuteRequest(url, method, body, cancellationToken: cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, body, cancellationToken: cancellationToken);
         var data = ParseResponse<Feedback>(responseBody, 201, url, method);
         return data;
     }
@@ -627,7 +609,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var body = new { reply };
 
         var method = HttpMethod.Post;
-        var responseBody = await ExecuteRequest(url, method, body, cancellationToken: cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, body, cancellationToken: cancellationToken);
         ParseResponseNoData(responseBody, 201, url, method);
     }
 
@@ -646,7 +628,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var orders = ParseResponseArrayAllowEmpty<Order>(responseBody, 200, url, method);
         return orders;
     }
@@ -656,7 +641,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponse<OrderDetails>(responseBody, 200, url, method);
         return data;
     }
@@ -666,7 +654,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var itemsBatchList = new List<OrderItem[]>();
         using var document = JsonDocument.Parse(responseBody);
         var dataElement = GetData(document, 200, url, method);
@@ -690,7 +681,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var messages = ParseResponseArrayAllowEmpty<OrderMessage>(responseBody, 200, url, method);
         return messages;
     }
@@ -700,7 +694,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}/feedback").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var feedbackArray = ParseResponseArrayAllowEmpty<Feedback>(responseBody, 200, url, method);
         return feedbackArray;
     }
@@ -710,7 +707,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}/status").ToString();
 
         var method = HttpMethod.Put;
-        var responseBody = await ExecuteRequest(url, method, new
+        var responseBody = await _httpClient.ExecuteRequest(url, method, new
         {
             field = "status",
             value = status.ToDomainString()
@@ -725,7 +722,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}/payment_status").ToString();
 
         var method = HttpMethod.Put;
-        var responseBody = await ExecuteRequest(url, method, new
+        var responseBody = await _httpClient.ExecuteRequest(url, method, new
         {
             field = "payment_status",
             value = status.ToDomainString()
@@ -744,7 +741,9 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Post;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
 
         ParseResponseNoData(responseBody, 200, url, method);
     }
@@ -755,7 +754,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
         var method = HttpMethod.Put;
-        var responseBody = await ExecuteRequest(url, method, updateOrder, 
+        var responseBody = await _httpClient.ExecuteRequest(url, method, updateOrder, 
             IgnoreNullValuesJsonSerializerOptions, cancellationToken);
 
         var order = ParseResponse<OrderDetails>(responseBody, 200, url, method);
@@ -785,7 +784,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = builder.ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var coupons = ParseResponseArrayAllowEmpty<Coupon>(responseBody, 200, url, method);
         return coupons;
     }
@@ -795,7 +797,10 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
 
         var method = HttpMethod.Get;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         var data = ParseResponse<Coupon>(responseBody, 200, url, method);
         return data;
     }
@@ -804,7 +809,10 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
         var method = HttpMethod.Delete;
-        var responseBody = await ExecuteRequest(url, method, cancellationToken);
+
+        var responseBody = await _httpClient.ExecuteRequest(url, method, 
+            cancellationToken: cancellationToken);
+
         ParseResponseNoData(responseBody, 204, url, method);
     }
 
@@ -814,7 +822,7 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = new Uri(_baseUri, "coupons").ToString();
         var method = HttpMethod.Post;
-        var responseBody = await ExecuteRequest(url, method, newCoupon, IgnoreNullValuesJsonSerializerOptions, cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequest(url, method, newCoupon, IgnoreNullValuesJsonSerializerOptions, cancellationToken);
         var coupon = ParseResponse<Coupon>(responseBody, 201, url, method);
         return coupon;
     }
@@ -827,7 +835,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
         var method = HttpMethod.Put;
 
-        var responseBody = await ExecuteRequest(url, method, updateCoupon, 
+        var responseBody = await _httpClient.ExecuteRequest(url, method, updateCoupon, 
             IgnoreNullValuesJsonSerializerOptions, cancellationToken);
 
         var coupon = ParseResponse<Coupon>(responseBody, 200, url, method);
@@ -848,14 +856,13 @@ internal sealed class BricklinkClient : IBricklinkClient
         {
             if (!int.TryParse(split[1], out int temp))
             {
-                throw new ArgumentException($"{itemNo} '{itemNo}' has an invalid sequence number. The section after the '-' must be numeric.",
+                throw new ArgumentException($"{itemNo} '{itemNo}' has an invalid sequence number. " +
+                                            "The section after the '-' must be numeric.",
                     nameof(itemNo));
             }
 
             sequenceNumber = temp;
         }
-
-        var s = condition.ToDomainString();
 
         var url = "https://www.bricklink.com/catalogPOV.asp?" +
                   $"itemType={itemType.ToDomainString()}&itemNo={rawItemNumber}&itemSeq={sequenceNumber}&itemQty=1&" +
@@ -875,13 +882,16 @@ internal sealed class BricklinkClient : IBricklinkClient
         result.ItemNumber = $"{rawItemNumber}-{sequenceNumber}";
         result.Condition = condition;
 
-        if (currencyCode != null)
+        if (currencyCode == null)
         {
-            var exchangeRate = await _currencyRatesService.GetExchangeRateAsync("USD", currencyCode);
-
-            result.Average6MonthsSalesValueMyCurrency = Math.Round(result.Average6MonthsSalesValueUsd * exchangeRate, 3);
-            result.CurrentSalesValueMyCurreny = Math.Round(result.CurrentSalesValueUsd * exchangeRate, 3);
+            return result;
         }
+
+        var exchangeRate = await _currencyRatesService
+            .GetExchangeRateAsync("USD", currencyCode, cancellationToken);
+
+        result.Average6MonthsSalesValueMyCurrency = Math.Round(result.Average6MonthsSalesValueUsd * exchangeRate, 3);
+        result.CurrentSalesValueMyCurreny = Math.Round(result.CurrentSalesValueUsd * exchangeRate, 3);
 
         return result;
     }
