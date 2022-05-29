@@ -35,6 +35,35 @@ namespace BricklinkSharp.Client.Extensions;
 
 internal static class HttpClientExtensions
 {
+    private static JsonElement GetData(JsonDocument document, int expectedCode,
+        string url, HttpMethod httpMethod)
+    {
+        var meta = document.RootElement.GetProperty("meta").ToObject<ResponseMeta>();
+
+        if (meta.Code != expectedCode)
+        {
+            throw new BricklinkHttpErrorException(meta.Code, expectedCode, meta.Description, meta.Message, url, httpMethod);
+        }
+
+        document.RootElement.TryGetProperty("data", out var dataElement);
+        return dataElement;
+    }
+
+    private static TData ParseResponse<TData>(string responseBody, int expectedCode,
+        string url, HttpMethod httpMethod)
+    {
+        using var document = JsonDocument.Parse(responseBody);
+        var dataElement = GetData(document, expectedCode, url, httpMethod);
+
+        if (dataElement.IsEmpty())
+        {
+            throw new BricklinkNoDataReceivedException(url, httpMethod);
+        }
+
+        var data = dataElement.ToObject<TData>();
+        return data;
+    }
+
     private static void GetAuthorizationHeader(string url, string method,
         out string scheme, out string parameter)
     {
@@ -53,8 +82,24 @@ internal static class HttpClientExtensions
         parameter = schemeParameter[1];
     }
 
-    public static async Task<string> ExecuteRequest(this HttpClient httpClient,string url, 
-        HttpMethod httpMethod, object? body = null, 
+    private static async Task<TResponse> ExecuteReadResponseAsync<TResponse>(HttpClient httpClient,
+        HttpMethod method,
+        string url,
+        int expectedCode,
+        object? body = null,
+        JsonSerializerOptions? jsonSerializerOptions = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var responseBody = await httpClient.ExecuteRequestAsync(url, method, body,
+            jsonSerializerOptions, cancellationToken);
+
+        var data = ParseResponse<TResponse>(responseBody, expectedCode, url, method);
+        return data;
+    }
+
+    public static async Task<string> ExecuteRequestAsync(this HttpClient httpClient, string url,
+        HttpMethod httpMethod, object? body = null,
         JsonSerializerOptions? options = null,
         CancellationToken cancellationToken = default)
     {
@@ -82,5 +127,33 @@ internal static class HttpClientExtensions
         var contentAsString = await response.Content.ReadAsStringAsync();
 #endif
         return contentAsString;
+    }
+
+    public static Task<TResponse> PutThenReadResponseAsync<TResponse>(this HttpClient httpClient,
+        string url, object? body = null,
+        JsonSerializerOptions? jsonSerializerOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        return ExecuteReadResponseAsync<TResponse>(httpClient,
+            HttpMethod.Put, url, 200, body, null, cancellationToken);
+    }
+
+    public static Task<TResponse> PostFromResponseAsync<TResponse>(
+        this HttpClient httpClient,
+        string url,
+        object body,
+        CancellationToken cancellationToken)
+    {
+        return ExecuteReadResponseAsync<TResponse>(httpClient, 
+            HttpMethod.Post, url, 201, body, null, cancellationToken);
+    }
+
+    public static Task<TResponse> GetFromResponseAsync<TResponse>(
+        this HttpClient httpClient,
+        string url,
+        CancellationToken cancellationToken)
+    {
+        return ExecuteReadResponseAsync<TResponse>(httpClient,
+            HttpMethod.Get, url, 200, null, null, cancellationToken);
     }
 }
