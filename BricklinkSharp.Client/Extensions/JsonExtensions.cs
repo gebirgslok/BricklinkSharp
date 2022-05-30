@@ -25,6 +25,7 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 
 namespace BricklinkSharp.Client.Extensions;
@@ -63,5 +64,25 @@ internal static class JsonExtensions
         }
 
         return obj;
+    }
+
+    internal static JsonElement GetData(this JsonDocument document, int expectedCode, string url, 
+        HttpMethod httpMethod)
+    {
+        var meta = document
+            .RootElement
+            .GetProperty("meta")
+            .ToObject<ResponseMeta>();
+
+        if (meta.Code != expectedCode)
+        {
+            throw new BricklinkHttpErrorException(meta.Code, 
+                expectedCode, 
+                meta.Description, 
+                meta.Message, url, httpMethod);
+        }
+
+        document.RootElement.TryGetProperty("data", out var dataElement);
+        return dataElement;
     }
 }

@@ -35,25 +35,12 @@ namespace BricklinkSharp.Client.Extensions;
 
 internal static class HttpClientExtensions
 {
-    private static JsonElement GetData(JsonDocument document, int expectedCode,
-        string url, HttpMethod httpMethod)
-    {
-        var meta = document.RootElement.GetProperty("meta").ToObject<ResponseMeta>();
-
-        if (meta.Code != expectedCode)
-        {
-            throw new BricklinkHttpErrorException(meta.Code, expectedCode, meta.Description, meta.Message, url, httpMethod);
-        }
-
-        document.RootElement.TryGetProperty("data", out var dataElement);
-        return dataElement;
-    }
-
     private static TData ParseResponse<TData>(string responseBody, int expectedCode,
         string url, HttpMethod httpMethod)
     {
         using var document = JsonDocument.Parse(responseBody);
-        var dataElement = GetData(document, expectedCode, url, httpMethod);
+
+        var dataElement = document.GetData(expectedCode, url, httpMethod);
 
         if (dataElement.IsEmpty())
         {
@@ -98,6 +85,63 @@ internal static class HttpClientExtensions
         return data;
     }
 
+    private static TData[] ParseResponseArrayAllowEmpty<TData>(string responseBody, 
+        int expectedCode, 
+        string url,
+        HttpMethod httpMethod)
+    {
+        using var document = JsonDocument.Parse(responseBody);
+        var dataElement = document.GetData(expectedCode, url, httpMethod);
+
+        if (dataElement.ValueKind != JsonValueKind.Array)
+        {
+            throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(), dataElement.ValueKind.ToString(),
+                url, httpMethod);
+        }
+
+        var dataArray = dataElement.ToObject<TData[]>();
+        return dataArray;
+    }
+
+    private static void ParseResponseNoData(string responseBody, 
+        int expectedCode, 
+        string url,
+        HttpMethod httpMethod)
+    {
+        using var document = JsonDocument.Parse(responseBody);
+        var dataElement = document.GetData(expectedCode, url, httpMethod);
+
+        if (!(dataElement.ValueKind == JsonValueKind.Object || dataElement.ValueKind == JsonValueKind.Undefined))
+        {
+            throw new BricklinkUnexpectedDataKindException(JsonValueKind.Object.ToString(),
+                dataElement.ValueKind.ToString(),
+                url,
+                httpMethod);
+        }
+
+        if (!dataElement.IsEmpty())
+        {
+            throw new BricklinkEmptyDataExpectedException(dataElement, url, httpMethod);
+        }
+    }
+
+    private static async Task ExecuteEnsureNoResponse(HttpClient httpClient,
+        string url,
+        HttpMethod method,
+        int expectedCode,
+        object? body = null,
+        JsonSerializerOptions? jsonSerializerOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        var responseBody = await httpClient.ExecuteRequestAsync(url, 
+            method, 
+            body,
+            jsonSerializerOptions,
+            cancellationToken: cancellationToken);
+
+        ParseResponseNoData(responseBody, expectedCode, url, method);
+    }
+
     public static async Task<string> ExecuteRequestAsync(this HttpClient httpClient, string url,
         HttpMethod httpMethod, object? body = null,
         JsonSerializerOptions? options = null,
@@ -135,10 +179,18 @@ internal static class HttpClientExtensions
         CancellationToken cancellationToken = default)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient,
-            HttpMethod.Put, url, 200, body, null, cancellationToken);
+            HttpMethod.Put, url, 200, body, jsonSerializerOptions, cancellationToken);
     }
 
-    public static Task<TResponse> PostFromResponseAsync<TResponse>(
+    public static Task PutEnsureNoResponseDataAsync(this HttpClient httpClient,
+        string url, object? body = null, JsonSerializerOptions? jsonSerializerOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Put, 200, body, jsonSerializerOptions,
+            cancellationToken);
+    }
+
+    public static Task<TResponse> PostThenReadResponseAsync<TResponse>(
         this HttpClient httpClient,
         string url,
         object body,
@@ -148,12 +200,42 @@ internal static class HttpClientExtensions
             HttpMethod.Post, url, 201, body, null, cancellationToken);
     }
 
-    public static Task<TResponse> GetFromResponseAsync<TResponse>(
+    public static Task PostEnsureNoResponseDataAsync(this HttpClient httpClient,
+        string url, object? body = null, CancellationToken cancellationToken = default)
+    {
+        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Post, 201, body, null,
+            cancellationToken);
+    }
+
+    public static Task DeleteEnsureNoResponseDataAsync(this HttpClient httpClient,
+        string url, CancellationToken cancellationToken = default)
+    {
+        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Delete, 204, 
+            null, 
+            null,
+            cancellationToken);
+    }
+
+    public static Task<TResponse> GetParseResponseAsync<TResponse>(
         this HttpClient httpClient,
         string url,
         CancellationToken cancellationToken)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient,
             HttpMethod.Get, url, 200, null, null, cancellationToken);
+    }
+
+    public static async Task<TResponse[]> GetParseResponseArrayAllowEmpty<TResponse>(
+        this HttpClient httpClient,
+        string url,
+        CancellationToken cancellationToken)
+    {
+        var method = HttpMethod.Get;
+
+        var responseBody = await httpClient.ExecuteRequestAsync(url, method,
+            cancellationToken: cancellationToken);
+
+        var dataArray = ParseResponseArrayAllowEmpty<TResponse>(responseBody, 200, url, method);
+        return dataArray;
     }
 }
