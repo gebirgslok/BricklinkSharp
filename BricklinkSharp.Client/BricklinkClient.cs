@@ -426,7 +426,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
         var query = HttpUtility.ParseQueryString(builder.Query);
-        query.AddIfNotNull("direction", direction, d => d!.ToString().ToLowerInvariant());
+        query.AddIfNotNull("direction", direction, d => d!.ToString()!.ToLowerInvariant());
         builder.Query = query.ToString();
 
         var url = builder.ToString();

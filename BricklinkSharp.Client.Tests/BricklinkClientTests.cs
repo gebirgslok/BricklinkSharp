@@ -79,8 +79,8 @@ public class BricklinkClientTests
         });
     }
 
-    [TestCase("21322-1", "EUR", true)]
-    [TestCase("21322-1", "SEK", false)]
+    [TestCase("7771-1", "GBP", true)]
+    [TestCase("7771-1", "SEK", false)]
     public async Task GetPartOutValueAsync_WithExchangeRate_ItemTypeIsSet_ItemExists(string itemNumber, string currencyCode, bool shouldLessThanUsd)
     {
         using var client = BricklinkClientFactory.Build();
@@ -89,13 +89,19 @@ public class BricklinkClientTests
 
         var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 
+        var message = shouldLessThanUsd ? 
+            $"Sales value in currency {currencyCode} should be less than US dollar but it is not" : 
+            $"Sales value in currency {currencyCode} should be greater than US dollar but it is not";
+
         Assert.True(shouldLessThanUsd ? 
             result.CurrentSalesValueUsd > result.CurrentSalesValueMyCurreny : 
-            result.CurrentSalesValueUsd < result.CurrentSalesValueMyCurreny);
+            result.CurrentSalesValueUsd < result.CurrentSalesValueMyCurreny,
+            message);
 
         Assert.True(shouldLessThanUsd ?
             result.Average6MonthsSalesValueUsd > result.Average6MonthsSalesValueMyCurrency :
-            result.Average6MonthsSalesValueUsd < result.Average6MonthsSalesValueMyCurrency);
+            result.Average6MonthsSalesValueUsd < result.Average6MonthsSalesValueMyCurrency,
+            message);
     }
 
     [TestCase("1610")]
