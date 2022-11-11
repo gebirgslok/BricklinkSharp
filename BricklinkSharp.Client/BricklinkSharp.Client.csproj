@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
     <Description>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Description>
     <Summary>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Summary>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -29,6 +29,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
     <AssemblyTitle>BricklinkSharp .Net 6.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net7.0'">
+    <AssemblyTitle>BricklinkSharp .Net 7.0</AssemblyTitle>
     <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
