@@ -61,7 +61,7 @@ steps:
     inputs:
       command: 'build'
       projects: '$(solution)'
-      arguments: '--Configuration $(buildConfiguration) -p:GeneratePackageOnBuild=true'
+      arguments: '-c $(buildConfiguration) -p:GeneratePackageOnBuild=true'
 
   - task: VSBuild@1
     displayName: Build Solution
