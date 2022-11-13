@@ -56,6 +56,13 @@ steps:
       filePath: "$(buildScripsPath)/update-csproj-generate-package-on-build.ps1"
       arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
 
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build
+    inputs:
+      command: 'build'
+      projects: '$(solution)'
+      arguments: '--Configuration $(buildConfiguration) -p:GeneratePackageOnBuild=true'
+
   - task: VSBuild@1
     displayName: Build Solution
     inputs:
