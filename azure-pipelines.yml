@@ -50,25 +50,25 @@ steps:
       filePath: "$(buildScripsPath)/update-build-number-from-version.ps1"
       arguments: "-PathToCsprojFile $(directoryBuildPropsPath)"
 
-  - task: PowerShell@2
-    displayName: Set GeneratePackageOnBuild Property = true in CSPROJ
-    inputs:
-      filePath: "$(buildScripsPath)/update-csproj-generate-package-on-build.ps1"
-      arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
+  #- task: PowerShell@2
+  #  displayName: Set GeneratePackageOnBuild Property = true in CSPROJ
+  #  inputs:
+  #    filePath: "$(buildScripsPath)/update-csproj-generate-package-on-build.ps1"
+  #    arguments: '-PathToCsprojFile $(System.DefaultWorkingDirectory)\BricklinkSharp.Client\BricklinkSharp.Client.csproj'
 
   - task: DotNetCoreCLI@2
-    displayName: dotnet build
+    displayName: Build Solution
     inputs:
       command: 'build'
       projects: '$(solution)'
       arguments: '-c $(buildConfiguration) -p:GeneratePackageOnBuild=true'
 
-  - task: VSBuild@1
-    displayName: Build Solution
-    inputs:
-      solution: "$(solution)"
-      platform: "$(buildPlatform)"
-      configuration: "$(buildConfiguration)"
+  #- task: VSBuild@1
+  #  displayName: Build Solution
+  #  inputs:
+  #    solution: "$(solution)"
+  #    platform: "$(buildPlatform)"
+  #    configuration: "$(buildConfiguration)"
 
   - task: CmdLine@2
     displayName: Run Unit Tests
