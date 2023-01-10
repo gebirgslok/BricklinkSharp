@@ -154,7 +154,7 @@ internal static class HttpClientExtensions
         if (body != null)
         {
             var json = JsonSerializer.Serialize(body, options);
-            using var content = new StringContent(json, Encoding.Default, "application/json");
+            var content = new StringContent(json, Encoding.Default, "application/json");
             content.Headers.ContentType.CharSet = string.Empty;
             message.Content = content;
         }
