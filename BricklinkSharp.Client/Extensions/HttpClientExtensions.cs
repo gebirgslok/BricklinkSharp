@@ -187,7 +187,7 @@ internal static class HttpClientExtensions
     public static Task PutEnsureNoResponseDataAsync(this HttpClient httpClient,
         string url, 
         object? body = null, 
-        int expectedCode = 200,
+        int expectedCode = 204,
         JsonSerializerOptions? jsonSerializerOptions = null,
         CancellationToken cancellationToken = default)
     {
