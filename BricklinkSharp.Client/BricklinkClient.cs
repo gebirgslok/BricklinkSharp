@@ -571,7 +571,7 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return _httpClient.PutEnsureNoResponseDataAsync(url, cancellationToken: cancellationToken);
+        return _httpClient.PostEnsureNoResponseDataAsync(url, expectedCode: 204, cancellationToken: cancellationToken);
     }
 
     public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder,
