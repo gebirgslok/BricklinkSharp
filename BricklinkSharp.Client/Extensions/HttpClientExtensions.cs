@@ -174,19 +174,24 @@ internal static class HttpClientExtensions
     }
 
     public static Task<TResponse> PutThenReadResponseAsync<TResponse>(this HttpClient httpClient,
-        string url, object? body = null,
+        string url, 
+        object? body = null, 
+        int expectedCode = 200,
         JsonSerializerOptions? jsonSerializerOptions = null,
         CancellationToken cancellationToken = default)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient,
-            HttpMethod.Put, url, 200, body, jsonSerializerOptions, cancellationToken);
+            HttpMethod.Put, url, expectedCode, body, jsonSerializerOptions, cancellationToken);
     }
 
     public static Task PutEnsureNoResponseDataAsync(this HttpClient httpClient,
-        string url, object? body = null, JsonSerializerOptions? jsonSerializerOptions = null,
+        string url, 
+        object? body = null, 
+        int expectedCode = 200,
+        JsonSerializerOptions? jsonSerializerOptions = null,
         CancellationToken cancellationToken = default)
     {
-        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Put, 200, body, jsonSerializerOptions,
+        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Put, expectedCode, body, jsonSerializerOptions,
             cancellationToken);
     }
 
@@ -194,23 +199,29 @@ internal static class HttpClientExtensions
         this HttpClient httpClient,
         string url,
         object body,
-        CancellationToken cancellationToken)
+        int expectedCode = 201,
+        CancellationToken cancellationToken = default)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient, 
-            HttpMethod.Post, url, 201, body, null, cancellationToken);
+            HttpMethod.Post, url, expectedCode, body, null, cancellationToken);
     }
 
     public static Task PostEnsureNoResponseDataAsync(this HttpClient httpClient,
-        string url, object? body = null, CancellationToken cancellationToken = default)
+        string url, 
+        object? body = null, 
+        int expectedCode = 201,
+        CancellationToken cancellationToken = default)
     {
-        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Post, 201, body, null,
+        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Post, expectedCode, body, null,
             cancellationToken);
     }
 
     public static Task DeleteEnsureNoResponseDataAsync(this HttpClient httpClient,
-        string url, CancellationToken cancellationToken = default)
+        string url, 
+        int expectedCode = 204,
+        CancellationToken cancellationToken = default)
     {
-        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Delete, 204, 
+        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Delete, expectedCode, 
             null, 
             null,
             cancellationToken);
