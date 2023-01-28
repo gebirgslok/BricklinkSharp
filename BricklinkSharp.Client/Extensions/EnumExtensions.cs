@@ -247,4 +247,15 @@ internal static class EnumExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(PaymentStatus), e, null)
         };
     }
+
+    internal static string ToDomainString(this VatOption e)
+    {
+        return e switch
+        {
+            VatOption.Exclude => "N",
+            VatOption.Include => "Y",
+            VatOption.IncludeAsNorway => "O",
+            _ => throw new ArgumentOutOfRangeException(nameof(VatOption), e, null)
+        };
+    }
 }

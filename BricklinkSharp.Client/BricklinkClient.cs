@@ -225,7 +225,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     public async Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
         PriceGuideType? priceGuideType = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
-        CancellationToken cancellationToken = default)
+        VatOption? vat = null, CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/price"));
@@ -236,6 +236,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         query.AddIfNotNull("country_code", countryCode);
         query.AddIfNotNull("region", region);
         query.AddIfNotNull("currency_code", currencyCode);
+        query.AddIfNotNull("vat", vat?.ToDomainString());
         builder.Query = query.ToString();
 
         var url = builder.ToString();
