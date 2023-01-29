@@ -65,6 +65,7 @@ public interface IBricklinkClient : IDisposable
         Condition? condition = null, string? countryCode = null,
         string? region = null,
         string? currencyCode = null,
+        VatOption? vat = null,
         CancellationToken cancellationToken = default);
 
     Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no, CancellationToken cancellationToken = default);
