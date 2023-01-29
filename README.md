@@ -16,6 +16,10 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.4.1
+
+- Fixed [GetPriceGuideAsync does not support the 'vat' parameter](https://github.com/gebirgslok/BricklinkSharp/issues/11), thanks to [cleargreen](https://github.com/cleargreen)
+
 ### 1.4.0
 
 - Added .NET7 Build Target
