@@ -51,15 +51,34 @@ internal static class HttpClientExtensions
         return data;
     }
 
-    private static void GetAuthorizationHeader(string url, string method,
+    private static void GetAuthorizationHeader(string url, 
+        string method, 
+        BricklinkCredentials? credentials,
         out string scheme, out string parameter)
     {
-        BricklinkClientConfiguration.Instance.ValidateThrowException();
+        string consumerKey, consumerSecret, tokenValue, tokenSecret;
 
-        var request = new OAuthRequest(BricklinkClientConfiguration.Instance.ConsumerKey!,
-            BricklinkClientConfiguration.Instance.ConsumerSecret!,
-            BricklinkClientConfiguration.Instance.TokenValue!,
-            BricklinkClientConfiguration.Instance.TokenSecret!,
+        if (credentials != null)
+        {
+            credentials.ValidateThrowException();
+            consumerKey = credentials.ConsumerKey!;
+            consumerSecret = credentials.ConsumerSecret!;
+            tokenValue = credentials.TokenValue!;
+            tokenSecret = credentials.TokenSecret!;
+        }
+        else
+        {
+            BricklinkClientConfiguration.Instance.ValidateThrowException();
+            consumerKey = BricklinkClientConfiguration.Instance.ConsumerKey!;
+            consumerSecret = BricklinkClientConfiguration.Instance.ConsumerSecret!;
+            tokenValue = BricklinkClientConfiguration.Instance.TokenValue!;
+            tokenSecret = BricklinkClientConfiguration.Instance.TokenSecret!;
+        }
+
+        var request = new OAuthRequest(consumerKey, 
+            consumerSecret,
+            tokenValue, 
+            tokenSecret,
             url,
             method);
 
@@ -75,11 +94,11 @@ internal static class HttpClientExtensions
         int expectedCode,
         object? body = null,
         JsonSerializerOptions? jsonSerializerOptions = null,
-        CancellationToken cancellationToken = default
-    )
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var responseBody = await httpClient.ExecuteRequestAsync(url, method, body,
-            jsonSerializerOptions, cancellationToken);
+            jsonSerializerOptions, cancellationToken, credentials);
 
         var data = ParseResponse<TResponse>(responseBody, expectedCode, url, method);
         return data;
@@ -131,13 +150,15 @@ internal static class HttpClientExtensions
         int expectedCode,
         object? body = null,
         JsonSerializerOptions? jsonSerializerOptions = null,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var responseBody = await httpClient.ExecuteRequestAsync(url, 
             method, 
             body,
             jsonSerializerOptions,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            credentials: credentials);
 
         ParseResponseNoData(responseBody, expectedCode, url, method);
     }
@@ -145,9 +166,14 @@ internal static class HttpClientExtensions
     public static async Task<string> ExecuteRequestAsync(this HttpClient httpClient, string url,
         HttpMethod httpMethod, object? body = null,
         JsonSerializerOptions? options = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        BricklinkCredentials? credentials = null)
     {
-        GetAuthorizationHeader(url, httpMethod.ToString(), out var authScheme, out var authParameter);
+        GetAuthorizationHeader(url, 
+            httpMethod.ToString(), 
+            credentials, 
+            out var authScheme, out var authParameter);
+
         using var message = new HttpRequestMessage(httpMethod, url);
         message.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authParameter);
 
@@ -155,7 +181,12 @@ internal static class HttpClientExtensions
         {
             var json = JsonSerializer.Serialize(body, options);
             var content = new StringContent(json, Encoding.Default, "application/json");
-            content.Headers.ContentType.CharSet = string.Empty;
+
+            if (content.Headers.ContentType != null)
+            {
+                content.Headers.ContentType.CharSet = string.Empty;
+            }
+
             message.Content = content;
         }
         else
@@ -178,10 +209,17 @@ internal static class HttpClientExtensions
         object? body = null, 
         int expectedCode = 200,
         JsonSerializerOptions? jsonSerializerOptions = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        BricklinkCredentials? credentials = null)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient,
-            HttpMethod.Put, url, expectedCode, body, jsonSerializerOptions, cancellationToken);
+            HttpMethod.Put, 
+            url, 
+            expectedCode, 
+            body, 
+            jsonSerializerOptions, 
+            credentials, 
+            cancellationToken);
     }
 
     public static Task PutEnsureNoResponseDataAsync(this HttpClient httpClient,
@@ -189,9 +227,16 @@ internal static class HttpClientExtensions
         object? body = null, 
         int expectedCode = 204,
         JsonSerializerOptions? jsonSerializerOptions = null,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Put, expectedCode, body, jsonSerializerOptions,
+        return ExecuteEnsureNoResponse(httpClient, 
+            url, 
+            HttpMethod.Put, 
+            expectedCode, 
+            body, 
+            jsonSerializerOptions,
+            credentials,
             cancellationToken);
     }
 
@@ -200,50 +245,76 @@ internal static class HttpClientExtensions
         string url,
         object body,
         int expectedCode = 201,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient, 
-            HttpMethod.Post, url, expectedCode, body, null, cancellationToken);
+            HttpMethod.Post,
+            url,
+            expectedCode,
+            body, 
+            null, 
+            credentials, 
+            cancellationToken);
     }
 
     public static Task PostEnsureNoResponseDataAsync(this HttpClient httpClient,
         string url, 
         object? body = null, 
         int expectedCode = 201,
-        CancellationToken cancellationToken = default)
+        BricklinkCredentials? credentials = null,
+    CancellationToken cancellationToken = default)
     {
-        return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Post, expectedCode, body, null,
+        return ExecuteEnsureNoResponse(httpClient, 
+            url, 
+            HttpMethod.Post, 
+            expectedCode, 
+            body, 
+            null,
+            credentials,
             cancellationToken);
     }
 
     public static Task DeleteEnsureNoResponseDataAsync(this HttpClient httpClient,
         string url, 
         int expectedCode = 204,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return ExecuteEnsureNoResponse(httpClient, url, HttpMethod.Delete, expectedCode, 
             null, 
             null,
+            credentials,
             cancellationToken);
     }
 
     public static Task<TResponse> GetParseResponseAsync<TResponse>(
         this HttpClient httpClient,
         string url,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        BricklinkCredentials? credentials = null)
     {
         return ExecuteReadResponseAsync<TResponse>(httpClient,
-            HttpMethod.Get, url, 200, null, null, cancellationToken);
+            HttpMethod.Get,
+            url,
+            200, 
+            null, 
+            null, 
+            credentials, 
+            cancellationToken);
     }
 
     public static async Task<TResponse[]> GetParseResponseArrayAllowEmpty<TResponse>(
         this HttpClient httpClient,
         string url,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        BricklinkCredentials? credentials = null)
     {
         var method = HttpMethod.Get;
 
-        var responseBody = await httpClient.ExecuteRequestAsync(url, method,
+        var responseBody = await httpClient.ExecuteRequestAsync(url, 
+            method,
+            credentials,
             cancellationToken: cancellationToken);
 
         var dataArray = ParseResponseArrayAllowEmpty<TResponse>(responseBody, 200, url, method);

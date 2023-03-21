@@ -51,7 +51,7 @@ internal class ChangedQuantityStringConverter : JsonConverter<int?>
         }
 
         var q = value.Value;
-        var stringValue = value.Value > 0 ? $"+{q}" : q.ToString();
+        var stringValue = value.Value >= 0 ? $"+{q}" : q.ToString();
         writer.WriteStringValue(stringValue);
     }
 }

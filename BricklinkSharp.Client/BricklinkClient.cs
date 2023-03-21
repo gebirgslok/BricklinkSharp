@@ -41,14 +41,14 @@ namespace BricklinkSharp.Client;
 
 internal sealed class BricklinkClient : IBricklinkClient
 {
-    private static readonly string _partImageUrlTemplate = "//img.bricklink.com/ItemImage/PN/{0}/{1}.png";
-    private static readonly string _minifigImageUrlTemplate = "//img.bricklink.com/ItemImage/MN/0/{0}.png";
-    private static readonly string _setImageUrlTemplate = "//img.bricklink.com/ItemImage/SN/0/{0}.png";
-    private static readonly string _bookImageUrlTemplate = "//img.bricklink.com/ItemImage/BN/0/{0}.png";
-    private static readonly string _gearImageUrlTemplate = "//img.bricklink.com/ItemImage/GN/0/{0}.png";
-    private static readonly string _catalogImageUrlTemplate = "//img.bricklink.com/ItemImage/CN/0/{0}.png";
-    private static readonly string _instructionImageUrlTemplate = "//img.bricklink.com/ItemImage/IN/0/{0}.png";
-    private static readonly string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
+    private const string _partImageUrlTemplate = "//img.bricklink.com/ItemImage/PN/{0}/{1}.png";
+    private const string _minifigImageUrlTemplate = "//img.bricklink.com/ItemImage/MN/0/{0}.png";
+    private const string _setImageUrlTemplate = "//img.bricklink.com/ItemImage/SN/0/{0}.png";
+    private const string _bookImageUrlTemplate = "//img.bricklink.com/ItemImage/BN/0/{0}.png";
+    private const string _gearImageUrlTemplate = "//img.bricklink.com/ItemImage/GN/0/{0}.png";
+    private const string _catalogImageUrlTemplate = "//img.bricklink.com/ItemImage/CN/0/{0}.png";
+    private const string _instructionImageUrlTemplate = "//img.bricklink.com/ItemImage/IN/0/{0}.png";
+    private const string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
 
     private readonly IExchangeRatesService _currencyRatesService;
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
@@ -57,8 +57,8 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     private bool _isDisposed;
 
-    public BricklinkClient(HttpClient httpClient, 
-        IExchangeRatesService currencyRatesService, 
+    public BricklinkClient(HttpClient httpClient,
+        IExchangeRatesService currencyRatesService,
         bool disposeHttpClient)
     {
         _httpClient = httpClient;
@@ -74,7 +74,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     private static JsonSerializerOptions IgnoreNullValuesJsonSerializerOptions => new()
     {
 #if HAVE_JSON_DEFAULT_IGNORE_CONDITION
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
 #else
         IgnoreNullValues = true,
 #endif
@@ -121,24 +121,29 @@ internal sealed class BricklinkClient : IBricklinkClient
         _isDisposed = true;
     }
 
-    public async Task<CatalogItem> GetItemAsync(ItemType type, string no, 
+    public async Task<CatalogItem> GetItemAsync(ItemType type,
+        string no,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var url = new Uri(_baseUri, $"items/{typeString}/{no}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<CatalogItem>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<CatalogItem>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<CatalogImage> GetItemImageAsync(ItemType type, string no, int colorId, 
+    public async Task<CatalogImage> GetItemImageAsync(ItemType type,
+        string no,
+        int colorId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var url = new Uri(_baseUri, $"items/{typeString}/{no}/images/{colorId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<CatalogImage>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<CatalogImage>(url,
+            cancellationToken, credentials);
     }
 
     public Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https")
@@ -187,7 +192,9 @@ internal sealed class BricklinkClient : IBricklinkClient
     }
 
     public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
-        int colorId = 0, CancellationToken cancellationToken = default)
+        int colorId = 0,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
 
@@ -197,14 +204,16 @@ internal sealed class BricklinkClient : IBricklinkClient
                     $"items/{typeString}/{no}/supersets")
             .ToString();
 
-        return await _httpClient.GetParseResponseAsync<Superset[]>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Superset[]>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Subset[]> GetSubsetsAsync(ItemType type, string no, 
+    public async Task<Subset[]> GetSubsetsAsync(ItemType type, string no,
         int colorId = 0, bool? includeOriginalBox = null,
-        bool? includeInstruction = null, bool? breakMinifigs = null, 
-        bool? breakSubsets = null, CancellationToken cancellationToken = default)
+        bool? includeInstruction = null, bool? breakMinifigs = null,
+        bool? breakSubsets = null,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/subsets"));
@@ -218,14 +227,16 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return await _httpClient.GetParseResponseAsync<Subset[]>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Subset[]>(url,
+            cancellationToken, credentials);
     }
 
     public async Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
         PriceGuideType? priceGuideType = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
-        VatOption? vat = null, CancellationToken cancellationToken = default)
+        VatOption? vat = null,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/price"));
@@ -241,50 +252,57 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return await _httpClient.GetParseResponseAsync<PriceGuide>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<PriceGuide>(url,
+            cancellationToken, credentials);
     }
 
     public async Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var typeString = type.ToDomainString();
         var url = new Uri(_baseUri, $"items/{typeString}/{no}/colors").ToString();
 
-        return await _httpClient.GetParseResponseAsync<KnownColor[]>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<KnownColor[]>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Color[]> GetColorListAsync(CancellationToken cancellationToken = default)
+    public async Task<Color[]> GetColorListAsync(BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, "colors").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Color[]>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Color[]>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Color> GetColorAsync(int colorId, CancellationToken cancellationToken = default)
+    public async Task<Color> GetColorAsync(int colorId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"colors/{colorId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Color>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Color>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Category[]> GetCategoryListAsync(CancellationToken cancellationToken = default)
+    public async Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, "categories").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Category[]>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Category[]>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Category> GetCategoryAsync(int categoryId, CancellationToken cancellationToken = default)
+    public async Task<Category> GetCategoryAsync(int categoryId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"categories/{categoryId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Category>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Category>(url,
+            cancellationToken, credentials);
     }
 
     public Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
@@ -295,49 +313,56 @@ internal sealed class BricklinkClient : IBricklinkClient
         IEnumerable<int>? excludedCategoryIds = null,
         IEnumerable<int>? includedColorIds = null,
         IEnumerable<int>? excludedColorIds = null,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var builder = new UriBuilder(new Uri(_baseUri, "inventories"));
         var query = HttpUtility.ParseQueryString(builder.Query);
 
-        query.AddIfNotNull("item_type", BuildIncludeExcludeParameter(includedItemTypes, 
+        query.AddIfNotNull("item_type", BuildIncludeExcludeParameter(includedItemTypes,
             excludedItemTypes, t => t.ToDomainString()));
 
-        query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, 
+        query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags,
             excludedStatusFlags, f => f.ToDomainString()));
 
-        query.AddIfNotNull("category_id", BuildIncludeExcludeParameter(includedCategoryIds, 
+        query.AddIfNotNull("category_id", BuildIncludeExcludeParameter(includedCategoryIds,
             excludedCategoryIds, categoryId => categoryId.ToString()));
 
-        query.AddIfNotNull("color_id", BuildIncludeExcludeParameter(includedColorIds, excludedColorIds, 
+        query.AddIfNotNull("color_id", BuildIncludeExcludeParameter(includedColorIds, excludedColorIds,
             colorId => colorId.ToString()));
 
         builder.Query = query.ToString();
 
         var url = builder.ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<Inventory>(url, cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<Inventory>(url, 
+            cancellationToken, credentials);
     }
 
-    public async Task<Inventory> GetInventoryAsync(int inventoryId, CancellationToken cancellationToken = default)
+    public async Task<Inventory> GetInventoryAsync(int inventoryId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Inventory>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Inventory>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory, 
+    public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory,
+        BricklinkCredentials? credentials = null, 
         CancellationToken cancellationToken = default)
     {
         newInventory.ValidateThrowException();
         var url = new Uri(_baseUri, "inventories").ToString();
 
-        return await _httpClient.PostThenReadResponseAsync<Inventory>(url, 
-            newInventory, cancellationToken: cancellationToken);
+        return await _httpClient.PostThenReadResponseAsync<Inventory>(url,
+            newInventory, cancellationToken: cancellationToken, credentials: credentials);
     }
 
-    public Task CreateInventoriesAsync(NewInventory[] newInventories, CancellationToken cancellationToken = default)
+    public Task CreateInventoriesAsync(NewInventory[] newInventories,
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         foreach (var newInventory in newInventories)
         {
@@ -346,12 +371,14 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = new Uri(_baseUri, "inventories").ToString();
 
-        return _httpClient.PostEnsureNoResponseDataAsync(url, 
+        return _httpClient.PostEnsureNoResponseDataAsync(url,
             newInventories,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials: credentials);
     }
 
-    public async Task<Inventory> UpdateInventoryAsync(int inventoryId, UpdateInventory updateInventory,
+    public async Task<Inventory> UpdateInventoryAsync(int inventoryId, 
+        UpdateInventory updateInventory,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         updateInventory.ValidateThrowException();
@@ -360,17 +387,21 @@ internal sealed class BricklinkClient : IBricklinkClient
         return await _httpClient.PutThenReadResponseAsync<Inventory>(url,
             updateInventory,
             jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials: credentials);
     }
 
-    public Task DeleteInventoryAsync(int inventoryId, CancellationToken cancellationToken = default)
+    public Task DeleteInventoryAsync(int inventoryId,
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
-        return _httpClient.DeleteEnsureNoResponseDataAsync(url, cancellationToken: cancellationToken);
+        return _httpClient.DeleteEnsureNoResponseDataAsync(url, 
+            cancellationToken: cancellationToken, credentials: credentials);
     }
 
-    public Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId, 
+    public Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var builder = new UriBuilder(new Uri(_baseUri, $"item_mapping/part/{partNo}"));
@@ -379,50 +410,60 @@ internal sealed class BricklinkClient : IBricklinkClient
         builder.Query = query.ToString();
         var url = builder.ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<ItemMapping>(url, cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<ItemMapping>(url, 
+            cancellationToken, credentials);
     }
 
-    public async Task<ItemMapping[]> GetItemNumberAsync(string elementId, CancellationToken cancellationToken = default)
+    public async Task<ItemMapping[]> GetItemNumberAsync(string elementId,
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
 
         return await _httpClient.GetParseResponseAsync<ItemMapping[]>(url,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials: credentials);
     }
 
-    public Task<ShippingMethod[]> GetShippingMethodListAsync(CancellationToken cancellationToken = default)
+    public Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
 
         return _httpClient.GetParseResponseArrayAllowEmpty<ShippingMethod>(url,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials);
     }
 
-    public async Task<ShippingMethod> GetShippingMethodAsync(int methodId, CancellationToken cancellationToken = default)
+    public async Task<ShippingMethod> GetShippingMethodAsync(int methodId,
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<ShippingMethod>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<ShippingMethod>(url,
+            cancellationToken, credentials);
     }
 
-    public Task<Notification[]> GetNotificationsAsync(CancellationToken cancellationToken = default)
+    public Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, "notifications").ToString();
 
         return _httpClient.GetParseResponseArrayAllowEmpty<Notification>(url,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials);
     }
 
-    public async Task<MemberRating> GetMemberRatingAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<MemberRating> GetMemberRatingAsync(string username, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"members/{username}/ratings").ToString();
 
         return await _httpClient.GetParseResponseAsync<MemberRating>(url,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials);
     }
 
-    public Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null, 
+    public Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
@@ -432,18 +473,24 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<Feedback>(url, cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<Feedback>(url, 
+            cancellationToken, credentials);
     }
 
-    public async Task<Feedback> GetFeedbackAsync(int feedbackId, CancellationToken cancellationToken = default)
+    public async Task<Feedback> GetFeedbackAsync(int feedbackId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"feedback/{feedbackId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Feedback>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Feedback>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Feedback> PostFeedbackAsync(int orderId, RatingType rating, string comment,
+    public async Task<Feedback> PostFeedbackAsync(int orderId, 
+        RatingType rating, 
+        string comment,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, "feedback").ToString();
@@ -455,23 +502,28 @@ internal sealed class BricklinkClient : IBricklinkClient
         };
 
         return await _httpClient.PostThenReadResponseAsync<Feedback>(url, body,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken, credentials: credentials);
     }
 
-    public Task ReplyFeedbackAsync(int feedbackId, 
-        string reply, 
+    public Task ReplyFeedbackAsync(int feedbackId,
+        string reply,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"feedback/{feedbackId}/reply").ToString();
         var body = new { reply };
 
-        return _httpClient.PostEnsureNoResponseDataAsync(url, body, cancellationToken: cancellationToken);
+        return _httpClient.PostEnsureNoResponseDataAsync(url, 
+            body, 
+            cancellationToken: cancellationToken,
+            credentials: credentials);
     }
 
     public Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
         IEnumerable<OrderStatus>? includedStatusFlags = null,
         IEnumerable<OrderStatus>? excludedStatusFlags = null,
         bool filed = false,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var builder = new UriBuilder(new Uri(_baseUri, "orders"));
@@ -483,25 +535,30 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<Order>(url, cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<Order>(url, 
+            cancellationToken, credentials);
     }
 
-    public async Task<OrderDetails> GetOrderAsync(int orderId, CancellationToken cancellationToken = default)
+    public async Task<OrderDetails> GetOrderAsync(int orderId,
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<OrderDetails>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<OrderDetails>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId, CancellationToken cancellationToken = default)
+    public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
 
         var method = HttpMethod.Get;
 
-        var responseBody = await _httpClient.ExecuteRequestAsync(url, method, 
-            cancellationToken: cancellationToken);
+        var responseBody = await _httpClient.ExecuteRequestAsync(url, method,
+            cancellationToken: cancellationToken, credentials: credentials);
 
         var itemsBatchList = new List<OrderItem[]>();
         using var document = JsonDocument.Parse(responseBody);
@@ -509,9 +566,9 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         if (dataElement.ValueKind != JsonValueKind.Array)
         {
-            throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(), 
+            throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(),
                 dataElement.ValueKind.ToString(),
-                url, 
+                url,
                 HttpMethod.Get);
         }
 
@@ -523,23 +580,30 @@ internal sealed class BricklinkClient : IBricklinkClient
         return itemsBatchList;
     }
 
-    public Task<OrderMessage[]> GetOrderMessagesAsync(int orderId, CancellationToken cancellationToken = default)
+    public Task<OrderMessage[]> GetOrderMessagesAsync(int orderId,
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<OrderMessage>(url, 
-            cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<OrderMessage>(url,
+            cancellationToken, credentials);
     }
 
-    public Task<Feedback[]> GetOrderFeedbackAsync(int orderId, CancellationToken cancellationToken = default)
+    public Task<Feedback[]> GetOrderFeedbackAsync(int orderId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}/feedback").ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<Feedback>(url, 
-            cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<Feedback>(url,
+            cancellationToken, credentials);
     }
 
-    public Task UpdateOrderStatusAsync(int orderId, OrderStatus status, CancellationToken cancellationToken = default)
+    public Task UpdateOrderStatusAsync(int orderId, 
+        OrderStatus status,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}/status").ToString();
 
@@ -547,10 +611,14 @@ internal sealed class BricklinkClient : IBricklinkClient
         {
             field = "status",
             value = status.ToDomainString()
-        }, cancellationToken: cancellationToken);
+        }, 
+            cancellationToken: cancellationToken, 
+            credentials: credentials);
     }
 
-    public Task UpdatePaymentStatusAsync(int orderId, PaymentStatus status, 
+    public Task UpdatePaymentStatusAsync(int orderId, 
+        PaymentStatus status,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}/payment_status").ToString();
@@ -559,10 +627,14 @@ internal sealed class BricklinkClient : IBricklinkClient
         {
             field = "payment_status",
             value = status.ToDomainString()
-        }, cancellationToken: cancellationToken);
+        },
+            cancellationToken: cancellationToken, 
+            credentials: credentials);
     }
 
-    public Task SendDriveThruAsync(int orderId, bool mailCcMe,
+    public Task SendDriveThruAsync(int orderId, 
+        bool mailCcMe,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var builder = new UriBuilder(new Uri(_baseUri, $"orders/{orderId}/drive_thru"));
@@ -572,17 +644,23 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return _httpClient.PostEnsureNoResponseDataAsync(url, expectedCode: 204, cancellationToken: cancellationToken);
+        return _httpClient.PostEnsureNoResponseDataAsync(url, 
+            expectedCode: 204, 
+            cancellationToken: cancellationToken,
+            credentials: credentials);
     }
 
-    public async Task<OrderDetails> UpdateOrderAsync(int orderId, UpdateOrder updateOrder,
+    public async Task<OrderDetails> UpdateOrderAsync(int orderId, 
+        UpdateOrder updateOrder,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
 
         return await _httpClient.PutThenReadResponseAsync<OrderDetails>(url, updateOrder,
             jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            credentials: credentials);
     }
 
     public void Dispose()
@@ -594,6 +672,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     public Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
         IEnumerable<CouponStatus>? includedCouponStatusTypes = null,
         IEnumerable<CouponStatus>? excludedCouponStatusTypes = null,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         var builder = new UriBuilder(new Uri(_baseUri, "coupons"));
@@ -608,37 +687,47 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = builder.ToString();
 
-        return _httpClient.GetParseResponseArrayAllowEmpty<Coupon>(url, 
-            cancellationToken);
+        return _httpClient.GetParseResponseArrayAllowEmpty<Coupon>(url,
+            cancellationToken, credentials);
     }
 
-    public async Task<Coupon> GetCouponAsync(int couponId, CancellationToken cancellationToken = default)
+    public async Task<Coupon> GetCouponAsync(int couponId,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
 
-        return await _httpClient.GetParseResponseAsync<Coupon>(url, 
-            cancellationToken);
+        return await _httpClient.GetParseResponseAsync<Coupon>(url,
+            cancellationToken, credentials);
     }
 
-    public Task DeleteCouponAsync(int couponId, CancellationToken cancellationToken = default)
+    public Task DeleteCouponAsync(int couponId, 
+        BricklinkCredentials? credentials = null, 
+        CancellationToken cancellationToken = default)
     {
         var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
 
         return _httpClient.DeleteEnsureNoResponseDataAsync(url,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            credentials: credentials);
     }
 
-    public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon, CancellationToken cancellationToken = default)
+    public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
     {
         newCoupon.ValidateThrowException();
 
         var url = new Uri(_baseUri, "coupons").ToString();
 
         return await _httpClient.PostThenReadResponseAsync<Coupon>(url, newCoupon,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            credentials: credentials);
     }
 
-    public async Task<Coupon> UpdateCouponAsync(int couponId, UpdateCoupon updateCoupon, 
+    public async Task<Coupon> UpdateCouponAsync(int couponId, 
+        UpdateCoupon updateCoupon,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         updateCoupon.ValidateThrowException();
@@ -648,7 +737,8 @@ internal sealed class BricklinkClient : IBricklinkClient
         return await _httpClient.PutThenReadResponseAsync<Coupon>(url,
             updateCoupon,
             jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            credentials: credentials);
     }
 
     public async Task<PartOutResult> GetPartOutValueFromPageAsync(string itemNo, Condition condition = Condition.New,
@@ -682,7 +772,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         var response = await _httpClient.GetAsync(url, cancellationToken);
 
 #if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
-            var htmlResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+        var htmlResponse = await response.Content.ReadAsStringAsync(cancellationToken);
 #else
         var htmlResponse = await response.Content.ReadAsStringAsync();
 #endif

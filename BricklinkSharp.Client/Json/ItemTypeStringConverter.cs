@@ -43,12 +43,12 @@ internal class ItemTypeStringConverter : JsonConverter<ItemType>
 
         var removedUnderscore = stringValue.Replace("_", string.Empty);
 
-        if (Enum.TryParse(removedUnderscore, true, out ItemType result))
-        {
-            return result;
-        }
+#if HAVE_GENERIC_ENUM_PARSE
+        return Enum.Parse<ItemType>(removedUnderscore, true);
+#else
+        return (ItemType)Enum.Parse(typeof(ItemType), removedUnderscore, true);
+#endif
 
-        return 0;
     }
 
     public override void Write(Utf8JsonWriter writer, ItemType value, JsonSerializerOptions options)

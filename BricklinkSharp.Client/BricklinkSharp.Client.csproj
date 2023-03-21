@@ -14,30 +14,40 @@
     <RepositoryType>Git</RepositoryType>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <AssemblyTitle>BricklinkSharp .Net Standard 2.0</AssemblyTitle>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.0'">
     <AssemblyTitle>BricklinkSharp .Net Core 3.0</AssemblyTitle>
+    <DefineConstants>HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1'">
     <AssemblyTitle>BricklinkSharp .Net Core 3.1</AssemblyTitle>
+    <DefineConstants>HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='net5.0'">
     <AssemblyTitle>BricklinkSharp .Net 5.0</AssemblyTitle>
-    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
     <AssemblyTitle>BricklinkSharp .Net 6.0</AssemblyTitle>
-    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)'=='net7.0'">
     <AssemblyTitle>BricklinkSharp .Net 7.0</AssemblyTitle>
-    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN</DefineConstants>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
+
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="NullGuard.Fody" Version="3.1.0" PrivateAssets="all" />
   </ItemGroup>

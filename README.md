@@ -16,6 +16,12 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.5.0
+
+- Added optional parameter `BricklinkCredentials? credentials = null` to every method on `IBricklinkClient` that requires authentication. This will override the global credentials (`BricklinkClientConfiguration.Instance`) and is useful for server scenarios (e.g. ASP.NET Core) where you need to do a request in the name of the logged in user
+- Fixed [Exception updating inventory items](https://github.com/gebirgslok/BricklinkSharp/issues/13), thanks to [stephanstapel](https://github.com/stephanstapel)
+- Improved `ItemTypeStringConverter` to fail on unknown strings (instead of returning `ItemType.Minifig` as default)
+
 ### 1.4.1
 
 - Fixed [GetPriceGuideAsync does not support the 'vat' parameter](https://github.com/gebirgslok/BricklinkSharp/issues/11), thanks to [cleargreen](https://github.com/cleargreen)
