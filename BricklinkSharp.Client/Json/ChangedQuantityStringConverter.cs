@@ -45,7 +45,7 @@ internal class ChangedQuantityStringConverter : JsonConverter<int?>
 
     public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
     {
-        if (!value.HasValue || value.Value == 0)
+        if (!value.HasValue)
         {
             return;
         }
