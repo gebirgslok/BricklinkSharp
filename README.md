@@ -18,7 +18,7 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 
 ### 1.5.0
 
-- Added optional parameter `BricklinkCredentials? credentials = null` to every method on `IBricklinkClient` that requires authentication. This will override the global credentials (`BricklinkClientConfiguration.Instance`) and is useful for server scenarios (e.g. ASP.NET Core) where you need to do a request in the name of the logged in user
+- Added optional parameter `BricklinkCredentials? credentials = null` to every method on `IBricklinkClient` that requires authentication. This will take precedence over the global credentials (`BricklinkClientConfiguration.Instance`) and is useful for server scenarios (e.g. ASP.NET Core) where you need to do a request in the name of the logged in user
 - Fixed [Exception updating inventory items](https://github.com/gebirgslok/BricklinkSharp/issues/13), thanks to [stephanstapel](https://github.com/stephanstapel)
 - Improved `ItemTypeStringConverter` to fail on unknown strings (instead of returning `ItemType.Minifig` as default)
 
