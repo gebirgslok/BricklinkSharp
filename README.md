@@ -3,6 +3,10 @@
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
 [![Build Status](https://dev.azure.com/jeisenbach/BricklinkSharp/_apis/build/status/gebirgslok.BricklinkSharp?branchName=master)](https://dev.azure.com/jeisenbach/BricklinkSharp/_build/latest?definitionId=1&branchName=master)
 
+## :star: Leave a star
+
+If this repo helps you out then just give it a star. I'll appreciate.
+
 ## Introduction
 
 BricklinkSharp is a strongly-typed, easy-to-use C# client for the [bricklink](https://www.bricklink.com/v2/main.page) marketplace that gets you started with just a few lines of code. It features OAuth1 authentication, error handling and parsing of JSON data into typed instances.
@@ -17,7 +21,7 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
 ### 1.5.1
-- Added **shipping.address.phone_number** to **GetOrderAsync* response
+- Added **shipping.address.phone_number** to *GetOrderAsync* response
 
 ### 1.5.0
 
