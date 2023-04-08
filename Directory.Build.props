@@ -3,7 +3,7 @@
     <LangVersion>10.0</LangVersion>
     <!-- version numbers will be updated by build -->
     <Version>1.5.1.0</Version>
-    <FileVersion>1.5.11.0</FileVersion>
+    <FileVersion>1.5.1.0</FileVersion>
     <InformationalVersion>1.5.1.0</InformationalVersion>
     <PackageVersion>1.5.1</PackageVersion>
     <Authors>Jens Eisenbach</Authors>
