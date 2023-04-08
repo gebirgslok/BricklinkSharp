@@ -55,6 +55,9 @@ public class Address
     [JsonPropertyName("postal_code")]
     public string? PostalCode { get; set; }
 
+    [JsonPropertyName("phone_number")]
+    public string? PhoneNumber { get; set; }
+
     public override string ToString()
     {
         return FullAddressAsString;
