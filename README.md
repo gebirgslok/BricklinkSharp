@@ -5,7 +5,7 @@
 
 ## :star: Leave a star
 
-If this repo helps you out then just give it a star. I'll appreciate.
+If this repo helps you out then why not give it a star. I'll appreciate.
 
 ## Introduction
 
