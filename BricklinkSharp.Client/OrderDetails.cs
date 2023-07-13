@@ -32,6 +32,9 @@ namespace BricklinkSharp.Client;
 [Serializable]
 public class OrderDetails : OrderBase
 {
+    [JsonPropertyName("date_status_changed")]
+    public DateTime StatusChangedDate { get; set; }
+
     [JsonPropertyName("store_name")]
     public string? StoreName { get; set; }
 
