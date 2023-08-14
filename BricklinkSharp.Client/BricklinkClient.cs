@@ -51,7 +51,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
 
     private readonly IExchangeRatesService _currencyRatesService;
-    private readonly IBricklinkRequestHandler _requesHandler;
+    private readonly IBricklinkRequestHandler _requestHandler;
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
     private readonly HttpClient _httpClient;
     private readonly bool _disposeHttpClient;
@@ -66,7 +66,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         _httpClient = httpClient;
         _currencyRatesService = currencyRatesService;
         _disposeHttpClient = disposeHttpClient;
-        _requesHandler = requestHandler;
+        _requestHandler = requestHandler;
     }
 
     ~BricklinkClient()
@@ -842,10 +842,10 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     private async void _measureRequest(CancellationToken cancellationToken = default)
     {
-        if (this._requesHandler != null)
+        if (this._requestHandler != null)
         {
             CancellationTokenSource source = new CancellationTokenSource();
-            await this._requesHandler.OnRequestAsync(cancellationToken);
+            await this._requestHandler.OnRequestAsync(cancellationToken);
         }
     }
 }
