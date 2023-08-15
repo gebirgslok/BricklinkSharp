@@ -51,7 +51,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
 
     private readonly IExchangeRatesService _currencyRatesService;
-    private readonly IBricklinkRequestHandler _requestHandler;
+    private readonly IBricklinkRequestHandler? _requestHandler;
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
     private readonly HttpClient _httpClient;
     private readonly bool _disposeHttpClient;
@@ -61,7 +61,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     public BricklinkClient(HttpClient httpClient,        
         IExchangeRatesService currencyRatesService,
         bool disposeHttpClient,
-        IBricklinkRequestHandler requestHandler = null)
+        IBricklinkRequestHandler? requestHandler = null)
     {
         _httpClient = httpClient;
         _currencyRatesService = currencyRatesService;

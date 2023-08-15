@@ -30,18 +30,18 @@ namespace BricklinkSharp.Client;
 
 public static class BricklinkClientFactory
 {
-    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IBricklinkRequestHandler requestHandler = null)
+    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IBricklinkRequestHandler? requestHandler = null)
     {
         var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
         return new BricklinkClient(httpClient, exchangeRatesService, disposeHttpClient, requestHandler);
     }
 
-    public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler requestHandler = null)
+    public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler? requestHandler = null)
     {
         return Build(httpClient, false, requestHandler);
     }
 
-    public static IBricklinkClient Build(IBricklinkRequestHandler requestHandler = null)
+    public static IBricklinkClient Build(IBricklinkRequestHandler? requestHandler = null)
     {
         return Build(new HttpClient(), true, requestHandler);
     }
