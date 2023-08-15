@@ -842,9 +842,9 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     private async Task MeasureRequestAsync(CancellationToken cancellationToken = default)
     {
-        if (this._requestHandler != null)
+        if (_requestHandler != null)
         {
-            await this._requestHandler.OnRequestAsync(cancellationToken);
+            await _requestHandler.OnRequestAsync(cancellationToken);
         }
     }
 }
