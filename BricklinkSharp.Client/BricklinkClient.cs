@@ -776,7 +776,7 @@ internal sealed class BricklinkClient : IBricklinkClient
 
         var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
 
-        _measureRequest(cancellationToken);
+        await MeasureRequestAsync(cancellationToken);
         return await _httpClient.PutThenReadResponseAsync<Coupon>(url,
             updateCoupon,
             jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
@@ -840,7 +840,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     }
 
 
-    private async void _measureRequest(CancellationToken cancellationToken = default)
+    private async Task MeasureRequestAsync(CancellationToken cancellationToken = default)
     {
         if (this._requestHandler != null)
         {
