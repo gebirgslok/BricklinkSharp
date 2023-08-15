@@ -844,7 +844,6 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         if (this._requestHandler != null)
         {
-            CancellationTokenSource source = new CancellationTokenSource();
             await this._requestHandler.OnRequestAsync(cancellationToken);
         }
     }
