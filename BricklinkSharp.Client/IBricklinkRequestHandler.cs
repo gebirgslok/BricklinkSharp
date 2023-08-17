@@ -34,6 +34,6 @@ namespace BricklinkSharp.Client
 {
     public interface IBricklinkRequestHandler
     {
-        Task OnRequestAsync(string url, CancellationToken ct);
+        Task OnRequestAsync(string url, BricklinkApiRequestTypes requestType, CancellationToken ct);
     }
 }
