@@ -22,18 +22,43 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace BricklinkSharp.Client
 {
-    public interface IBricklinkRequestHandler
+    public enum BricklinkApiResourceType
     {
-        Task OnRequestAsync(BricklinkApiResourceType resourceType, HttpVerb verb, CancellationToken ct);
+        Unknown,
+        Item,
+        ItemImage,
+        ItemNumber,
+        Order,
+        OrderItem,
+        OrderDetails,
+        OrderMessage,
+        OrderFeedback,
+        OrderStatus,
+        PaymentStatus,
+        DriveThru,
+        Superset,
+        Subset,
+        PriceGuide,        
+        Color,
+        KnownColor,
+        ColorList,
+        Category,
+        CategoryList,        
+        Inventory,
+        InventoryList,
+        ElementId,
+        ShippingMethod,
+        Notification,
+        MemberRating,
+        Feedback,
+        FeedbackList,
+        Coupon,
+        PartoutValue
     }
 }
