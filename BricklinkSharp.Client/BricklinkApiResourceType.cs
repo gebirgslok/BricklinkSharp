@@ -58,7 +58,6 @@ namespace BricklinkSharp.Client
         MemberRating,
         Feedback,
         FeedbackList,
-        Coupon,
-        PartoutValue
+        Coupon
     }
 }

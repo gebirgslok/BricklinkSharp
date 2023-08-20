@@ -813,7 +813,6 @@ internal sealed class BricklinkClient : IBricklinkClient
                   $"&incInstr={(includeInstructions ? "Y" : "N")}&incBox={(includeBox ? "Y" : "N")}&" +
                   $"incParts={(includeExtraParts ? "Y" : "N")}&breakSets={(breakSetsInSet ? "Y" : "N")}";
 
-        await MeasureRequestAsync(BricklinkApiResourceType.PartoutValue, HttpVerb.Get, null, cancellationToken);
         var response = await _httpClient.GetAsync(url, cancellationToken);
 
 #if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
