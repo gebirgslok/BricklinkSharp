@@ -22,18 +22,18 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace BricklinkSharp.Client
 {
-    public interface IBricklinkRequestHandler
+    public enum HttpVerb
     {
-        Task OnRequestAsync(BricklinkApiResourceType resourceType, HttpVerb verb, BricklinkCredentials? credentials, CancellationToken ct);
+        Get,
+        Post,
+        Put,
+        Patch,
+        Delete
     }
 }
