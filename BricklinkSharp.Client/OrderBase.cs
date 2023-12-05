@@ -44,6 +44,9 @@ public abstract class OrderBase
     [JsonPropertyName("buyer_name")]
     public string BuyerName { get; set; } = null!;
 
+    [JsonPropertyName("store_name")]
+    public string StoreName { get; set; } = null!;
+
     [JsonPropertyName("total_count")]
     public int TotalCount { get; set; }
 
