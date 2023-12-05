@@ -20,6 +20,9 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.6.1
+- Added **order.store_name** to *GetOrderAsync* response, thanks to [stephanstapel](https://github.com/stephanstapel)
+
 ### 1.6.0
 - Added the option to inject a custom ``IBricklinkRequestHandler`` to handle the Bricklink API rate limiting (5000 requests per day) in your own way, thanks to [stephanstapel](https://github.com/stephanstapel)
 
