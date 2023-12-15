@@ -106,7 +106,7 @@ internal static class PartOutResponseParser
     private static readonly Regex _partOutCurrentSales = new Regex("<FONT CLASS=\"fv\">Current Items For Sale Average:<\\/FONT>.+?<\\/B>",
         RegexOptions.IgnoreCase);
     private static readonly Regex _withinBTags = new Regex("(?<=<B>)(.*)(?=<\\/B>)", RegexOptions.IgnoreCase);
-    private static readonly Regex _decimal = new Regex("\\d+\\.?\\d*");
+    private static readonly Regex _decimal = new Regex("\\d{1,3}(?:,?\\d{3})*(?:\\.\\d{2})");
     private static readonly Regex _number = new Regex("\\d+");
     private static readonly CultureInfo _enUs = new CultureInfo("en-US");
     private static readonly Regex _included = new Regex("<FONT CLASS=\"fv\">Including <B>\\d+<\\/B> Item[s]? in <B>\\d+<\\/B> Lot[s]?.", 
