@@ -61,12 +61,21 @@ public class BricklinkClientTests
         Assert.True(result.IncludedLotsCount > 0);
     }
 
+    [TestCase("10307")]
+    [TestCase("75313")]
+    public async Task GetPartOutValueFromPageAsync_Price_Above_1000_Succeeds(string itemNumber)
+    {
+        using var client = BricklinkClientFactory.Build();
+        var partOutResult = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set);
+        Assert.GreaterOrEqual(partOutResult.CurrentSalesValueUsd, 1000.0);
+    }
+    
     [TestCase("aqu017")]
     [TestCase("aqu017-1")]
     [TestCase("hol183")]
-    public async Task GetPartOutValueFromPageAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
+    public Task GetPartOutValueFromPageAsync_ItemTypeIsMinifig_ItemExists(string itemNumber)
     {
-        await GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
+        return GetPartOutValueFromPageAsync_ItemExists(itemNumber, PartOutItemType.Minifig);
     }
 
     [TestCase("1212adsa")]

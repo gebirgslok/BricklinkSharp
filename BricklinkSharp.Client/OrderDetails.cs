@@ -35,9 +35,6 @@ public class OrderDetails : OrderBase
     [JsonPropertyName("date_status_changed")]
     public DateTime StatusChangedDate { get; set; }
 
-    [JsonPropertyName("store_name")]
-    public string? StoreName { get; set; }
-
     [JsonPropertyName("buyer_email")]
     public string BuyerEmail { get; set; } = null!;
 
