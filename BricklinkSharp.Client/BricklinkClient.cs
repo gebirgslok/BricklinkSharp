@@ -235,42 +235,42 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     public Uri GetPartThumbnailForColor(string partNo, int colorId, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), partNo)}");
     }
 
     public Uri GetMinifigThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, number)}");
     }
 
     public Uri GetSetThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, number)}");
     }
 
     public Uri GetBookThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, number)}");
     }
 
     public Uri GetGearThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, number)}");
     }
 
     public Uri GetCatalogThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, number)}");
     }
 
     public Uri GetInstructionThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, number)}");
     }
 
     public Uri GetOriginalBoxThumbnail(string number, string scheme = "https")
     {
-        throw new NotImplementedException();
+        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, number)}");
     }
 
     public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")
