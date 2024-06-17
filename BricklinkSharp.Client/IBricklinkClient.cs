@@ -43,6 +43,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
+    Uri GetImage(string number, ItemType type, int? colorId = null, string scheme = "https");
     Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https");
 
     Uri GetMinifigImage(string number, string scheme = "https");
@@ -58,6 +59,22 @@ public interface IBricklinkClient : IDisposable
     Uri GetInstructionImage(string number, string scheme = "https");
 
     Uri GetOriginalBoxImage(string number, string scheme = "https");
+    Uri GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https");
+    Uri GetPartThumbnailForColor(string partNo, int colorId, string scheme = "https");
+
+    Uri GetMinifigThumbnail(string number, string scheme = "https");
+
+    Uri GetSetThumbnail(string number, string scheme = "https");
+
+    Uri GetBookThumbnail(string number, string scheme = "https");
+
+    Uri GetGearThumbnail(string number, string scheme = "https");
+
+    Uri GetCatalogThumbnail(string number, string scheme = "https");
+
+    Uri GetInstructionThumbnail(string number, string scheme = "https");
+
+    Uri GetOriginalBoxThumbnail(string number, string scheme = "https");
 
     Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
 
