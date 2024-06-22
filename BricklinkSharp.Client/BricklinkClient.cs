@@ -161,7 +161,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken, credentials);
     }
 
-    public Uri GetImage(string number, ItemType type, int? colorId = null, string scheme = "https")
+    public Uri? GetImage(string number, ItemType type, int? colorId = null, string scheme = "https")
     {
         return type switch
         {
@@ -217,7 +217,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, number)}");
     }   
 
-    public Uri GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https")
+    public Uri? GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https")
     {
         return type switch
         {
