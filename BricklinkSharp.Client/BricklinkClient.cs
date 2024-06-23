@@ -51,6 +51,15 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _instructionImageUrlTemplate = "//img.bricklink.com/ItemImage/IN/0/{0}.png";
     private const string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
 
+    private const string _partThumbnailUrlTemplate = "//img.bricklink.com/P/{0}/{1}.jpg";
+    private const string _minifigThumbnailUrlTemplate = "//img.bricklink.com/M/{0}.jpg";
+    private const string _setThumbnailUrlTemplate = "//img.bricklink.com/S/{0}.jpg";
+    private const string _bookThumbnailUrlTemplate = "//img.bricklink.com/B/{0}.jpg";
+    private const string _gearThumbnailUrlTemplate = "//img.bricklink.com/G/{0}.jpg";
+    private const string _catalogThumbnaileUrlTemplate = "//img.bricklink.com/C/{0}.jpg";
+    private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
+    private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
+
     private readonly IExchangeRatesService _currencyRatesService;
     private readonly IBricklinkRequestHandler? _requestHandler;
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
@@ -152,6 +161,22 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken, credentials);
     }
 
+    public Uri? GetImage(string number, ItemType type, int? colorId = null, string scheme = "https")
+    {
+        return type switch
+        {
+            ItemType.Minifig => GetMinifigImage(number, scheme),
+            ItemType.Part => colorId.HasValue ? GetPartImageForColor(number, colorId.Value, scheme) : null,
+            ItemType.Set => GetSetImage(number, scheme),
+            ItemType.Book => GetBookImage(number,scheme),
+            ItemType.Gear => GetGearImage(number, scheme),
+            ItemType.Catalog => GetCatalogImage(number, scheme),
+            ItemType.Instruction => GetInstructionImage(number, scheme),            
+            ItemType.OriginalBox => GetOriginalBoxImage(number, scheme),
+            _ => null
+        };
+    }
+
     public Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https")
     {
         return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), partNo)}");
@@ -190,6 +215,62 @@ internal sealed class BricklinkClient : IBricklinkClient
     public Uri GetOriginalBoxImage(string number, string scheme = "https")
     {
         return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, number)}");
+    }   
+
+    public Uri? GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https")
+    {
+        return type switch
+        {
+            ItemType.Minifig => GetMinifigThumbnail(number, scheme),
+            ItemType.Part => colorId.HasValue ? GetPartThumbnailForColor(number, colorId.Value, scheme) : null,
+            ItemType.Set => GetSetThumbnail(number, scheme),
+            ItemType.Book => GetBookThumbnail(number, scheme),
+            ItemType.Gear => GetGearThumbnail(number, scheme),
+            ItemType.Catalog => GetCatalogThumbnail(number, scheme),
+            ItemType.Instruction => GetInstructionThumbnail(number, scheme),
+            ItemType.OriginalBox => GetOriginalBoxThumbnail(number, scheme),
+            _ => null
+        };
+    }
+
+    public Uri GetPartThumbnailForColor(string partNo, int colorId, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), partNo)}");
+    }
+
+    public Uri GetMinifigThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, number)}");
+    }
+
+    public Uri GetSetThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, number)}");
+    }
+
+    public Uri GetBookThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, number)}");
+    }
+
+    public Uri GetGearThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, number)}");
+    }
+
+    public Uri GetCatalogThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, number)}");
+    }
+
+    public Uri GetInstructionThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, number)}");
+    }
+
+    public Uri GetOriginalBoxThumbnail(string number, string scheme = "https")
+    {
+        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, number)}");
     }
 
     public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")
@@ -852,5 +933,5 @@ internal sealed class BricklinkClient : IBricklinkClient
 
             await _requestHandler.OnRequestAsync(resourceType, verb, credentials, cancellationToken);
         }
-    } // !MeasureRequestAsync()
+    } // !MeasureRequestAsync()    
 }
