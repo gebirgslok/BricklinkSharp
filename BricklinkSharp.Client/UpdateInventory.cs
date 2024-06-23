@@ -40,7 +40,7 @@ public class UpdateInventory
     public decimal? UnitPrice { get; set; }
 
     [JsonPropertyName("description")]
-    public string Description { get; set; } = String.Empty;
+    public string? Description { get; set; }
 
     [JsonPropertyName("remarks")]
     public string? Remarks { get; set; }
