@@ -20,6 +20,9 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 
 > :information_source: At the moment the project is assumed to be complete, nevertheless it will continue to be actively maintained to fix bugs and respond to API changes. If you encounter bugs or have suggestions for additional features then you can simply open an issue or submit a pull request.
 
+### 1.8.0
+- Updated System.Text.Json NuGet dependency to v8.0.4 for .netstandard targets, see https://github.com/advisories/GHSA-hh2w-p6rv-4g7w
+
 ### 1.7.0
 - Added methods to retrieve thumbnail images from catalog items (see [Retrieve thumbnail image url](https://github.com/gebirgslok/BricklinkSharp/issues/25)), thanks to [stephanstapel](https://github.com/stephanstapel)
 
