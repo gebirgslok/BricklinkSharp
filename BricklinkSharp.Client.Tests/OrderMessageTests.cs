@@ -25,6 +25,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 namespace BricklinkSharp.Client.Tests;
 
@@ -43,10 +44,10 @@ public class OrderMessageTests
             Subject = null
         };
 
-        Assert.AreEqual("Hello world", orderMessage.Body);
-        Assert.AreEqual("Foo", orderMessage.From);
-        Assert.AreEqual("Bar", orderMessage.To);
-        Assert.IsTrue(DateTime.Now >= now);
-        Assert.IsNull(orderMessage.Subject);
+        ClassicAssert.AreEqual("Hello world", orderMessage.Body);
+        ClassicAssert.AreEqual("Foo", orderMessage.From);
+        ClassicAssert.AreEqual("Bar", orderMessage.To);
+        ClassicAssert.IsTrue(DateTime.Now >= now);
+        ClassicAssert.IsNull(orderMessage.Subject);
     }
 }
