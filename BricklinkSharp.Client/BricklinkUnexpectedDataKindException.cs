@@ -25,7 +25,6 @@
 
 using System;
 using System.Net.Http;
-using System.Runtime.Serialization;
 
 namespace BricklinkSharp.Client;
 
@@ -43,19 +42,5 @@ public class BricklinkUnexpectedDataKindException : BricklinkException
     {
         ExpectedDataKind = expectedDataKind;
         ReceivedDataKind = receivedDataKind;
-    }
-
-    private BricklinkUnexpectedDataKindException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        ExpectedDataKind = info.GetString(nameof(ExpectedDataKind));
-        ReceivedDataKind = info.GetString(nameof(ReceivedDataKind));
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue(nameof(ExpectedDataKind), ExpectedDataKind);
-        info.AddValue(nameof(ReceivedDataKind), ReceivedDataKind);
-
-        base.GetObjectData(info, context);
     }
 }

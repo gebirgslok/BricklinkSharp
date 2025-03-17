@@ -23,8 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Runtime.Serialization;
-
 namespace BricklinkSharp.Client.CurrencyRates;
 
 public sealed class CurrencyNotSupportedException : System.Exception
@@ -35,17 +33,5 @@ public sealed class CurrencyNotSupportedException : System.Exception
         base($"The currency (code = {currencyCode} is not supported by the underlying exchange rate service.")
     {
         CurrencyCode = currencyCode;
-    }
-
-    private CurrencyNotSupportedException(SerializationInfo info, StreamingContext context) :
-        base(info, context)
-    {
-        CurrencyCode = info.GetString(nameof(CurrencyCode));
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue(nameof(CurrencyCode), CurrencyCode);
-        base.GetObjectData(info, context);
     }
 }

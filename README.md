@@ -23,6 +23,7 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 ### 1.9.0
 - Added **IsCounterpart** to `SubsetEntry (see [SubsetEntry is missing IsCounterpart parameter](https://github.com/gebirgslok/BricklinkSharp/issues/27))
 - Updated System.Text.Json NuGet dependency to v8.0.5 for .netstandard targets, see https://github.com/advisories/GHSA-8g4q-xg66-9fp4
+- Removed deprecated `GetObjectData(SerializationInfo, StreamingContext)` methods from custom exceptions
 
 ### 1.8.0
 - Updated System.Text.Json NuGet dependency to v8.0.4 for .netstandard targets, see https://github.com/advisories/GHSA-hh2w-p6rv-4g7w

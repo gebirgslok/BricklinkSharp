@@ -17,6 +17,7 @@
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <AssemblyTitle>BricklinkSharp .Net Standard 2.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.0'">

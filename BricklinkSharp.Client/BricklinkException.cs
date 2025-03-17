@@ -25,7 +25,6 @@
 
 using System;
 using System.Net.Http;
-using System.Runtime.Serialization;
 
 namespace BricklinkSharp.Client;
 
@@ -39,24 +38,5 @@ public abstract class BricklinkException : Exception
     {
         RequestUrl = url;
         HttpMethod = httpMethod;
-    }
-
-    protected internal BricklinkException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        RequestUrl = info.GetString(nameof(RequestUrl));
-        var method = info.GetString("Method");
-
-        if (method != null)
-        {
-            HttpMethod = new HttpMethod(method);
-        }
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue(nameof(RequestUrl), RequestUrl);
-        info.AddValue("Method", HttpMethod?.Method);
-
-        base.GetObjectData(info, context);
     }
 }

@@ -25,7 +25,6 @@
 
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace BricklinkSharp.Client;
@@ -38,24 +37,7 @@ public class BricklinkPartOutRequestErrorException : BricklinkException
     {
         Errors = errors;
     }
-
-    internal BricklinkPartOutRequestErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        Errors = new List<string>();
-
-        var count = info.GetInt32("Count");
-
-        for (var i = 0; i < count; i++)
-        {
-            var message = info.GetString($"Error{i}");
-
-            if (message != null)
-            {
-                Errors.Add(message);
-            }
-        }
-    }
-
+    
     private static string BuildMessage(List<string> errors)
     {
         var builder = new StringBuilder("The Part-Out value request returned a global error page. The following error(s) occurred:");
@@ -67,17 +49,5 @@ public class BricklinkPartOutRequestErrorException : BricklinkException
         }
 
         return builder.ToString();
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue("Count", Errors.Count);
-            
-        for (var i = 0; i < Errors.Count; i++)
-        {
-            info.AddValue($"Error{i}", Errors[i]);
-        }
-
-        base.GetObjectData(info, context);
     }
 }

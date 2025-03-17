@@ -41,7 +41,7 @@ internal class NullableItemTypeStringConverter : JsonConverter<ItemType?>
             return null;
         }
 
-        var removedUnderscore = stringValue.Replace("_", string.Empty);
+        var removedUnderscore = stringValue!.Replace("_", string.Empty);
 
         if (Enum.TryParse(removedUnderscore, true, out ItemType result))
         {
@@ -57,7 +57,7 @@ internal class NullableItemTypeStringConverter : JsonConverter<ItemType?>
         {
             return;
         }
-
+        
         var typeString = value?.ToDomainString().ToUpperInvariant();
         writer.WriteStringValue(typeString);
     }

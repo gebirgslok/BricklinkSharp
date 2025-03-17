@@ -24,7 +24,6 @@
 #endregion
 
 using System.Net.Http;
-using System.Runtime.Serialization;
 
 namespace BricklinkSharp.Client;
 
@@ -38,19 +37,5 @@ public class BricklinkPartOutParseErrorException : BricklinkException
     {
         Stage = stage;
         Branch = branch;
-    }
-
-    internal BricklinkPartOutParseErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        Stage = info.GetString(nameof(Stage));
-        Branch = info.GetString(nameof(Branch));
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue(nameof(Stage), Stage);
-        info.AddValue(nameof(Branch), Branch);
-
-        base.GetObjectData(info, context);
     }
 }

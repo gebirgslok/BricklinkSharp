@@ -25,7 +25,6 @@
 
 using System;
 using System.Net.Http;
-using System.Runtime.Serialization;
 
 namespace BricklinkSharp.Client;
 
@@ -50,23 +49,5 @@ public class BricklinkHttpErrorException : BricklinkException
         ReceivedCode = receivedCode;
         Description = description;
         RawMessage = message;
-    }
-
-    private BricklinkHttpErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-        ExpectedCode = info.GetInt32(nameof(ExpectedCode));
-        ReceivedCode = info.GetInt32(nameof(ReceivedCode));
-        Description = info.GetString(nameof(Description));
-        RawMessage = info.GetString(nameof(RawMessage));
-    }
-
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue(nameof(ExpectedCode), ExpectedCode);
-        info.AddValue(nameof(ReceivedCode), ReceivedCode);
-        info.AddValue(nameof(Description), Description);
-        info.AddValue(nameof(RawMessage), RawMessage);
-
-        base.GetObjectData(info, context);
     }
 }

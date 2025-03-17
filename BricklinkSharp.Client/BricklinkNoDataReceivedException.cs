@@ -34,8 +34,4 @@ public class BricklinkNoDataReceivedException : BricklinkException
         base($"No data ('data' element) was received from the request '{httpMethod}' {url}.", url, httpMethod)
     {
     }
-
-    private BricklinkNoDataReceivedException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }
