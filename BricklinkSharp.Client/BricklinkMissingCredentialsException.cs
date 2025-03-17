@@ -25,9 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text;
-// ReSharper disable UnusedMember.Local
 
 namespace BricklinkSharp.Client;
 
@@ -50,9 +48,5 @@ public class BricklinkMissingCredentialsException : Exception
         }
 
         return builder.ToString();
-    }
-
-    private BricklinkMissingCredentialsException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
     }
 }

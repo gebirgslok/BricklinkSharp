@@ -25,10 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable MemberCanBePrivate.Global
 
 namespace BricklinkSharp.Client;
 
@@ -68,14 +65,10 @@ public class BricklinkInvalidParameterException : Exception
         foreach (var o in invalidParameters)
         {
             var separator = count <= invalidParameters.Count - 1 ? ',' : '.';
-            builder.AppendLine($"{o.Key}: {o.Value ?? "null"}{separator}");
+            builder.AppendLine($"{o.Key}: {o.Value}{separator}");
             count += 1;
         }
 
         return builder.ToString();
-    }
-
-    internal BricklinkInvalidParameterException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
     }
 }
