@@ -39,6 +39,9 @@ public class SubsetEntry : SuperSubSetEntryBase
 
     [JsonPropertyName("is_alternate")]
     public bool IsAlternate { get; set; }
+    
+    [JsonPropertyName("is_counterpart")]
+    public bool IsCounterpart { get; set; }
 
     public override string ToString()
     {

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <Description>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Description>
     <Summary>Strongly-typed, easy-to-use API client for the bricklink marketplace.</Summary>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -44,11 +44,21 @@
     <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)'=='net8.0'">
+    <AssemblyTitle>BricklinkSharp .Net 8.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0'">
+    <AssemblyTitle>BricklinkSharp .Net 9.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="NullGuard.Fody" Version="3.1.1" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 </Project>
