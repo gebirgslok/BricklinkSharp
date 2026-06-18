@@ -312,10 +312,10 @@ internal static class HttpClientExtensions
     {
         var method = HttpMethod.Get;
 
-        var responseBody = await httpClient.ExecuteRequestAsync(url, 
+        var responseBody = await httpClient.ExecuteRequestAsync(url,
             method,
-            credentials,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken,
+            credentials: credentials);
 
         var dataArray = ParseResponseArrayAllowEmpty<TResponse>(responseBody, 200, url, method);
         return dataArray;
