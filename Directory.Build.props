@@ -3,12 +3,12 @@
     <LangVersion>10.0</LangVersion>
     <!-- version numbers will be updated by build -->
     <Version>1.0.0.0</Version>
-    <FileVersion>1.9.0.0</FileVersion>
-    <InformationalVersion>1.9.0.0</InformationalVersion>
-    <PackageVersion>1.9.0</PackageVersion>
+    <FileVersion>1.9.1.0</FileVersion>
+    <InformationalVersion>1.9.1.0</InformationalVersion>
+    <PackageVersion>1.9.1</PackageVersion>
     <Authors>Jens Eisenbach</Authors>
     <Product>BricklinkSharp</Product>
-    <Copyright>Copyright © Jens Eisenbach 2020</Copyright>
+    <Copyright>Copyright © Jens Eisenbach 2020-2026</Copyright>
     <Nullable>enable</Nullable>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>

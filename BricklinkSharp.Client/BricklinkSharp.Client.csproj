@@ -55,6 +55,11 @@
     <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)'=='net10.0'">
+    <AssemblyTitle>BricklinkSharp .Net 10.0</AssemblyTitle>
+    <DefineConstants>HAVE_JSON_DEFAULT_IGNORE_CONDITION;HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN;HAVE_GENERIC_ENUM_PARSE</DefineConstants>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="NullGuard.Fody" Version="3.1.1" PrivateAssets="all" />
   </ItemGroup>
