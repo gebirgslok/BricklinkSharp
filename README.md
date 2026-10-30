@@ -673,3 +673,9 @@ var currencyCode = "EUR"; //Uses the exchange rate service to convert USD to Eur
 var result = await client.GetPartOutValueFromPageAsync(itemNo, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
                     includeExtraParts: true, includeInstructions:true, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 ```
+
+Any exchangeratesapi.io-compatible endpoint can be used instead by setting `BaseUrl` (the client calls `{BaseUrl}/latest`). For a non-default endpoint the API key is optional. For example, AllRatesToday serves ECB reference rates in the same format without a key (free, including commercial use; a visible "Exchange rates by AllRatesToday" link to https://allratestoday.com is required where the rates are shown):
+
+```csharp
+ExchangeRatesApiDotIoConfiguration.Instance.BaseUrl = "https://allratestoday.com/api/compat/exchangeratesapi";
+```

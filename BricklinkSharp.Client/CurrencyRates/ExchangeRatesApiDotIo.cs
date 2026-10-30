@@ -79,15 +79,23 @@ internal class ExchangeRatesApiDotIo : IExchangeRatesService
     {
         if (_cachedResponse == null || (DateTime.Now - _cachedResponse.Date) >= TimeSpan.FromHours(24))
         {
-            var key = ExchangeRatesApiDotIoConfiguration.Instance.ApiKey;
+            var config = ExchangeRatesApiDotIoConfiguration.Instance;
+            var key = config.ApiKey;
+            var baseUrl = string.IsNullOrWhiteSpace(config.BaseUrl)
+                ? ExchangeRatesApiDotIoConfiguration.DefaultBaseUrl
+                : config.BaseUrl.TrimEnd('/');
+            var isDefaultEndpoint = baseUrl == ExchangeRatesApiDotIoConfiguration.DefaultBaseUrl;
 
-            if (key == null)
+            if (key == null && isDefaultEndpoint)
             {
                 throw new BricklinkMissingCredentialsException(new List<string>{ "Exchangeratesapi.io - API Access Key" });
             }
 
-            var response = await _httpClient.GetAsync($"http://api.exchangeratesapi.io/v1/latest?access_key={key}", 
-                cancellationToken);
+            var url = key == null
+                ? $"{baseUrl}/latest"
+                : $"{baseUrl}/latest?access_key={key}";
+
+            var response = await _httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
 
 #if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
