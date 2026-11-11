@@ -33,18 +33,6 @@ public class ExchangeRatesApiDotIoConfiguration
 
     public string? ApiKey { get; set;  }
 
-    /// <summary>
-    /// Default endpoint of the exchangeratesapi.io service.
-    /// </summary>
-    public const string DefaultBaseUrl = "http://api.exchangeratesapi.io/v1";
-
-    /// <summary>
-    /// Base URL of an exchangeratesapi.io-compatible endpoint (the client calls <c>{BaseUrl}/latest</c>).
-    /// Defaults to exchangeratesapi.io, which requires <see cref="ApiKey"/>. When a different endpoint is set,
-    /// the API key is optional and is only sent if provided.
-    /// </summary>
-    public string BaseUrl { get; set; } = DefaultBaseUrl;
-
     private ExchangeRatesApiDotIoConfiguration()
     {
     }

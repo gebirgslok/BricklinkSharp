@@ -60,7 +60,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
     private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
 
-    private readonly IExchangeRatesService _currencyRatesService;
+    private readonly IFetchExchangeRate _currencyRatesService;
     private readonly IBricklinkRequestHandler? _requestHandler;
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
     private readonly HttpClient _httpClient;
@@ -69,7 +69,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     private bool _isDisposed;
 
     public BricklinkClient(HttpClient httpClient,        
-        IExchangeRatesService currencyRatesService,
+        IFetchExchangeRate currencyRatesService,
         bool disposeHttpClient,
         IBricklinkRequestHandler? requestHandler = null)
     {
@@ -911,8 +911,8 @@ internal sealed class BricklinkClient : IBricklinkClient
             return result;
         }
 
-        var exchangeRate = await _currencyRatesService
-            .GetExchangeRateAsync("USD", currencyCode, cancellationToken);
+        var exchangeRate = (await _currencyRatesService
+            .FetchAsync("USD", currencyCode, cancellationToken)).Rate;
 
         result.Average6MonthsSalesValueMyCurrency = Math.Round(result.Average6MonthsSalesValueUsd * exchangeRate, 3);
         result.CurrentSalesValueMyCurreny = Math.Round(result.CurrentSalesValueUsd * exchangeRate, 3);

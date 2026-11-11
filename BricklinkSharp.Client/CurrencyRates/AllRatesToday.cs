@@ -23,13 +23,28 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Threading;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace BricklinkSharp.Client.CurrencyRates;
 
-internal interface IExchangeRatesService
+// Calls https://allratestoday.com/ keyless ECB reference rates (exchangeratesapi.io response format)
+internal sealed class AllRatesToday : RatesTableFetcher
 {
-    Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
-        CancellationToken cancellationToken = default);
+    internal const string LatestUrl = "https://allratestoday.com/api/compat/exchangeratesapi/latest";
+
+    private static CacheEntry? _cache;
+
+    public AllRatesToday(HttpClient httpClient) : base(httpClient)
+    {
+    }
+
+    protected override CacheEntry? Cache
+    {
+        get => _cache;
+        set => _cache = value;
+    }
+
+    protected override string BuildUrl() => LatestUrl;
+
+    internal static void ResetCache() => _cache = null;
 }

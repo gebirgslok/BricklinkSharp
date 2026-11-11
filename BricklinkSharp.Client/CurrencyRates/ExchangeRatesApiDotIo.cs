@@ -23,89 +23,37 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BricklinkSharp.Client.CurrencyRates;
 
 // Calls https://exchangeratesapi.io/ Foreign exchange rate service
-internal class ExchangeRatesApiDotIo : IExchangeRatesService
+internal sealed class ExchangeRatesApiDotIo : RatesTableFetcher
 {
-    class ExchangeRatesApiResponse
+    private static CacheEntry? _cache;
+
+    public ExchangeRatesApiDotIo(HttpClient httpClient) : base(httpClient)
     {
-        [JsonPropertyName("rates")]
-        public Dictionary<string, decimal> Rates { get; set; } = new Dictionary<string, decimal>();
-
-        [JsonPropertyName("base")]
-        public string Base { get; set; } = null!;
-
-        [JsonPropertyName("date")]
-        public DateTime Date { get; set; }
     }
 
-    private readonly HttpClient _httpClient;
-
-    private static ExchangeRatesApiResponse? _cachedResponse;
-
-    public ExchangeRatesApiDotIo(HttpClient httpClient)
+    protected override CacheEntry? Cache
     {
-        _httpClient = httpClient;
+        get => _cache;
+        set => _cache = value;
     }
 
-    private static decimal GetRate(string currency, ExchangeRatesApiResponse response)
+    protected override string BuildUrl()
     {
-        var currencyUpper = currency.ToUpperInvariant();
+        var key = ExchangeRatesApiDotIoConfiguration.Instance.ApiKey;
 
-        if (currencyUpper == "EUR")
+        if (key == null)
         {
-            return 1.0M;
+            throw new BricklinkMissingCredentialsException(new List<string> { "Exchangeratesapi.io - API Access Key" });
         }
 
-        if (!response.Rates.ContainsKey(currencyUpper))
-        {
-            throw new CurrencyNotSupportedException(currencyUpper);
-        }
-
-        return response.Rates[currencyUpper];
+        return $"http://api.exchangeratesapi.io/v1/latest?access_key={key}";
     }
 
-    public async Task<decimal> GetExchangeRateAsync(string fromCurrency, string toCurrency, 
-        CancellationToken cancellationToken = default)
-    {
-        if (_cachedResponse == null || (DateTime.Now - _cachedResponse.Date) >= TimeSpan.FromHours(24))
-        {
-            var config = ExchangeRatesApiDotIoConfiguration.Instance;
-            var key = config.ApiKey;
-            var baseUrl = string.IsNullOrWhiteSpace(config.BaseUrl)
-                ? ExchangeRatesApiDotIoConfiguration.DefaultBaseUrl
-                : config.BaseUrl.TrimEnd('/');
-            var isDefaultEndpoint = baseUrl == ExchangeRatesApiDotIoConfiguration.DefaultBaseUrl;
-
-            if (key == null && isDefaultEndpoint)
-            {
-                throw new BricklinkMissingCredentialsException(new List<string>{ "Exchangeratesapi.io - API Access Key" });
-            }
-
-            var url = key == null
-                ? $"{baseUrl}/latest"
-                : $"{baseUrl}/latest?access_key={key}";
-
-            var response = await _httpClient.GetAsync(url, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
-                var contentAsString = await response.Content.ReadAsStringAsync(cancellationToken);
-#else
-            var contentAsString = await response.Content.ReadAsStringAsync();
-#endif
-            _cachedResponse = JsonSerializer.Deserialize<ExchangeRatesApiResponse>(contentAsString);
-        }
-
-        return GetRate(toCurrency, _cachedResponse!) / GetRate(fromCurrency, _cachedResponse!);
-    }
+    internal static void ResetCache() => _cache = null;
 }

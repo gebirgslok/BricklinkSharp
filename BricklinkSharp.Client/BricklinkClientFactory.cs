@@ -30,19 +30,35 @@ namespace BricklinkSharp.Client;
 
 public static class BricklinkClientFactory
 {
-    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IBricklinkRequestHandler? requestHandler = null)
+    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient,
+        IBricklinkRequestHandler? requestHandler, IFetchExchangeRate? exchangeRates)
     {
-        var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
+        var exchangeRatesService = exchangeRates ?? ExchangeRateServices.CreateExchangeRatesApiDotIo(httpClient);
         return new BricklinkClient(httpClient, exchangeRatesService, disposeHttpClient, requestHandler);
     }
 
     public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler? requestHandler = null)
     {
-        return Build(httpClient, false, requestHandler);
+        return Build(httpClient, false, requestHandler, null);
     }
 
     public static IBricklinkClient Build(IBricklinkRequestHandler? requestHandler = null)
     {
-        return Build(new HttpClient(), true, requestHandler);
+        return Build(new HttpClient(), true, requestHandler, null);
+    }
+
+    /// <param name="exchangeRates">Exchange rate service used by GetPartOutValueFromPageAsync,
+    /// e.g. from <see cref="ExchangeRateServices"/>. <c>null</c> uses exchangeratesapi.io.</param>
+    public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler? requestHandler,
+        IFetchExchangeRate? exchangeRates)
+    {
+        return Build(httpClient, false, requestHandler, exchangeRates);
+    }
+
+    /// <param name="exchangeRates">Exchange rate service used by GetPartOutValueFromPageAsync,
+    /// e.g. from <see cref="ExchangeRateServices"/>. <c>null</c> uses exchangeratesapi.io.</param>
+    public static IBricklinkClient Build(IBricklinkRequestHandler? requestHandler, IFetchExchangeRate? exchangeRates)
+    {
+        return Build(new HttpClient(), true, requestHandler, exchangeRates);
     }
 }

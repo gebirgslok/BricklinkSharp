@@ -1,4 +1,4 @@
-# BricklinkSharp
+﻿# BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
 [![Build Status](https://dev.azure.com/jeisenbach/BricklinkSharp/_apis/build/status/gebirgslok.BricklinkSharp?branchName=master)](https://dev.azure.com/jeisenbach/BricklinkSharp/_build/latest?definitionId=1&branchName=master)
@@ -674,8 +674,17 @@ var result = await client.GetPartOutValueFromPageAsync(itemNo, breakSetsInSet: t
                     includeExtraParts: true, includeInstructions:true, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 ```
 
-Any exchangeratesapi.io-compatible endpoint can be used instead by setting `BaseUrl` (the client calls `{BaseUrl}/latest`). For a non-default endpoint the API key is optional. For example, AllRatesToday serves ECB reference rates in the same format without a key (free, including commercial use; a visible "Exchange rates by AllRatesToday" link to https://allratestoday.com is required where the rates are shown):
+The exchange rate service can be swapped by passing an `IFetchExchangeRate` to `BricklinkClientFactory.Build`. `ExchangeRateServices` has ready-made clients, or implement the interface yourself:
 
 ```csharp
-ExchangeRatesApiDotIoConfiguration.Instance.BaseUrl = "https://allratestoday.com/api/compat/exchangeratesapi";
+var httpClient = new HttpClient();
+
+//exchangeratesapi.io (default, needs ExchangeRatesApiDotIoConfiguration.Instance.ApiKey).
+var exchangeRates = ExchangeRateServices.CreateExchangeRatesApiDotIo(httpClient);
+
+//AllRatesToday ECB reference rates, no API key. Where rates are shown publicly,
+//a visible "Exchange rates by AllRatesToday" link to https://allratestoday.com is required.
+//var exchangeRates = ExchangeRateServices.CreateAllRatesToday(httpClient);
+
+using var client = BricklinkClientFactory.Build(httpClient, requestHandler: null, exchangeRates);
 ```
