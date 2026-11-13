@@ -1,6 +1,6 @@
 ---
 github_issue: 33
-status: in-progress (phase 1 done)
+status: in-progress (phases 1-2 done)
 created: 2026-11-13
 ---
 
@@ -33,7 +33,7 @@ internal sealed class BricklinkRequestExecutor
 internal sealed class BricklinkRequestExecutorOptions
 {
     Uri BaseUri; IBricklinkRequestHandler? RequestHandler;
-    Func<BricklinkCredentials?> DefaultCredentials;   // factory wires () => BricklinkClientConfiguration.Instance
+    Func<BricklinkCredentials?> DefaultCredentialsProvider; // factory wires () => BricklinkClientConfiguration.Instance
     Func<DateTimeOffset> Clock; Func<string> NonceGenerator;
 }
 
@@ -41,10 +41,10 @@ internal sealed class BricklinkRequestExecutorOptions
 internal sealed class BricklinkRequest
 {
     BricklinkRequest(BricklinkApiResourceType resource, HttpVerb verb, string path);
-    BricklinkRequest WithQuery(string name, object? value);   // null skipped, invariant culture, escaped
+    BricklinkRequest WithQueryParameter(string name, object? value); // null skipped, invariant culture, escaped
     BricklinkRequest WithBody(object? body);                  // null-skipping serialization, always
     BricklinkRequest WithCredentials(BricklinkCredentials? credentials);
-    BricklinkRequest ExpectCode(int code);                    // default: GET 200, PUT 200, POST 201, DELETE 204
+    BricklinkRequest WithExpectedMetaCode(int metaCode);                  // default: GET 200, PUT 200, POST 201, DELETE 204
     BricklinkRequest WithShape(ResponseShape shape);          // override of the T-derived default
 }
 internal readonly struct NoData { }                           // SendAsync<NoData> = data must be absent/empty
@@ -52,7 +52,7 @@ internal readonly struct NoData { }                           // SendAsync<NoDat
 
 Response shape defaults from `T`: `NoData` requires empty data; an array type allows an empty array; any other type throws `BricklinkNoDataReceivedException` on empty data. `WithShape` is the escape hatch (e.g. a non-empty array required). Default expected code for `NoData` PUT is 204, as today.
 
-Execution order: resolve credentials (per-call, else `DefaultCredentials`, validated) → call hook with the **resolved** credentials → sign (fresh parameter list, injected clock/nonce) → send → dispose response → parse. Every failure surfaces as a `BricklinkException` subtype. Domain validation (`ValidateThrowException`) stays in the endpoint methods.
+Execution order: resolve credentials (per-call, else `DefaultCredentialsProvider`, validated) → call hook with the **resolved** credentials → sign (fresh parameter list, injected clock/nonce) → send → dispose response → parse. Every failure of parsing or mapping surfaces as a `BricklinkException` subtype (transport exceptions such as `HttpRequestException` are not mapped). Domain validation (`ValidateThrowException`) stays in the endpoint methods.
 
 Endpoint shape after migration:
 
@@ -77,11 +77,12 @@ Goal: signing is a pure function of credentials, request and injected clock/nonc
 
 ### Phase 2 — Add the executor (unused by the client)
 Goal: `BricklinkRequestExecutor`, `BricklinkRequest`, `BricklinkRequestExecutorOptions`, `ResponseShape` and `NoData` exist and are fully tested with a stub `HttpMessageHandler`; `BricklinkClient` is untouched.
-- [ ] 2.1 Implement `BricklinkRequest` (query building with null-skip/escaping, body, credentials, expected code, shape)
-- [ ] 2.2 Implement the executor: credential resolution, hook with resolved credentials, signing, send, response disposal, `ConfigureAwait(false)`
-- [ ] 2.3 Implement parsing and error mapping: non-JSON body, missing `meta`, status/meta-code mismatch, shape mismatches, non-object `data` without throwing
-- [ ] 2.4 Tests: URL and query, Authorization header with fixed clock/nonce, null-credentials-to-hook, non-JSON body → `BricklinkException`, empty/array/object shapes, null-skipping body
-- [ ] 2.5 Read `ResponseMeta`, `BricklinkApiResourceType`, `HttpVerb` and the factory; reconcile any assumption in this RFC that does not hold
+- [x] 2.1 Implement `BricklinkRequest` (query building with null-skip/escaping, body, credentials, expected code, shape)
+- [x] 2.2 Implement the executor: credential resolution, hook with resolved credentials, signing, send, response disposal, `ConfigureAwait(false)`
+- [x] 2.3 Implement parsing and error mapping: non-JSON body, missing `meta`, status/meta-code mismatch, shape mismatches, non-object `data` without throwing
+- [x] 2.4 Tests: URL and query, Authorization header with fixed clock/nonce, null-credentials-to-hook, non-JSON body → `BricklinkException`, empty/array/object shapes, null-skipping body
+- [x] 2.5 Read `ResponseMeta`, `BricklinkApiResourceType`, `HttpVerb` and the factory; reconcile any assumption in this RFC that does not hold
+  - Reconciled: `BricklinkMissingCredentialsException` derives from `Exception` (moved into 4.2). Today `GetParseResponseAsync<T[]>` (Category, Color, ItemMapping, KnownColor, Subset, Superset) rejects empty arrays; the T-derived default now allows them, so tasks 3.1/3.2 must add `.WithShape(ResponseShape.ArrayNonEmpty)` there to preserve behaviour. Query values: enums throw (pass the domain string), dates format as ISO 8601. Old `Post` calls serialized nulls; the executor always skips them. Absent `data` for array shapes is `BricklinkNoDataReceivedException` (was `UnexpectedDataKind`). New public `BricklinkInvalidResponseException`; changelog in 4.3. Renamed in code: `WithQueryParameter`, `WithExpectedMetaCode`, `DefaultCredentialsProvider`, `ResponseShape.ArrayOrEmpty`.
 
 ### Phase 3 — Migrate endpoints, delete the old pipeline
 Goal: all 40 endpoints go through `SendAsync`; the old wrappers are gone.
@@ -93,8 +94,8 @@ Goal: all 40 endpoints go through `SendAsync`; the old wrappers are gone.
 ### Phase 4 — Wiring and polish
 Goal: the factory builds the executor; documentation and exception hierarchy match `CODING.md`.
 - [ ] 4.1 Wire `BricklinkClientFactory` to build the executor (the only read of `BricklinkClientConfiguration.Instance`)
-- [ ] 4.2 Make `BricklinkInvalidParameterException` derive from `BricklinkException` and fix its trailing-separator logic
-- [ ] 4.3 `CHANGELOG.md` entries under `## Unreleased` (Fixed: non-JSON body, hook credentials, disposal; Changed: exception base class)
+- [ ] 4.2 Make `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` derive from `BricklinkException` and fix the trailing-separator logic
+- [ ] 4.3 `CHANGELOG.md` entries under `## Unreleased` (Added: `BricklinkInvalidResponseException`; Fixed: non-JSON body, converter errors, hook credentials, disposal; Changed: exception base classes)
 - [ ] 4.4 Run demos' build and a final `dotnet test`; mention the issue can be closed
 
 ## Risks & alternatives
