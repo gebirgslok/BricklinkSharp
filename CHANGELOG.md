@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 - .NET 10 build target
+- `BricklinkInvalidResponseException`, thrown when a response body is not valid JSON, lacks `meta` or does not match the expected shape
+
+### Changed
+- `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` now derive from `BricklinkException` (`RequestUrl` and `HttpMethod` are `null` for them) instead of `Exception`
+
+### Fixed
+- A non-JSON response body (e.g. an HTML error page) or a JSON converter error no longer leaks a raw `JsonException`; it surfaces as a `BricklinkException`
+- `IBricklinkRequestHandler` now receives the resolved credentials (per-call, else `BricklinkClientConfiguration.Instance`) instead of `null`
+- `HttpResponseMessage` is now disposed after every request
+- Trailing separator in the `BricklinkInvalidParameterException` message listed `,` after the last parameter
 
 ### Removed
 - **Breaking:** `IBricklinkClient.GetPartOutValueFromPageAsync` and everything that existed only for it: `PartOutResult`, `PartOutItemType`, `BricklinkPartOutParseErrorException`, `BricklinkPartOutRequestErrorException` and the exchange rate service (`BricklinkSharp.Client.CurrencyRates`, including `ExchangeRatesApiDotIoConfiguration`). BrickLink now protects the scraped page with a bot challenge, so the method no longer works. The public `BricklinkClient` constructor no longer takes an `IExchangeRatesService`

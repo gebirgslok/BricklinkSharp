@@ -36,7 +36,7 @@ internal static class InventoryDemos
     {
         using var client = BricklinkClientFactory.Build();
         var inventory = await client.UpdateInventoryAsync(id, new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
-            
+
         PrintHelper.PrintAsJson(inventory);
     }
 

@@ -82,7 +82,7 @@ public class NewInventory : InventoryBase
                     {"Item.Type", Item.Type},
                     {nameof(Completeness), Completeness}
                 },
-                $"{Completeness} can only be applied to items of type {ItemType.Set}.", 
+                $"{Completeness} can only be applied to items of type {ItemType.Set}.",
                 GetType());
         }
 
@@ -154,7 +154,7 @@ public class NewInventory : InventoryBase
 
             if (invalidParameters.Any())
             {
-                throw new BricklinkInvalidParameterException(invalidParameters, 
+                throw new BricklinkInvalidParameterException(invalidParameters,
                     "Following rules apply for tiered pricing: " + Environment.NewLine +
                     $"{nameof(UnitPrice)} > {nameof(TierPrice1)} > {nameof(TierPrice2)} > {nameof(TierPrice3)}," + Environment.NewLine +
                     $"{nameof(TierQuantity1)} < {nameof(TierQuantity2)} < {nameof(TierQuantity3)}.",
@@ -167,7 +167,7 @@ public class NewInventory : InventoryBase
             throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                 {
                     {nameof(Bulk), Bulk}
-                }, 
+                },
                 $"{nameof(Bulk)} must be > 0.",
                 GetType());
         }

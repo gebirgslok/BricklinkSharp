@@ -53,24 +53,13 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
     private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
 
-    private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
     private readonly BricklinkRequestExecutor _executor;
     private readonly HttpClient _httpClient;
     private readonly bool _disposeHttpClient;
 
     private bool _isDisposed;
 
-    public BricklinkClient(HttpClient httpClient,
-        bool disposeHttpClient,
-        IBricklinkRequestHandler? requestHandler = null)
-        : this(new BricklinkRequestExecutor(httpClient,
-                new BricklinkRequestExecutorOptions(_baseUri, () => BricklinkClientConfiguration.Instance, requestHandler)),
-            httpClient,
-            disposeHttpClient)
-    {
-    }
-
-    internal BricklinkClient(BricklinkRequestExecutor executor, HttpClient httpClient, bool disposeHttpClient)
+    public BricklinkClient(BricklinkRequestExecutor executor, HttpClient httpClient, bool disposeHttpClient)
     {
         _executor = executor;
         _httpClient = httpClient;

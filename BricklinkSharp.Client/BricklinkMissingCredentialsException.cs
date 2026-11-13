@@ -29,7 +29,7 @@ using System.Text;
 
 namespace BricklinkSharp.Client;
 
-public class BricklinkMissingCredentialsException : Exception
+public class BricklinkMissingCredentialsException : BricklinkException
 {
     internal BricklinkMissingCredentialsException(IReadOnlyList<string> missingParams) : base(BuildMessage(missingParams))
     {

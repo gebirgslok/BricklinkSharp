@@ -57,7 +57,7 @@ internal class NullableItemTypeStringConverter : JsonConverter<ItemType?>
         {
             return;
         }
-        
+
         var typeString = value?.ToDomainString().ToUpperInvariant();
         writer.WriteStringValue(typeString);
     }

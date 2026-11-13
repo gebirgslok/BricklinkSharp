@@ -34,6 +34,10 @@ public abstract class BricklinkException : Exception
 
     public HttpMethod? HttpMethod { get; }
 
+    protected internal BricklinkException(string message) : base(message)
+    {
+    }
+
     protected internal BricklinkException(string message, string url, HttpMethod httpMethod)
         : this(message, url, httpMethod, null)
     {

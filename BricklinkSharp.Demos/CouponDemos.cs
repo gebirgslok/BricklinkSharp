@@ -85,7 +85,7 @@ internal static class CouponDemos
     {
         using var client = BricklinkClientFactory.Build();
         var coupons = await client.GetCouponsAsync(Direction.Out,
-            includedCouponStatusTypes: new List<CouponStatus> 
+            includedCouponStatusTypes: new List<CouponStatus>
             {
                 CouponStatus.Open
             });

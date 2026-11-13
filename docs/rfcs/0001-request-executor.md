@@ -1,6 +1,6 @@
 ---
 github_issue: 33
-status: in-progress (phases 1-3 done)
+status: done (phases 1-4)
 created: 2026-11-13
 ---
 
@@ -94,10 +94,10 @@ Goal: all 40 endpoints go through `SendAsync`; the old wrappers are gone.
 
 ### Phase 4 — Wiring and polish
 Goal: the factory builds the executor; documentation and exception hierarchy match `CODING.md`.
-- [ ] 4.1 Wire `BricklinkClientFactory` to build the executor (the only read of `BricklinkClientConfiguration.Instance`)
-- [ ] 4.2 Make `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` derive from `BricklinkException` and fix the trailing-separator logic
-- [ ] 4.3 `CHANGELOG.md` entries under `## Unreleased` (Added: `BricklinkInvalidResponseException`; Fixed: non-JSON body, converter errors, hook credentials, disposal; Changed: exception base classes)
-- [ ] 4.4 Run demos' build and a final `dotnet test`; mention the issue can be closed
+- [x] 4.1 Wire `BricklinkClientFactory` to build the executor (the only read of `BricklinkClientConfiguration.Instance`)
+- [x] 4.2 Make `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` derive from `BricklinkException` and fix the trailing-separator logic
+- [x] 4.3 `CHANGELOG.md` entries under `## Unreleased` (Added: `BricklinkInvalidResponseException`; Fixed: non-JSON body, converter errors, hook credentials, disposal; Changed: exception base classes)
+- [x] 4.4 Run demos' build and a final `dotnet test`; mention the issue can be closed
 
 ## Risks & alternatives
 - Inferring shape from `T` is compact but implicit; mitigated by `WithShape`.

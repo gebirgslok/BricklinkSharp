@@ -29,7 +29,7 @@ using System.Text;
 
 namespace BricklinkSharp.Client;
 
-public class BricklinkInvalidParameterException : Exception
+public class BricklinkInvalidParameterException : BricklinkException
 {
     public Dictionary<string, object>? InvalidParameters { get; }
 
@@ -64,9 +64,9 @@ public class BricklinkInvalidParameterException : Exception
         var count = 0;
         foreach (var o in invalidParameters)
         {
-            var separator = count <= invalidParameters.Count - 1 ? ',' : '.';
-            builder.AppendLine($"{o.Key}: {o.Value}{separator}");
             count += 1;
+            var separator = count < invalidParameters.Count ? ',' : '.';
+            builder.AppendLine($"{o.Key}: {o.Value}{separator}");
         }
 
         return builder.ToString();
