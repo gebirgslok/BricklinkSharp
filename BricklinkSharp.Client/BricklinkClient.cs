@@ -35,7 +35,6 @@ using System.Text.Json.Serialization;
 #endif
 using System.Threading.Tasks;
 using System.Web;
-using BricklinkSharp.Client.CurrencyRates;
 using BricklinkSharp.Client.Extensions;
 
 namespace BricklinkSharp.Client;
@@ -60,7 +59,6 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
     private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
 
-    private readonly IExchangeRatesService _currencyRatesService;
     private readonly IBricklinkRequestHandler? _requestHandler;
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
     private readonly HttpClient _httpClient;
@@ -68,13 +66,11 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     private bool _isDisposed;
 
-    public BricklinkClient(HttpClient httpClient,        
-        IExchangeRatesService currencyRatesService,
+    public BricklinkClient(HttpClient httpClient,
         bool disposeHttpClient,
         IBricklinkRequestHandler? requestHandler = null)
     {
         _httpClient = httpClient;
-        _currencyRatesService = currencyRatesService;
         _disposeHttpClient = disposeHttpClient;
         _requestHandler = requestHandler;
     }
@@ -865,61 +861,6 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken: cancellationToken,
             credentials: credentials);
     }
-
-    public async Task<PartOutResult> GetPartOutValueFromPageAsync(string itemNo, Condition condition = Condition.New,
-        bool includeInstructions = true, bool breakMinifigs = false, bool includeBox = false,
-        bool includeExtraParts = false, bool breakSetsInSet = false, PartOutItemType itemType = PartOutItemType.Set,
-        string? currencyCode = null, CancellationToken cancellationToken = default)
-    {
-        var split = itemNo.Split('-');
-        var rawItemNumber = split[0];
-
-        var sequenceNumber = 1;
-
-        if (split.Length > 1)
-        {
-            if (!int.TryParse(split[1], out int temp))
-            {
-                throw new ArgumentException($"{itemNo} '{itemNo}' has an invalid sequence number. " +
-                                            "The section after the '-' must be numeric.",
-                    nameof(itemNo));
-            }
-
-            sequenceNumber = temp;
-        }
-
-        var url = "https://www.bricklink.com/catalogPOV.asp?" +
-                  $"itemType={itemType.ToDomainString()}&itemNo={rawItemNumber}&itemSeq={sequenceNumber}&itemQty=1&" +
-                  $"breakType={(breakMinifigs ? "P" : "M")}&itemCondition={condition.ToDomainString()}" +
-                  $"&incInstr={(includeInstructions ? "Y" : "N")}&incBox={(includeBox ? "Y" : "N")}&" +
-                  $"incParts={(includeExtraParts ? "Y" : "N")}&breakSets={(breakSetsInSet ? "Y" : "N")}";
-
-        var response = await _httpClient.GetAsync(url, cancellationToken);
-
-#if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
-        var htmlResponse = await response.Content.ReadAsStringAsync(cancellationToken);
-#else
-        var htmlResponse = await response.Content.ReadAsStringAsync();
-#endif
-
-        var result = PartOutResponseParser.ParseResponse(htmlResponse, url);
-        result.ItemNumber = $"{rawItemNumber}-{sequenceNumber}";
-        result.Condition = condition;
-
-        if (currencyCode == null)
-        {
-            return result;
-        }
-
-        var exchangeRate = await _currencyRatesService
-            .GetExchangeRateAsync("USD", currencyCode, cancellationToken);
-
-        result.Average6MonthsSalesValueMyCurrency = Math.Round(result.Average6MonthsSalesValueUsd * exchangeRate, 3);
-        result.CurrentSalesValueMyCurreny = Math.Round(result.CurrentSalesValueUsd * exchangeRate, 3);
-
-        return result;
-    }
-
 
     private async Task MeasureRequestAsync(BricklinkApiResourceType resourceType, HttpVerb verb, BricklinkCredentials? credentials, CancellationToken cancellationToken = default)
     {

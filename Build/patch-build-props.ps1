@@ -44,7 +44,7 @@ Function Update-CsProj-Versions([string]$DirectoryBuildPropsPath, [int]$BuildId,
     $VersionNode = $XmlContent.SelectSingleNode("//Project/PropertyGroup/Version")
     $VersionNode.InnerText = $UpdatedVersion
 
-    [string]$UpdatedInformationalVersion = "$($Split[0]).$($Split[1]).$($Split[2])-$InformationalVersionSuffix"
+    [string]$UpdatedInformationalVersion = "$($Split[0]).$($Split[1]).$($Split[2])$InformationalVersionSuffix"
 
     Write-Host "Set updated InformationalVersion = $UpdatedInformationalVersion"
 

@@ -257,9 +257,4 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null, 
         CancellationToken cancellationToken = default);
 
-    Task<PartOutResult> GetPartOutValueFromPageAsync(string itemNo, Condition condition = Condition.New,
-        bool includeInstructions = true, bool breakMinifigs = false,
-        bool includeBox = false, bool includeExtraParts = false, bool breakSetsInSet = false,
-        PartOutItemType itemType = PartOutItemType.Set, string? currencyCode = null,
-        CancellationToken cancellationToken = default);
 }

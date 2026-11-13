@@ -1,7 +1,7 @@
 # BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
-[![Build Status](https://dev.azure.com/jeisenbach/BricklinkSharp/_apis/build/status/gebirgslok.BricklinkSharp?branchName=master)](https://dev.azure.com/jeisenbach/BricklinkSharp/_build/latest?definitionId=1&branchName=master)
+[![CI](https://github.com/gebirgslok/BricklinkSharp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gebirgslok/BricklinkSharp/actions/workflows/ci.yml)
 
 ## :star: Leave a star
 
@@ -510,26 +510,4 @@ var coupon = await client.UpdateCouponAsync(couponId, updateCoupon);
 ```csharp
 var couponId = 123456789; //Must be a valid coupon ID.
 await client.DeleteCouponAsync(couponId);
-```
-
-### Part Out Value
-
-#### Get Part Out Value From Page
-
-> :warning: This method makes a call to the public Bricklink page and parses the received HTML. Therefore, no credentials are required.
-
-> :information_source: The method can optionally call the [Foreign exchange rates API](https://exchangeratesapi.io/) in order to fetch the Part-Out-Value in your preferred currency. Fetched API calls will be cached in-memory up to 24 hours.
-
-```csharp
-var itemNo = "21322"; //Uses Sequence Number = 1 (21322-1).
-//var itemNo = "1610-2"; //Set Sequence Number explicitly.
-
-//You must sign up on https://exchangeratesapi.io/ (free plan) in order to get your API key.
-//Note that this setup line can be done one-time during bootstrapping of your application.
-ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = "1234567890";
-
-var currencyCode = "EUR"; //Uses the exchange rate service to convert USD to Euro.
-//var currencyCode = null; //Skips calling the exchange rate service and only returns USD. In this case, no API key is required.
-var result = await client.GetPartOutValueFromPageAsync(itemNo, breakSetsInSet: true, breakMinifigs: true, includeBox:true,
-                    includeExtraParts: true, includeInstructions:true, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 ```

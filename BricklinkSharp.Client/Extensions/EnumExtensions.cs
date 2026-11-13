@@ -53,17 +53,6 @@ internal static class EnumExtensions
         };
     }
 
-    internal static string ToDomainString(this PartOutItemType e)
-    {
-        return e switch
-        {
-            PartOutItemType.Set => "S",
-            PartOutItemType.Minifig => "M",
-            PartOutItemType.Gear => "G",
-            _ => throw new ArgumentOutOfRangeException(nameof(PartOutItemType), e, null)
-        };
-    }
-
     internal static string ToDomainString(this ItemType e)
     {
         return e switch
