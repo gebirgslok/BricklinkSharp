@@ -35,7 +35,7 @@ public class BricklinkUnexpectedDataKindException : BricklinkException
     public string? ReceivedDataKind { get; }
 
     internal BricklinkUnexpectedDataKindException(string expectedDataKind, string receivedDataKind,
-        string url, HttpMethod httpMethod) : 
+        string url, HttpMethod httpMethod) :
         base($"Received unexpected JSON data kind for request '{httpMethod}' {url}:" +
              Environment.NewLine +
              $"Expected = {expectedDataKind}, received = {receivedDataKind}.", url, httpMethod)

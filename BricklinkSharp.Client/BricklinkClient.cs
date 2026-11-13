@@ -26,15 +26,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
-#if HAVE_JSON_DEFAULT_IGNORE_CONDITION
-using System.Text.Json.Serialization;
-#endif
 using System.Threading.Tasks;
-using System.Web;
 using BricklinkSharp.Client.Extensions;
 
 namespace BricklinkSharp.Client;
@@ -59,35 +53,23 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
     private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
 
-    private readonly IBricklinkRequestHandler? _requestHandler;
-    private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
+    private readonly BricklinkRequestExecutor _executor;
     private readonly HttpClient _httpClient;
     private readonly bool _disposeHttpClient;
 
     private bool _isDisposed;
 
-    public BricklinkClient(HttpClient httpClient,
-        bool disposeHttpClient,
-        IBricklinkRequestHandler? requestHandler = null)
+    public BricklinkClient(BricklinkRequestExecutor executor, HttpClient httpClient, bool disposeHttpClient)
     {
+        _executor = executor;
         _httpClient = httpClient;
         _disposeHttpClient = disposeHttpClient;
-        _requestHandler = requestHandler;
     }
 
     ~BricklinkClient()
     {
         Dispose(false);
     }
-
-    private static JsonSerializerOptions IgnoreNullValuesJsonSerializerOptions => new()
-    {
-#if HAVE_JSON_DEFAULT_IGNORE_CONDITION
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-#else
-        IgnoreNullValues = true,
-#endif
-    };
 
     private static string? BuildIncludeExcludeParameter<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
         Func<T, string> toStringFunc)
@@ -130,31 +112,28 @@ internal sealed class BricklinkClient : IBricklinkClient
         _isDisposed = true;
     }
 
-    public async Task<CatalogItem> GetItemAsync(ItemType type,
+    public Task<CatalogItem> GetItemAsync(ItemType type,
         string no,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var typeString = type.ToDomainString();
-        var url = new Uri(_baseUri, $"items/{typeString}/{no}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Item, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<CatalogItem>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<CatalogItem>(
+            new BricklinkRequest(BricklinkApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{no}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<CatalogImage> GetItemImageAsync(ItemType type,
+    public Task<CatalogImage> GetItemImageAsync(ItemType type,
         string no,
         int colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var typeString = type.ToDomainString();
-        var url = new Uri(_baseUri, $"items/{typeString}/{no}/images/{colorId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.ItemImage, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<CatalogImage>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<CatalogImage>(
+            new BricklinkRequest(BricklinkApiResourceType.ItemImage, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{no}/images/{colorId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
     public Uri? GetImage(string number, ItemType type, int? colorId = null, string scheme = "https")
@@ -164,10 +143,10 @@ internal sealed class BricklinkClient : IBricklinkClient
             ItemType.Minifig => GetMinifigImage(number, scheme),
             ItemType.Part => colorId.HasValue ? GetPartImageForColor(number, colorId.Value, scheme) : null,
             ItemType.Set => GetSetImage(number, scheme),
-            ItemType.Book => GetBookImage(number,scheme),
+            ItemType.Book => GetBookImage(number, scheme),
             ItemType.Gear => GetGearImage(number, scheme),
             ItemType.Catalog => GetCatalogImage(number, scheme),
-            ItemType.Instruction => GetInstructionImage(number, scheme),            
+            ItemType.Instruction => GetInstructionImage(number, scheme),
             ItemType.OriginalBox => GetOriginalBoxImage(number, scheme),
             _ => null
         };
@@ -211,7 +190,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     public Uri GetOriginalBoxImage(string number, string scheme = "https")
     {
         return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, number)}");
-    }   
+    }
 
     public Uri? GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https")
     {
@@ -274,129 +253,114 @@ internal sealed class BricklinkClient : IBricklinkClient
         return new Uri($"{scheme}:{imageUrl}");
     }
 
-    public async Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
+    public Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
         int colorId = 0,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var typeString = type.ToDomainString();
-
-        var url = new Uri(_baseUri,
-                colorId > 0 ?
-                    $"items/{typeString}/{no}/supersets?color_id={colorId}" :
-                    $"items/{typeString}/{no}/supersets")
-            .ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Superset, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Superset[]>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Superset[]>(
+            new BricklinkRequest(BricklinkApiResourceType.Superset, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{no}/supersets")
+                .WithQueryParameter("color_id", colorId > 0 ? colorId : null)
+                .WithShape(ResponseShape.ArrayNonEmpty)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Subset[]> GetSubsetsAsync(ItemType type, string no,
+    public Task<Subset[]> GetSubsetsAsync(ItemType type, string no,
         int colorId = 0, bool? includeOriginalBox = null,
         bool? includeInstruction = null, bool? breakMinifigs = null,
         bool? breakSubsets = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var typeString = type.ToDomainString();
-        var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/subsets"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query["color_id"] = colorId.ToString();
-        query.AddIfNotNull("box", includeOriginalBox);
-        query.AddIfNotNull("instruction", includeInstruction);
-        query.AddIfNotNull("break_minifigs", breakMinifigs);
-        query.AddIfNotNull("break_subsets", breakSubsets);
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Subset, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Subset[]>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Subset[]>(
+            new BricklinkRequest(BricklinkApiResourceType.Subset, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{no}/subsets")
+                .WithQueryParameter("color_id", colorId)
+                .WithQueryParameter("box", includeOriginalBox)
+                .WithQueryParameter("instruction", includeInstruction)
+                .WithQueryParameter("break_minifigs", breakMinifigs)
+                .WithQueryParameter("break_subsets", breakSubsets)
+                .WithShape(ResponseShape.ArrayNonEmpty)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
+    public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
         PriceGuideType? priceGuideType = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
         VatOption? vat = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var typeString = type.ToDomainString();
-        var builder = new UriBuilder(new Uri(_baseUri, $"items/{typeString}/{no}/price"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query["color_id"] = colorId.ToString();
-        query.AddIfNotNull("guide_type", priceGuideType?.ToDomainString());
-        query.AddIfNotNull("new_or_used", condition?.ToDomainString());
-        query.AddIfNotNull("country_code", countryCode);
-        query.AddIfNotNull("region", region);
-        query.AddIfNotNull("currency_code", currencyCode);
-        query.AddIfNotNull("vat", vat?.ToDomainString());
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.PriceGuide, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<PriceGuide>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<PriceGuide>(
+            new BricklinkRequest(BricklinkApiResourceType.PriceGuide, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{no}/price")
+                .WithQueryParameter("color_id", colorId)
+                .WithQueryParameter("guide_type", priceGuideType?.ToDomainString())
+                .WithQueryParameter("new_or_used", condition?.ToDomainString())
+                .WithQueryParameter("country_code", countryCode)
+                .WithQueryParameter("region", region)
+                .WithQueryParameter("currency_code", currencyCode)
+                .WithQueryParameter("vat", vat?.ToDomainString())
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
+    public Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var typeString = type.ToDomainString();
-        var url = new Uri(_baseUri, $"items/{typeString}/{no}/colors").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.KnownColor, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<KnownColor[]>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<KnownColor[]>(
+            new BricklinkRequest(BricklinkApiResourceType.KnownColor, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{no}/colors")
+                .WithShape(ResponseShape.ArrayNonEmpty)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Color[]> GetColorListAsync(BricklinkCredentials? credentials = null,
+    public Task<Color[]> GetColorListAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, "colors").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.ColorList, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Color[]>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Color[]>(
+            new BricklinkRequest(BricklinkApiResourceType.ColorList, HttpVerb.Get, "colors")
+                .WithShape(ResponseShape.ArrayNonEmpty)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Color> GetColorAsync(int colorId, 
-        BricklinkCredentials? credentials = null, 
+    public Task<Color> GetColorAsync(int colorId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"colors/{colorId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Color, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Color>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Color>(
+            new BricklinkRequest(BricklinkApiResourceType.Color, HttpVerb.Get, $"colors/{colorId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
+    public Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, "categories").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.CategoryList, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Category[]>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Category[]>(
+            new BricklinkRequest(BricklinkApiResourceType.CategoryList, HttpVerb.Get, "categories")
+                .WithShape(ResponseShape.ArrayNonEmpty)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Category> GetCategoryAsync(int categoryId, 
-        BricklinkCredentials? credentials = null, 
+    public Task<Category> GetCategoryAsync(int categoryId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"categories/{categoryId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Category, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Category>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Category>(
+            new BricklinkRequest(BricklinkApiResourceType.Category, HttpVerb.Get, $"categories/{categoryId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
+    public Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
         IEnumerable<ItemType>? excludedItemTypes = null,
         IEnumerable<InventoryStatusType>? includedStatusFlags = null,
         IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
@@ -407,55 +371,46 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UriBuilder(new Uri(_baseUri, "inventories"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-
-        query.AddIfNotNull("item_type", BuildIncludeExcludeParameter(includedItemTypes,
-            excludedItemTypes, t => t.ToDomainString()));
-
-        query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags,
-            excludedStatusFlags, f => f.ToDomainString()));
-
-        query.AddIfNotNull("category_id", BuildIncludeExcludeParameter(includedCategoryIds,
-            excludedCategoryIds, categoryId => categoryId.ToString()));
-
-        query.AddIfNotNull("color_id", BuildIncludeExcludeParameter(includedColorIds, excludedColorIds,
-            colorId => colorId.ToString()));
-
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.InventoryList, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<Inventory>(url, 
-            cancellationToken, credentials);
+        return _executor.SendAsync<Inventory[]>(
+            new BricklinkRequest(BricklinkApiResourceType.InventoryList, HttpVerb.Get, "inventories")
+                .WithQueryParameter("item_type", BuildIncludeExcludeParameter(includedItemTypes,
+                    excludedItemTypes, t => t.ToDomainString()))
+                .WithQueryParameter("status", BuildIncludeExcludeParameter(includedStatusFlags,
+                    excludedStatusFlags, f => f.ToDomainString()))
+                .WithQueryParameter("category_id", BuildIncludeExcludeParameter(includedCategoryIds,
+                    excludedCategoryIds, categoryId => categoryId.ToString()))
+                .WithQueryParameter("color_id", BuildIncludeExcludeParameter(includedColorIds, excludedColorIds,
+                    colorId => colorId.ToString()))
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Inventory> GetInventoryAsync(int inventoryId, 
-        BricklinkCredentials? credentials = null, 
+    public Task<Inventory> GetInventoryAsync(int inventoryId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Inventory, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Inventory>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Inventory>(
+            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Get, $"inventories/{inventoryId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
     public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         newInventory.ValidateThrowException();
-        var url = new Uri(_baseUri, "inventories").ToString();
 
-        await MeasureRequestAsync(BricklinkApiResourceType.Inventory, HttpVerb.Post, credentials, cancellationToken);
-        return await _httpClient.PostThenReadResponseAsync<Inventory>(url,
-            newInventory, cancellationToken: cancellationToken, credentials: credentials);
+        return await _executor.SendAsync<Inventory>(
+            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
+                .WithBody(newInventory)
+                .WithCredentials(credentials),
+            cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task CreateInventoriesAsync(NewInventory[] newInventories,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         foreach (var newInventory in newInventories)
@@ -463,142 +418,127 @@ internal sealed class BricklinkClient : IBricklinkClient
             newInventory.ValidateThrowException();
         }
 
-        var url = new Uri(_baseUri, "inventories").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Inventory, HttpVerb.Post, credentials, cancellationToken);
-        await _httpClient.PostEnsureNoResponseDataAsync(url,
-            newInventories,
-            cancellationToken: cancellationToken, credentials: credentials);
+        await _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
+                .WithBody(newInventories)
+                .WithCredentials(credentials),
+            cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async Task<Inventory> UpdateInventoryAsync(int inventoryId, 
+    public async Task<Inventory> UpdateInventoryAsync(int inventoryId,
         UpdateInventory updateInventory,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         updateInventory.ValidateThrowException();
-        var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
 
-        await MeasureRequestAsync(BricklinkApiResourceType.Inventory, HttpVerb.Put, credentials, cancellationToken);
-        return await _httpClient.PutThenReadResponseAsync<Inventory>(url,
-            updateInventory,
-            jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
-            cancellationToken: cancellationToken, credentials: credentials);
+        return await _executor.SendAsync<Inventory>(
+            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
+                .WithBody(updateInventory)
+                .WithCredentials(credentials),
+            cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async Task DeleteInventoryAsync(int inventoryId,
-        BricklinkCredentials? credentials = null, 
-        CancellationToken cancellationToken = default)
-    {
-        var url = new Uri(_baseUri, $"inventories/{inventoryId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Inventory, HttpVerb.Delete, credentials, cancellationToken);
-        await _httpClient.DeleteEnsureNoResponseDataAsync(url, 
-            cancellationToken: cancellationToken, credentials: credentials);
-    }
-
-    public async Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId,
+    public Task DeleteInventoryAsync(int inventoryId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UriBuilder(new Uri(_baseUri, $"item_mapping/part/{partNo}"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.AddIfNotNull("color_id", colorId);
-        builder.Query = query.ToString();
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.ElementId, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<ItemMapping>(url, 
-            cancellationToken, credentials);
+        return _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, $"inventories/{inventoryId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<ItemMapping[]> GetItemNumberAsync(string elementId,
-        BricklinkCredentials? credentials = null, 
-        CancellationToken cancellationToken = default)
-    {
-        var url = new Uri(_baseUri, $"item_mapping/{elementId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.ItemNumber, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<ItemMapping[]>(url,
-            cancellationToken: cancellationToken, credentials: credentials);
-    }
-
-    public async Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null, 
-        CancellationToken cancellationToken = default)
-    {
-        var url = new Uri(_baseUri, "settings/shipping_methods").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<ShippingMethod>(url,
-            cancellationToken: cancellationToken, credentials);
-    }
-
-    public async Task<ShippingMethod> GetShippingMethodAsync(int methodId,
-        BricklinkCredentials? credentials = null, 
-        CancellationToken cancellationToken = default)
-    {
-        var url = new Uri(_baseUri, $"settings/shipping_methods/{methodId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<ShippingMethod>(url,
-            cancellationToken, credentials);
-    }
-
-    public async Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null, 
-        CancellationToken cancellationToken = default)
-    {
-        var url = new Uri(_baseUri, "notifications").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Notification, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<Notification>(url,
-            cancellationToken: cancellationToken, credentials);
-    }
-
-    public async Task<MemberRating> GetMemberRatingAsync(string username, 
-        BricklinkCredentials? credentials = null, 
-        CancellationToken cancellationToken = default)
-    {
-        var url = new Uri(_baseUri, $"members/{username}/ratings").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.MemberRating, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<MemberRating>(url,
-            cancellationToken: cancellationToken, credentials);
-    }
-
-    public async Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
+    public Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UriBuilder(new Uri(_baseUri, "feedback"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.AddIfNotNull("direction", direction, d => d!.ToString()!.ToLowerInvariant());
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.FeedbackList, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<Feedback>(url, 
-            cancellationToken, credentials);
+        return _executor.SendAsync<ItemMapping[]>(
+            new BricklinkRequest(BricklinkApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{partNo}")
+                .WithQueryParameter("color_id", colorId)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Feedback> GetFeedbackAsync(int feedbackId, 
-        BricklinkCredentials? credentials = null, 
+    public Task<ItemMapping[]> GetItemNumberAsync(string elementId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"feedback/{feedbackId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Feedback, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Feedback>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<ItemMapping[]>(
+            new BricklinkRequest(BricklinkApiResourceType.ItemNumber, HttpVerb.Get, $"item_mapping/{elementId}")
+                .WithShape(ResponseShape.ArrayNonEmpty)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Feedback> PostFeedbackAsync(int orderId, 
-        RatingType rating, 
+    public Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _executor.SendAsync<ShippingMethod[]>(
+            new BricklinkRequest(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get, "settings/shipping_methods")
+                .WithCredentials(credentials),
+            cancellationToken);
+    }
+
+    public Task<ShippingMethod> GetShippingMethodAsync(int methodId,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _executor.SendAsync<ShippingMethod>(
+            new BricklinkRequest(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get,
+                    $"settings/shipping_methods/{methodId}")
+                .WithCredentials(credentials),
+            cancellationToken);
+    }
+
+    public Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _executor.SendAsync<Notification[]>(
+            new BricklinkRequest(BricklinkApiResourceType.Notification, HttpVerb.Get, "notifications")
+                .WithCredentials(credentials),
+            cancellationToken);
+    }
+
+    public Task<MemberRating> GetMemberRatingAsync(string username,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _executor.SendAsync<MemberRating>(
+            new BricklinkRequest(BricklinkApiResourceType.MemberRating, HttpVerb.Get, $"members/{username}/ratings")
+                .WithCredentials(credentials),
+            cancellationToken);
+    }
+
+    public Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _executor.SendAsync<Feedback[]>(
+            new BricklinkRequest(BricklinkApiResourceType.FeedbackList, HttpVerb.Get, "feedback")
+                .WithQueryParameter("direction", direction?.ToString().ToLowerInvariant())
+                .WithCredentials(credentials),
+            cancellationToken);
+    }
+
+    public Task<Feedback> GetFeedbackAsync(int feedbackId,
+        BricklinkCredentials? credentials = null,
+        CancellationToken cancellationToken = default)
+    {
+        return _executor.SendAsync<Feedback>(
+            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Get, $"feedback/{feedbackId}")
+                .WithCredentials(credentials),
+            cancellationToken);
+    }
+
+    public Task<Feedback> PostFeedbackAsync(int orderId,
+        RatingType rating,
         string comment,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, "feedback").ToString();
         var body = new FeedbackBase
         {
             Comment = comment,
@@ -606,177 +546,133 @@ internal sealed class BricklinkClient : IBricklinkClient
             Rating = rating
         };
 
-        await MeasureRequestAsync(BricklinkApiResourceType.Feedback, HttpVerb.Post, credentials, cancellationToken);
-        return await _httpClient.PostThenReadResponseAsync<Feedback>(url, body,
-            cancellationToken: cancellationToken, credentials: credentials);
+        return _executor.SendAsync<Feedback>(
+            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Post, "feedback")
+                .WithBody(body)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task ReplyFeedbackAsync(int feedbackId,
+    public Task ReplyFeedbackAsync(int feedbackId,
         string reply,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"feedback/{feedbackId}/reply").ToString();
-        var body = new { reply };
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Feedback, HttpVerb.Post, credentials, cancellationToken);
-        await _httpClient.PostEnsureNoResponseDataAsync(url, 
-            body, 
-            cancellationToken: cancellationToken,
-            credentials: credentials);
+        return _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Post, $"feedback/{feedbackId}/reply")
+                .WithBody(new { reply })
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+    public Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
         IEnumerable<OrderStatus>? includedStatusFlags = null,
         IEnumerable<OrderStatus>? excludedStatusFlags = null,
         bool filed = false,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UriBuilder(new Uri(_baseUri, "orders"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.Add("direction", direction.ToDomainString());
-        query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedStatusFlags, excludedStatusFlags, f => f.ToDomainString()));
-        query.Add("filed", filed.ToString());
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Order, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<Order>(url, 
-            cancellationToken, credentials);
+        return _executor.SendAsync<Order[]>(
+            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Get, "orders")
+                .WithQueryParameter("direction", direction.ToDomainString())
+                .WithQueryParameter("status", BuildIncludeExcludeParameter(includedStatusFlags,
+                    excludedStatusFlags, f => f.ToDomainString()))
+                .WithQueryParameter("filed", filed)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<OrderDetails> GetOrderAsync(int orderId,
-        BricklinkCredentials? credentials = null, 
+    public Task<OrderDetails> GetOrderAsync(int orderId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Order, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<OrderDetails>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<OrderDetails>(
+            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Get, $"orders/{orderId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId, 
-        BricklinkCredentials? credentials = null, 
+    public async Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}/items").ToString();
+        var itemsBatches = await _executor.SendAsync<OrderItem[][]>(
+                new BricklinkRequest(BricklinkApiResourceType.OrderItem, HttpVerb.Get, $"orders/{orderId}/items")
+                    .WithCredentials(credentials),
+                cancellationToken)
+            .ConfigureAwait(false);
 
-        var method = HttpMethod.Get;
-
-        await MeasureRequestAsync(BricklinkApiResourceType.OrderItem, HttpVerb.Get, credentials, cancellationToken);
-        var responseBody = await _httpClient.ExecuteRequestAsync(url, method,
-            cancellationToken: cancellationToken, credentials: credentials);
-
-        var itemsBatchList = new List<OrderItem[]>();
-        using var document = JsonDocument.Parse(responseBody);
-        var dataElement = document.GetData(200, url, method);
-
-        if (dataElement.ValueKind != JsonValueKind.Array)
-        {
-            throw new BricklinkUnexpectedDataKindException(JsonValueKind.Array.ToString(),
-                dataElement.ValueKind.ToString(),
-                url,
-                HttpMethod.Get);
-        }
-
-        foreach (var innerList in dataElement.EnumerateArray())
-        {
-            itemsBatchList.Add(innerList.ToObject<OrderItem[]>());
-        }
-
-        return itemsBatchList;
+        return itemsBatches.ToList();
     }
 
-    public async Task<OrderMessage[]> GetOrderMessagesAsync(int orderId,
-        BricklinkCredentials? credentials = null, 
+    public Task<OrderMessage[]> GetOrderMessagesAsync(int orderId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}/messages").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.OrderMessage, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<OrderMessage>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<OrderMessage[]>(
+            new BricklinkRequest(BricklinkApiResourceType.OrderMessage, HttpVerb.Get, $"orders/{orderId}/messages")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Feedback[]> GetOrderFeedbackAsync(int orderId, 
-        BricklinkCredentials? credentials = null, 
+    public Task<Feedback[]> GetOrderFeedbackAsync(int orderId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}/feedback").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.OrderFeedback, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<Feedback>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Feedback[]>(
+            new BricklinkRequest(BricklinkApiResourceType.OrderFeedback, HttpVerb.Get, $"orders/{orderId}/feedback")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task UpdateOrderStatusAsync(int orderId, 
+    public Task UpdateOrderStatusAsync(int orderId,
         OrderStatus status,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}/status").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.OrderStatus, HttpVerb.Put, credentials, cancellationToken);
-        await _httpClient.PutEnsureNoResponseDataAsync(url, new
-        {
-            field = "status",
-            value = status.ToDomainString()
-        }, 
-            cancellationToken: cancellationToken, 
-            credentials: credentials);
+        return _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.OrderStatus, HttpVerb.Put, $"orders/{orderId}/status")
+                .WithBody(new { field = "status", value = status.ToDomainString() })
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task UpdatePaymentStatusAsync(int orderId, 
+    public Task UpdatePaymentStatusAsync(int orderId,
         PaymentStatus status,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}/payment_status").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.PaymentStatus, HttpVerb.Put, credentials, cancellationToken);
-        await _httpClient.PutEnsureNoResponseDataAsync(url, new
-        {
-            field = "payment_status",
-            value = status.ToDomainString()
-        },
-            cancellationToken: cancellationToken, 
-            credentials: credentials);
+        return _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.PaymentStatus, HttpVerb.Put,
+                    $"orders/{orderId}/payment_status")
+                .WithBody(new { field = "payment_status", value = status.ToDomainString() })
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task SendDriveThruAsync(int orderId, 
+    public Task SendDriveThruAsync(int orderId,
         bool mailCcMe,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UriBuilder(new Uri(_baseUri, $"orders/{orderId}/drive_thru"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.Add("mail_me", mailCcMe.ToString());
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.DriveThru, HttpVerb.Post, credentials, cancellationToken);
-        await _httpClient.PostEnsureNoResponseDataAsync(url, 
-            expectedCode: 204, 
-            cancellationToken: cancellationToken,
-            credentials: credentials);
+        return _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.DriveThru, HttpVerb.Post, $"orders/{orderId}/drive_thru")
+                .WithQueryParameter("mail_me", mailCcMe)
+                .WithExpectedMetaCode(204)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<OrderDetails> UpdateOrderAsync(int orderId, 
+    public Task<OrderDetails> UpdateOrderAsync(int orderId,
         UpdateOrder updateOrder,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"orders/{orderId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Order, HttpVerb.Put, credentials, cancellationToken);
-        return await _httpClient.PutThenReadResponseAsync<OrderDetails>(url, updateOrder,
-            jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
-            cancellationToken: cancellationToken,
-            credentials: credentials);
+        return _executor.SendAsync<OrderDetails>(
+            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Put, $"orders/{orderId}")
+                .WithBody(updateOrder)
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
     public void Dispose()
@@ -785,50 +681,39 @@ internal sealed class BricklinkClient : IBricklinkClient
         GC.SuppressFinalize(this);
     }
 
-    public async Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
+    public Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
         IEnumerable<CouponStatus>? includedCouponStatusTypes = null,
         IEnumerable<CouponStatus>? excludedCouponStatusTypes = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var builder = new UriBuilder(new Uri(_baseUri, "coupons"));
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.Add("direction", direction.ToDomainString());
-
-        query.AddIfNotNull("status", BuildIncludeExcludeParameter(includedCouponStatusTypes,
-            excludedCouponStatusTypes,
-            f => f.ToDomainString()));
-
-        builder.Query = query.ToString();
-
-        var url = builder.ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Coupon, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseArrayAllowEmpty<Coupon>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Coupon[]>(
+            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Get, "coupons")
+                .WithQueryParameter("direction", direction.ToDomainString())
+                .WithQueryParameter("status", BuildIncludeExcludeParameter(includedCouponStatusTypes,
+                    excludedCouponStatusTypes, f => f.ToDomainString()))
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task<Coupon> GetCouponAsync(int couponId,
+    public Task<Coupon> GetCouponAsync(int couponId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Coupon, HttpVerb.Get, credentials, cancellationToken);
-        return await _httpClient.GetParseResponseAsync<Coupon>(url,
-            cancellationToken, credentials);
+        return _executor.SendAsync<Coupon>(
+            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Get, $"coupons/{couponId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
-    public async Task DeleteCouponAsync(int couponId, 
-        BricklinkCredentials? credentials = null, 
+    public Task DeleteCouponAsync(int couponId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Coupon, HttpVerb.Delete, credentials, cancellationToken);
-        await _httpClient.DeleteEnsureNoResponseDataAsync(url,
-            cancellationToken: cancellationToken,
-            credentials: credentials);
+        return _executor.SendAsync<NoData>(
+            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Delete, $"coupons/{couponId}")
+                .WithCredentials(credentials),
+            cancellationToken);
     }
 
     public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon,
@@ -837,42 +722,26 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         newCoupon.ValidateThrowException();
 
-        var url = new Uri(_baseUri, "coupons").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Coupon, HttpVerb.Post, credentials, cancellationToken);
-        return await _httpClient.PostThenReadResponseAsync<Coupon>(url, newCoupon,
-            cancellationToken: cancellationToken,
-            credentials: credentials);
+        return await _executor.SendAsync<Coupon>(
+            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Post, "coupons")
+                .WithBody(newCoupon)
+                .WithCredentials(credentials),
+            cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async Task<Coupon> UpdateCouponAsync(int couponId, 
+    public async Task<Coupon> UpdateCouponAsync(int couponId,
         UpdateCoupon updateCoupon,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         updateCoupon.ValidateThrowException();
 
-        var url = new Uri(_baseUri, $"coupons/{couponId}").ToString();
-
-        await MeasureRequestAsync(BricklinkApiResourceType.Coupon, HttpVerb.Put, credentials, cancellationToken);
-        return await _httpClient.PutThenReadResponseAsync<Coupon>(url,
-            updateCoupon,
-            jsonSerializerOptions: IgnoreNullValuesJsonSerializerOptions,
-            cancellationToken: cancellationToken,
-            credentials: credentials);
+        return await _executor.SendAsync<Coupon>(
+            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")
+                .WithBody(updateCoupon)
+                .WithCredentials(credentials),
+            cancellationToken)
+            .ConfigureAwait(false);
     }
-
-    private async Task MeasureRequestAsync(BricklinkApiResourceType resourceType, HttpVerb verb, BricklinkCredentials? credentials, CancellationToken cancellationToken = default)
-    {
-        if (_requestHandler != null)
-        {
-            BricklinkCredentials? _credentials = credentials;
-            if (_credentials == null)
-            {
-                _credentials = (BricklinkCredentials)BricklinkClientConfiguration.Instance;
-            }
-
-            await _requestHandler.OnRequestAsync(resourceType, verb, credentials, cancellationToken);
-        }
-    } // !MeasureRequestAsync()    
 }

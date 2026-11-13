@@ -72,5 +72,5 @@ public class Coupon : CouponBase
     public decimal DisplayTierPrice2 { get; set; }
 
     [JsonPropertyName("disp_tier_price3"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal DisplayTierPrice3 { get; set; }               
+    public decimal DisplayTierPrice3 { get; set; }
 }

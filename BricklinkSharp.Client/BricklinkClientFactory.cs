@@ -23,15 +23,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Net.Http;
 
 namespace BricklinkSharp.Client;
 
 public static class BricklinkClientFactory
 {
+    private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
+
     private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IBricklinkRequestHandler? requestHandler = null)
     {
-        return new BricklinkClient(httpClient, disposeHttpClient, requestHandler);
+        var options = new BricklinkRequestExecutorOptions(_baseUri, () => BricklinkClientConfiguration.Instance, requestHandler);
+        return new BricklinkClient(new BricklinkRequestExecutor(httpClient, options), httpClient, disposeHttpClient);
     }
 
     public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler? requestHandler = null)

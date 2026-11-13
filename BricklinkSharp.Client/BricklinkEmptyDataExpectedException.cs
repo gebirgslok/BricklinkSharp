@@ -30,9 +30,9 @@ namespace BricklinkSharp.Client;
 
 public class BricklinkEmptyDataExpectedException : BricklinkException
 {
-    internal BricklinkEmptyDataExpectedException(JsonElement json, 
-        string url, 
-        HttpMethod httpMethod) : 
+    internal BricklinkEmptyDataExpectedException(JsonElement json,
+        string url,
+        HttpMethod httpMethod) :
         base($"Expected to receive an empty data JSON object but received '{json}'.", url, httpMethod)
     {
     }

@@ -29,7 +29,7 @@ namespace BricklinkSharp.Client.OAuth;
 
 internal class WebParameter : IComparable<WebParameter>, IComparable
 {
-    public string Name { get;  }
+    public string Name { get; }
 
     public string Value { get; }
 

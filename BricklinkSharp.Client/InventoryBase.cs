@@ -53,7 +53,7 @@ public class InventoryBase
     [JsonPropertyName("remarks")]
     public string? Remarks { get; set; }
 
-    [JsonPropertyName("bulk")] 
+    [JsonPropertyName("bulk")]
     public int Bulk { get; set; } = 1;
 
     [JsonPropertyName("is_retain")]

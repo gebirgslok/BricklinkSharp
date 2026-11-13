@@ -32,13 +32,13 @@ namespace BricklinkSharp.Client;
 
 public interface IBricklinkClient : IDisposable
 {
-    Task<CatalogItem> GetItemAsync(ItemType type, 
+    Task<CatalogItem> GetItemAsync(ItemType type,
         string no,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<CatalogImage> GetItemImageAsync(ItemType type, 
-        string no, 
+    Task<CatalogImage> GetItemImageAsync(ItemType type,
+        string no,
         int colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
@@ -78,8 +78,8 @@ public interface IBricklinkClient : IDisposable
 
     Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
 
-    Task<Superset[]> GetSupersetsAsync(ItemType type, 
-        string no, 
+    Task<Superset[]> GetSupersetsAsync(ItemType type,
+        string no,
         int colorId = 0,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
@@ -98,7 +98,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<KnownColor[]> GetKnownColorsAsync(ItemType type, 
+    Task<KnownColor[]> GetKnownColorsAsync(ItemType type,
         string no,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
@@ -113,7 +113,7 @@ public interface IBricklinkClient : IDisposable
     Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Category> GetCategoryAsync(int categoryId, 
+    Task<Category> GetCategoryAsync(int categoryId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
@@ -128,67 +128,67 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Inventory> GetInventoryAsync(int inventoryId, 
+    Task<Inventory> GetInventoryAsync(int inventoryId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Inventory> CreateInventoryAsync(NewInventory newInventory, 
+    Task<Inventory> CreateInventoryAsync(NewInventory newInventory,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task CreateInventoriesAsync(NewInventory[] newInventories, 
+    Task CreateInventoriesAsync(NewInventory[] newInventories,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Inventory> UpdateInventoryAsync(int inventoryId, 
-        UpdateInventory updateInventory, 
+    Task<Inventory> UpdateInventoryAsync(int inventoryId,
+        UpdateInventory updateInventory,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task DeleteInventoryAsync(int inventoryId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<ItemMapping[]> GetElementIdAsync(string partNo, 
+    Task<ItemMapping[]> GetElementIdAsync(string partNo,
         int? colorId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<ItemMapping[]> GetItemNumberAsync(string elementId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null, 
+    Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<ShippingMethod> GetShippingMethodAsync(int methodId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null, 
+    Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<MemberRating> GetMemberRatingAsync(string username,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Feedback> GetFeedbackAsync(int feedbackId, 
-        BricklinkCredentials? credentials = null, 
+    Task<Feedback> GetFeedbackAsync(int feedbackId,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Feedback> PostFeedbackAsync(int orderId, 
-        RatingType rating, 
+    Task<Feedback> PostFeedbackAsync(int orderId,
+        RatingType rating,
         string comment,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task ReplyFeedbackAsync(int feedbackId, 
+    Task ReplyFeedbackAsync(int feedbackId,
         string reply,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
@@ -199,39 +199,39 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<OrderDetails> GetOrderAsync(int orderId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<List<OrderItem[]>> GetOrderItemsAsync(int orderId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<OrderMessage[]> GetOrderMessagesAsync(int orderId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Feedback[]> GetOrderFeedbackAsync(int orderId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<OrderDetails> UpdateOrderAsync(int orderId, 
+    Task<OrderDetails> UpdateOrderAsync(int orderId,
         UpdateOrder updateOrder,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task UpdateOrderStatusAsync(int orderId, 
-        OrderStatus status, 
-        BricklinkCredentials? credentials = null, 
+    Task UpdateOrderStatusAsync(int orderId,
+        OrderStatus status,
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task UpdatePaymentStatusAsync(int orderId, 
+    Task UpdatePaymentStatusAsync(int orderId,
         PaymentStatus status,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task SendDriveThruAsync(int orderId, 
+    Task SendDriveThruAsync(int orderId,
         bool mailCcMe,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Coupon[]> GetCouponsAsync(Direction direction = Direction.Out,
@@ -241,20 +241,20 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<Coupon> GetCouponAsync(int couponId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Coupon> CreateCouponAsync(NewCoupon newCoupon,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Coupon> UpdateCouponAsync(int couponId, 
+    Task<Coupon> UpdateCouponAsync(int couponId,
         UpdateCoupon updateCoupon,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task DeleteCouponAsync(int couponId,
-        BricklinkCredentials? credentials = null, 
+        BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
 }

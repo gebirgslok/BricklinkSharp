@@ -24,17 +24,32 @@
 #endregion
 
 using System;
-using System.Collections.Specialized;
 
-namespace BricklinkSharp.Client.Extensions;
+namespace BricklinkSharp.Client;
 
-internal static class NameValueCollectionExtensions
+internal sealed class BricklinkRequestExecutorOptions
 {
-    public static void AddIfNotNull<T>(this NameValueCollection collection, string key, T value, Func<T, string>? toString = null)
+    public BricklinkRequestExecutorOptions(Uri baseUri,
+        Func<BricklinkCredentials?> defaultCredentialsProvider,
+        IBricklinkRequestHandler? requestHandler = null,
+        Func<DateTimeOffset>? clock = null,
+        Func<string>? nonceGenerator = null)
     {
-        if (value != null)
-        {
-            collection[key] = toString == null ? value.ToString() : toString.Invoke(value);
-        }
+        BaseUri = baseUri;
+        DefaultCredentialsProvider = defaultCredentialsProvider;
+        RequestHandler = requestHandler;
+        Clock = clock;
+        NonceGenerator = nonceGenerator;
     }
+
+    public Uri BaseUri { get; }
+
+    public Func<BricklinkCredentials?> DefaultCredentialsProvider { get; }
+
+    public IBricklinkRequestHandler? RequestHandler { get; }
+
+    // null means the signer's real clock and nonce
+    public Func<DateTimeOffset>? Clock { get; }
+
+    public Func<string>? NonceGenerator { get; }
 }

@@ -64,7 +64,7 @@ public class PriceGuide
 
     public override string ToString()
     {
-        return $"({Item.Type}, {Item.Number}): {Condition}, {CurrencyCode}, min: {MinPrice}, " + 
+        return $"({Item.Type}, {Item.Number}): {Condition}, {CurrencyCode}, min: {MinPrice}, " +
                $"max: {MaxPrice}, avg: {AveragePrice}, qty_avg: {QuantityAveragePrice}";
     }
 }
