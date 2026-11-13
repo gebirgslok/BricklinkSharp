@@ -34,8 +34,6 @@ jobs:
 
       - name: Test
         run: dotnet test BricklinkSharp.Client.Tests -c Release --no-build
-        env:
-          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
 
       - run: dotnet pack BricklinkSharp.Client -c Release --no-build -o artifacts
 

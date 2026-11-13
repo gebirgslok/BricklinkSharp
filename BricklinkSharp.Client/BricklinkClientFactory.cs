@@ -24,7 +24,6 @@
 #endregion
 
 using System.Net.Http;
-using BricklinkSharp.Client.CurrencyRates;
 
 namespace BricklinkSharp.Client;
 
@@ -32,8 +31,7 @@ public static class BricklinkClientFactory
 {
     private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IBricklinkRequestHandler? requestHandler = null)
     {
-        var exchangeRatesService = new ExchangeRatesApiDotIo(httpClient);
-        return new BricklinkClient(httpClient, exchangeRatesService, disposeHttpClient, requestHandler);
+        return new BricklinkClient(httpClient, disposeHttpClient, requestHandler);
     }
 
     public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler? requestHandler = null)

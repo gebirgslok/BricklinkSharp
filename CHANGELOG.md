@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 - .NET 10 build target
 
+### Removed
+- **Breaking:** `IBricklinkClient.GetPartOutValueFromPageAsync` and everything that existed only for it: `PartOutResult`, `PartOutItemType`, `BricklinkPartOutParseErrorException`, `BricklinkPartOutRequestErrorException` and the exchange rate service (`BricklinkSharp.Client.CurrencyRates`, including `ExchangeRatesApiDotIoConfiguration`). BrickLink now protects the scraped page with a bot challenge, so the method no longer works. The public `BricklinkClient` constructor no longer takes an `IExchangeRatesService`
+
 ## 1.9.1 - 2026-06-19
 
 ### Fixed

@@ -47,17 +47,6 @@ public class EnumExtensionsTests
     }
 
     [Test]
-    public void ToDomainString_PartOutItemType()
-    {
-        ClassicAssert.AreEqual("M", PartOutItemType.Minifig.ToDomainString());
-        ClassicAssert.AreEqual("G", PartOutItemType.Gear.ToDomainString());
-        ClassicAssert.AreEqual("S", PartOutItemType.Set.ToDomainString());
-
-        PartOutItemType? nullHolder = null;
-        ClassicAssert.IsNull(nullHolder?.ToDomainString());
-    }
-
-    [Test]
     public void ToDomainString_OrderStatus()
     {
         ClassicAssert.AreEqual("PENDING", OrderStatus.Pending.ToDomainString());

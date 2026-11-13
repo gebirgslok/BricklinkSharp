@@ -46,10 +46,6 @@ _Avoid_: Price history
 The link between an item number plus Color and a BrickLink Element ID.
 _Avoid_: Element lookup
 
-**Part Out Value**:
-The value of a set if sold as parts. Scraped from the public BrickLink page, so it needs no credentials and is not an API call.
-_Avoid_: Parting value
-
 ### Store
 
 **Inventory**:

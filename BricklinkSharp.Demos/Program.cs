@@ -100,7 +100,6 @@ internal static class Program
         await CouponDemos.CreateCouponDemo();
         await CouponDemos.UpdateCouponDemo(couponId);
 
-        await PartOutValueDemos.GetPartOutValueFromPageDemo();
         Console.ReadKey(true);
         return 0;
     }
