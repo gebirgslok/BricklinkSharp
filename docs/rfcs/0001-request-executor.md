@@ -1,6 +1,6 @@
 ---
 github_issue: 33
-status: in-progress (phases 1-2 done)
+status: in-progress (phases 1-3 done)
 created: 2026-11-13
 ---
 
@@ -86,10 +86,11 @@ Goal: `BricklinkRequestExecutor`, `BricklinkRequest`, `BricklinkRequestExecutorO
 
 ### Phase 3 — Migrate endpoints, delete the old pipeline
 Goal: all 40 endpoints go through `SendAsync`; the old wrappers are gone.
-- [ ] 3.1 Give `BricklinkClient` an executor and migrate catalog and price-guide endpoints (including the `UriBuilder` and `?color_id=` styles)
-- [ ] 3.2 Migrate inventory, order, coupon, feedback, notification and remaining endpoints, including `GetOrderItemsAsync` (nested array) and `BuildIncludeExcludeParameter` call sites
-- [ ] 3.3 Add per-area stub-handler tests for request URL/verb/body and response mapping
-- [ ] 3.4 Delete the 8 `HttpClient` wrappers, the 2 private executors, `MeasureRequestAsync` and `JsonExtensions.GetData`
+- [x] 3.1 Give `BricklinkClient` an executor and migrate catalog and price-guide endpoints (including the `UriBuilder` and `?color_id=` styles)
+- [x] 3.2 Migrate inventory, order, coupon, feedback, notification and remaining endpoints, including `GetOrderItemsAsync` (nested array) and `BuildIncludeExcludeParameter` call sites
+- [x] 3.3 Add per-area stub-handler tests for request URL/verb/body and response mapping
+- [x] 3.4 Delete the 8 `HttpClient` wrappers, the 2 private executors, `MeasureRequestAsync` and `JsonExtensions.GetData`
+  - Deleted `HttpClientExtensions`, `JsonExtensions` and the now-unused `NameValueCollectionExtensions`. `BricklinkClient` still builds its executor in its public constructor (default credentials from `BricklinkClientConfiguration.Instance`); task 4.1 moves that wiring to the factory. Methods that validate (`Create*`/`Update*` inventory and coupon) stay `async` so validation errors surface as a faulted `Task`.
 
 ### Phase 4 — Wiring and polish
 Goal: the factory builds the executor; documentation and exception hierarchy match `CODING.md`.
