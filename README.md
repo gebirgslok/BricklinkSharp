@@ -1,7 +1,7 @@
 # BricklinkSharp
 
 [![NuGet](https://img.shields.io/nuget/v/BricklinkSharp?color=blue)](https://www.nuget.org/packages/BricklinkSharp/)
-[![CI](https://github.com/gebirgslok/BricklinkSharp/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gebirgslok/BricklinkSharp/actions/workflows/ci.yml)
+[![CI](https://github.com/gebirgslok/BricklinkSharp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gebirgslok/BricklinkSharp/actions/workflows/ci.yml)
 
 ## :star: Leave a star
 
@@ -26,7 +26,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the release history.
 
 ### Demo project
 
-Check out the [demo project](https://github.com/gebirgslok/BricklinkSharp/tree/master/BricklinkSharp.Demos) for full-featured examples.
+Check out the [demo project](https://github.com/gebirgslok/BricklinkSharp/tree/main/BricklinkSharp.Demos) for full-featured examples.
 
 ### Prerequisites
 

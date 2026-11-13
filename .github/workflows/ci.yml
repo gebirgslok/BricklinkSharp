@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
   schedule:
-    # Weekly run on master to catch BrickLink page changes that break the scraping tests.
+    # Weekly run on main to catch changes on BrickLink (e.g. image URLs) that break the live tests.
     - cron: "0 5 * * 1"
 
 permissions:
