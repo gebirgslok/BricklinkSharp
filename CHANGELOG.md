@@ -6,10 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
-## 1.9.1 - 2026-06-19
-
 ### Added
 - .NET 10 build target
+
+## 1.9.1 - 2026-06-19
 
 ### Fixed
 - [GetParseResponseArrayAllowEmpty passes credentials as body to ExecuteRequestAsync](https://github.com/gebirgslok/BricklinkSharp/issues/28)

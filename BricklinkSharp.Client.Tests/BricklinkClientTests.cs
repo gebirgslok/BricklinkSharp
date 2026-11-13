@@ -93,9 +93,16 @@ public class BricklinkClientTests
     [TestCase("7771-1", "SEK", false)]
     public async Task GetPartOutValueAsync_WithExchangeRate_ItemTypeIsSet_ItemExists(string itemNumber, string currencyCode, bool shouldLessThanUsd)
     {
+        var accessKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
+
+        if (string.IsNullOrEmpty(accessKey))
+        {
+            Assert.Ignore("ACCESS_KEY environment variable is not set.");
+        }
+
         using var client = BricklinkClientFactory.Build();
 
-        ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
+        ExchangeRatesApiDotIoConfiguration.Instance.ApiKey = accessKey;
 
         var result = await client.GetPartOutValueFromPageAsync(itemNumber, itemType: PartOutItemType.Set, currencyCode: currencyCode);
 

@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    # Weekly run on master to catch BrickLink page changes that break the scraping tests.
+    - cron: "0 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: |
+            9.0.x
+            10.0.x
+
+      - name: Stamp version
+        shell: pwsh
+        run: |
+          $suffix = "-" + (Get-Date -AsUTC -Format "yyyyMMdd+HHmmss")
+          ./Build/patch-build-props.ps1 -DirectoryBuildPropsPath Directory.Build.props -BuildId $env:GITHUB_RUN_NUMBER -InformationalVersionSuffix $suffix
+
+      - run: dotnet build BricklinkSharp.sln -c Release
+
+      - name: Test
+        run: dotnet test BricklinkSharp.Client.Tests -c Release --no-build
+        env:
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+
+      - run: dotnet pack BricklinkSharp.Client -c Release --no-build -o artifacts
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
