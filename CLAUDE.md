@@ -29,7 +29,8 @@ Some tests hit the live BrickLink API and need credentials; the API is limited t
 
 - Two identical enums exist: `Direction` (coupons) and `OrderDirection` (orders). Same concept; merging is a breaking change, so leave as is.
 - `GetPartOutValueFromPageAsync` scrapes the public HTML page — no API, no credentials.
-- Every user-visible change: update the README changelog and bump the version (see commit "update version to 1.9.1").
+- Every user-visible change: add an entry under `## Unreleased` in `CHANGELOG.md` (Keep a Changelog sections: Added/Changed/Fixed/Removed/Security).
+- Release: rename `Unreleased` to the version and date, bump the version in `Directory.Build.props` (see commit "update version to 1.9.1"), tag `vX.Y.Z` and create the GitHub Release from the changelog section (`gh release create vX.Y.Z --notes-file ...`). Manual until the GitHub Actions migration.
 
 ## Review agents (`.claude/agents/`)
 

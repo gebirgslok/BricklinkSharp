@@ -12,6 +12,7 @@
     <AssemblyName>BricklinkSharp.Client</AssemblyName>
     <RepositoryUrl>https://github.com/gebirgslok/BricklinkSharp</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <PackageReleaseNotes>https://github.com/gebirgslok/BricklinkSharp/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
