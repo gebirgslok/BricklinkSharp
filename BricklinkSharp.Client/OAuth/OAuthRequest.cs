@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -37,8 +38,14 @@ internal class OAuthRequest
     private readonly string _requestUrl;
     private readonly string _method;
 
-    public OAuthRequest(string consumerKey, string consumerSecret, string token, string tokenSecret, string requestUrl, string method)
+    private readonly Func<DateTimeOffset> _clock;
+    private readonly Func<string> _nonceGenerator;
+
+    public OAuthRequest(string consumerKey, string consumerSecret, string token, string tokenSecret, string requestUrl, string method,
+        Func<DateTimeOffset>? clock = null, Func<string>? nonceGenerator = null)
     {
+        _clock = clock ?? (() => DateTimeOffset.UtcNow);
+        _nonceGenerator = nonceGenerator ?? OAuthUtilities.GetNonce;
         _consumerKey = consumerKey;
         _consumerSecret = consumerSecret;
         _token = token;
@@ -79,7 +86,9 @@ internal class OAuthRequest
 
     private string GetSignature(string timestamp, string nonce, List<WebParameter>? queryParameters = null)
     {
-        var parameters = queryParameters ?? new List<WebParameter>();
+        var parameters = queryParameters is null
+            ? new List<WebParameter>()
+            : new List<WebParameter>(queryParameters);
         AddAuthParamters(parameters, timestamp, nonce);
         var signatureBase = OAuthUtilities.ConcatenateRequestElements(_method.ToUpperInvariant(), _requestUrl, parameters);
         var signature = OAuthUtilities.GetSignature(signatureBase, _consumerSecret, _tokenSecret);
@@ -88,8 +97,8 @@ internal class OAuthRequest
 
     public string GetAuthorizationHeader(List<WebParameter>? queryParameters = null)
     {
-        var timestamp = OAuthUtilities.GetTimestamp();
-        var nonce = OAuthUtilities.GetNonce();
+        var timestamp = OAuthUtilities.GetTimestamp(_clock());
+        var nonce = _nonceGenerator();
         var signature = GetSignature(timestamp, nonce, queryParameters);
         var header = BuildAuthHeader(signature, timestamp, nonce);
         return header;

@@ -1,6 +1,6 @@
 ---
 github_issue: 33
-status: draft
+status: in-progress (phase 1 done)
 created: 2026-11-13
 ---
 
@@ -70,10 +70,10 @@ Each phase leaves the repo building with tests green. New code is added before o
 
 ### Phase 1 — Deterministic, non-mutating OAuth signer
 Goal: signing is a pure function of credentials, request and injected clock/nonce; the existing request path still works.
-- [ ] 1.1 Add clock and nonce parameters to `OAuthRequest`/`OAuthUtilities`, defaulting to the current behaviour
-- [ ] 1.2 Stop mutating the caller's parameter list in `GetSignature` and `ConcatenateRequestElements`
-- [ ] 1.3 Add signature tests against fixed vectors (known base string, key, clock, nonce)
-- [ ] 1.4 Add `CHANGELOG.md` entry only if any user-visible behaviour changed
+- [x] 1.1 Add clock and nonce parameters to `OAuthRequest`/`OAuthUtilities`, defaulting to the current behaviour
+- [x] 1.2 Stop mutating the caller's parameter list in `GetSignature` and `ConcatenateRequestElements`
+- [x] 1.3 Add signature tests against fixed vectors (known base string, key, clock, nonce)
+- [x] 1.4 Add `CHANGELOG.md` entry only if any user-visible behaviour changed (no user-visible change; no entry needed)
 
 ### Phase 2 — Add the executor (unused by the client)
 Goal: `BricklinkRequestExecutor`, `BricklinkRequest`, `BricklinkRequestExecutorOptions`, `ResponseShape` and `NoData` exist and are fully tested with a stub `HttpMessageHandler`; `BricklinkClient` is untouched.
