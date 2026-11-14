@@ -48,6 +48,17 @@ internal static class BricklinkResponseParser
         return isCollection ? ResponseShape.ArrayOrEmpty : ResponseShape.Object;
     }
 
+    internal static int DefaultExpectedMetaCode(HttpVerb verb, ResponseShape shape)
+    {
+        return verb switch
+        {
+            HttpVerb.Post => 201,
+            HttpVerb.Put => shape == ResponseShape.NoData ? 204 : 200,
+            HttpVerb.Delete => 204,
+            _ => 200
+        };
+    }
+
     internal static T Parse<T>(string responseBody, int httpStatusCode, int expectedMetaCode, ResponseShape shape,
         string url, HttpMethod httpMethod)
     {

@@ -28,24 +28,14 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using BricklinkSharp.Client.OAuth;
 
 namespace BricklinkSharp.Client;
 
-internal sealed class BricklinkRequestExecutor
+internal sealed class BricklinkRequestExecutor : IEndpointSender
 {
-    private static readonly JsonSerializerOptions BodySerializerOptions = new()
-    {
-#if HAVE_JSON_DEFAULT_IGNORE_CONDITION
-        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-#else
-        IgnoreNullValues = true,
-#endif
-    };
-
     private readonly HttpClient _httpClient;
     private readonly BricklinkRequestExecutorOptions _options;
 
@@ -53,6 +43,14 @@ internal sealed class BricklinkRequestExecutor
     {
         _httpClient = httpClient;
         _options = options;
+    }
+
+    public Task<T> SendAsync<T>(Endpoint<T> endpoint, BricklinkCredentials? credentials,
+        CancellationToken cancellationToken)
+    {
+        return endpoint.Rejection != null
+            ? Task.FromException<T>(endpoint.Rejection)
+            : SendAsync<T>(endpoint.ToRequest(credentials), cancellationToken);
     }
 
     public async Task<T> SendAsync<T>(BricklinkRequest request, CancellationToken cancellationToken)
@@ -67,7 +65,7 @@ internal sealed class BricklinkRequestExecutor
         }
 
         var shape = BricklinkResponseParser.ResolveShape<T>(request.Shape);
-        var expectedMetaCode = request.ExpectedMetaCode ?? GetDefaultExpectedMetaCode(request.Verb, shape);
+        var expectedMetaCode = request.ExpectedMetaCode ?? BricklinkResponseParser.DefaultExpectedMetaCode(request.Verb, shape);
         var httpMethod = ToHttpMethod(request.Verb);
         var url = request.BuildUrl(_options.BaseUri);
 
@@ -111,7 +109,7 @@ internal sealed class BricklinkRequestExecutor
             credentials.TokenValue!, credentials.TokenSecret!, url, httpMethod.Method,
             _options.Clock, _options.NonceGenerator);
         var header = signer.GetAuthorizationHeader().Split(' ');
-        var json = request.Body == null ? null : JsonSerializer.Serialize(request.Body, BodySerializerOptions);
+        var json = request.Body == null ? null : WireJson.Serialize(request.Body);
 
         var message = new HttpRequestMessage(httpMethod, url);
         message.Headers.Authorization = new AuthenticationHeaderValue(header[0], header[1]);
@@ -124,17 +122,6 @@ internal sealed class BricklinkRequestExecutor
         }
 
         return message;
-    }
-
-    private static int GetDefaultExpectedMetaCode(HttpVerb verb, ResponseShape shape)
-    {
-        return verb switch
-        {
-            HttpVerb.Post => 201,
-            HttpVerb.Put => shape == ResponseShape.NoData ? 204 : 200,
-            HttpVerb.Delete => 204,
-            _ => 200
-        };
     }
 
     private static HttpMethod ToHttpMethod(HttpVerb verb)

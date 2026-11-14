@@ -1,6 +1,6 @@
 ---
 github_issue: 41
-status: draft
+status: in-progress
 created: 2026-11-14
 ---
 
@@ -56,22 +56,22 @@ internal interface IEndpointSender
 - Validation lives inside each factory that takes a body. A table-driven test asserts every body-carrying endpoint either validates or is on an explicit exempt list.
 - Typed wire records (`FieldChange`, `ReplyBody`, ...) with `[JsonPropertyName]` replace anonymous bodies. Body serialization uses a shared `WireJson` so tests can compare JSON.
 - `BricklinkRequest` is kept as the executor's inner representation while migrating; retiring or folding it is decided in the last phase.
-- `color_id` rule: decide once, shared by subsets, supersets and price guide. Default is omit when `<= 0`. This changes `GetSubsetsAsync` and `GetPriceGuideAsync` on the wire and needs a changelog entry. Confirm server behaviour for `color_id=0` before Phase 2.
+- `color_id` rule: decide once, shared by subsets, supersets and price guide. Default is omit when `<= 0`. This changes `GetSubsetsAsync` and `GetPriceGuideAsync` on the wire and needs a changelog entry. **Decided (Phase 1, by the user):** omit `color_id` when `<= 0`, for subsets, supersets and price guide.
 
 ## Phases
 
 ### Phase 1 — Seam and core types
 Goal: `Endpoint<T>`, `IEndpointSender` and wire body records exist and are covered by tests; the client still uses the old path, so nothing user-visible changes.
-- [ ] Task 1.1 Add `Endpoint<T>` with verb helpers (`Get`/`Post`/`Put`/`Delete`), default meta code and shape resolution moved from the executor, and `Rejected(...)`
-- [ ] Task 1.2 Add shared `WireJson` serializer and typed wire body records (`FieldChange`, `ReplyBody`, ...)
-- [ ] Task 1.3 Implement `IEndpointSender` on `BricklinkRequestExecutor` (rejection short-circuit, credentials and token flow)
-- [ ] Task 1.4 Executor boundary tests: sends what the `Endpoint` describes, rejection makes zero `HttpClient` calls
-- [ ] Task 1.5 Confirm `color_id=0` server behaviour with the user and record the decision in this RFC
+- [x] Task 1.1 Add `Endpoint<T>` with verb helpers (`Get`/`Post`/`Put`/`Delete`), default meta code and shape resolution moved from the executor, and `Rejected(...)`
+- [x] Task 1.2 Add shared `WireJson` serializer and typed wire body records (`FieldChange`, `ReplyBody`, ...)
+- [x] Task 1.3 Implement `IEndpointSender` on `BricklinkRequestExecutor` (rejection short-circuit, credentials and token flow)
+- [x] Task 1.4 Executor boundary tests: sends what the `Endpoint` describes, rejection makes zero `HttpClient` calls
+- [x] Task 1.5 Confirm `color_id=0` server behaviour with the user and record the decision in this RFC (decision: omit when `<= 0`; server behaviour not verified against the live API)
 
 ### Phase 2 — Read endpoints
 Goal: all GET endpoints are built by `Endpoints` factories and sent through `IEndpointSender`; the `color_id` and `direction` inconsistencies are fixed.
 - [ ] Task 2.1 `Endpoints` factories for catalog, price guide, supersets, subsets, colors, categories and mappings
-- [ ] Task 2.2 Factories for the remaining GET endpoints (orders, order items with `Project`, feedback, inventories, coupons, members, notifications)
+- [ ] Task 2.2 Factories for the remaining GET endpoints (orders, order items with `Project` (add `Project` to `Endpoint<T>` here; Phase 1 left it out as unused), feedback, inventories, coupons, members, notifications)
 - [ ] Task 2.3 Switch the matching `BricklinkClient` methods to one-line calls; unify `color_id`; use `ToDomainString()` for `direction`
 - [ ] Task 2.4 Move URL/query assertions from `BricklinkClientEndpointTests` to pure `EndpointsTests`; keep a few end-to-end stub tests; add missing cases (`GetOrders` and `GetCoupons` status flags, `GetSubsets` flags)
 - [ ] Task 2.5 Changelog entry for any wire change

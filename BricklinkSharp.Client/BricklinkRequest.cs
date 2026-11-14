@@ -121,7 +121,7 @@ internal sealed class BricklinkRequest
         return builder.ToString();
     }
 
-    private static string FormatQueryValue(object value)
+    internal static string FormatQueryValue(object value)
     {
         return value switch
         {
