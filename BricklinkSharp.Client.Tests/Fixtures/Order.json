@@ -1,0 +1,73 @@
+{
+  "order_id": 1234567,
+  "date_ordered": "2023-05-01T12:30:45.000Z",
+  "date_status_changed": "2023-05-02T08:00:00.000Z",
+  "seller_name": "seller1",
+  "buyer_name": "buyer1",
+  "buyer_email": "buyer1@example.com",
+  "buyer_order_count": 3,
+  "require_insurance": true,
+  "status": "SHIPPED",
+  "is_invoiced": true,
+  "is_filed": true,
+  "drive_thru_sent": true,
+  "salesTax_collected_by_bl": true,
+  "remarks": "fragile",
+  "total_count": 12,
+  "unique_count": 4,
+  "total_weight": "123.45",
+  "payment": {
+    "method": "PayPal",
+    "currency_code": "EUR",
+    "date_paid": "2023-05-01T13:00:00.000Z",
+    "status": "Received"
+  },
+  "shipping": {
+    "method": "Standard",
+    "method_id": 7,
+    "tracking_no": "TRK123",
+    "tracking_link": "https://tracking.example.com/TRK123",
+    "date_shipped": "2023-05-02T09:00:00.000Z",
+    "address": {
+      "name": { "full": "Jane Doe", "first": "Jane", "last": "Doe" },
+      "full": "Jane Doe, Main St 1, Berlin",
+      "address1": "Main St 1",
+      "address2": "Floor 2",
+      "country_code": "DE",
+      "city": "Berlin",
+      "state": "BE",
+      "postal_code": "10115",
+      "phone_number": "123456"
+    }
+  },
+  "cost": {
+    "currency_code": "EUR",
+    "subtotal": "10.50",
+    "grand_total": "14.75",
+    "salesTax_collected_by_BL": "0.25",
+    "final_total": "15.00",
+    "etc1": "0.10",
+    "etc2": "0.20",
+    "insurance": "1.00",
+    "shipping": "3.50",
+    "credit": "0.30",
+    "coupon": "0.40",
+    "vat_rate": "19.00",
+    "vat_amount": "2.35"
+  },
+  "disp_cost": {
+    "currency_code": "USD",
+    "subtotal": "11.50",
+    "grand_total": "15.75",
+    "salesTax_collected_by_BL": "0.35",
+    "final_total": "16.00",
+    "etc1": "0.11",
+    "etc2": "0.21",
+    "insurance": "1.10",
+    "shipping": "3.60",
+    "credit": "0.31",
+    "coupon": "0.41",
+    "vat_rate": "19.10",
+    "vat_amount": "2.45"
+  }
+}

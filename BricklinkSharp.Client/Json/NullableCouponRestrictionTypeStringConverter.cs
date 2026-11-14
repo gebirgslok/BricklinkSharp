@@ -23,40 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class NullableCouponRestrictionTypeStringConverter : JsonConverter<CouponRestrictionType?>
+internal class NullableCouponRestrictionTypeStringConverter : NullableWireStringConverter<CouponRestrictionType>
 {
-    public override CouponRestrictionType? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public NullableCouponRestrictionTypeStringConverter() : base(WireMaps.CouponRestrictionType)
     {
-        var stringValue = reader.GetString();
-
-        if (string.IsNullOrEmpty(stringValue))
-        {
-            return null;
-        }
-
-        return stringValue switch
-        {
-            "A" => CouponRestrictionType.ApplyToSpecifiedItemType,
-            "E" => CouponRestrictionType.ExcludeSpecifiedType,
-            _ => null,
-        };
-    }
-
-    public override void Write(Utf8JsonWriter writer, CouponRestrictionType? value, JsonSerializerOptions options)
-    {
-        if (value == null)
-        {
-            return;
-        }
-
-        var typeString = value?.ToDomainString();
-        writer.WriteStringValue(typeString);
     }
 }

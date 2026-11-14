@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Fixtures\*.json" LogicalName="Fixtures.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BricklinkSharp.Client\BricklinkSharp.Client.csproj" />
   </ItemGroup>
 

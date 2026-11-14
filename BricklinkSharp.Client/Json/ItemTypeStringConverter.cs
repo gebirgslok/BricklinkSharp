@@ -23,37 +23,13 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class ItemTypeStringConverter : JsonConverter<ItemType>
+internal class ItemTypeStringConverter : WireStringConverter<ItemType>
 {
-    public override ItemType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public ItemTypeStringConverter() : base(WireMaps.ItemType)
     {
-        var stringValue = reader.GetString();
-
-        if (stringValue == null)
-        {
-            throw new NullReferenceException(nameof(stringValue));
-        }
-
-        var removedUnderscore = stringValue.Replace("_", string.Empty);
-
-#if HAVE_GENERIC_ENUM_PARSE
-        return Enum.Parse<ItemType>(removedUnderscore, true);
-#else
-        return (ItemType)Enum.Parse(typeof(ItemType), removedUnderscore, true);
-#endif
-
     }
 
-    public override void Write(Utf8JsonWriter writer, ItemType value, JsonSerializerOptions options)
-    {
-        var typeString = value.ToDomainString().ToUpperInvariant();
-        writer.WriteStringValue(typeString);
-    }
+    protected override string NormalizeWireForWrite(string wire) => wire.ToUpperInvariant();
 }

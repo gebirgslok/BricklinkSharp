@@ -23,32 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class ConditionStringConverter : JsonConverter<Condition>
+internal class ConditionStringConverter : WireStringConverter<Condition>
 {
-    public override Condition Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public ConditionStringConverter() : base(WireMaps.Condition)
     {
-        var stringValue = reader.GetString();
-        switch (stringValue)
-        {
-            case "N":
-                return Condition.New;
-            case "U":
-                return Condition.Used;
-            default:
-                return Condition.New;
-        }
-    }
-
-    public override void Write(Utf8JsonWriter writer, Condition value, JsonSerializerOptions options)
-    {
-        var typeString = value.ToDomainString();
-        writer.WriteStringValue(typeString);
     }
 }

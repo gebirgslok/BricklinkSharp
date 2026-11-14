@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 using BricklinkSharp.Client.OAuth;
+using BricklinkSharp.Client.Tests.Support;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
@@ -40,15 +41,7 @@ namespace BricklinkSharp.Client.Tests;
 
 public class BricklinkRequestExecutorTests
 {
-    private static readonly Uri BaseUri = new("https://api.bricklink.com/api/store/v1/");
-
-    private static readonly BricklinkCredentials DefaultCredentials = new()
-    {
-        ConsumerKey = "ck",
-        ConsumerSecret = "cs",
-        TokenValue = "tk",
-        TokenSecret = "ts"
-    };
+    private static readonly BricklinkCredentials DefaultCredentials = BricklinkTestHost.DefaultCredentials;
 
     private static readonly BricklinkCredentials CallCredentials = new()
     {
@@ -58,24 +51,17 @@ public class BricklinkRequestExecutorTests
         TokenSecret = "ts2"
     };
 
-    private static string Envelope(int code, string? data = null) =>
-        "{\"meta\":{\"description\":\"d\",\"message\":\"m\",\"code\":" + code + "}" +
-        (data == null ? "" : ",\"data\":" + data) + "}";
-
     private static BricklinkRequest Get(string path = "items/part/3001") =>
         new(BricklinkApiResourceType.Item, HttpVerb.Get, path);
 
     private static BricklinkRequestExecutor CreateExecutor(StubHttpMessageHandler handler,
         IBricklinkRequestHandler? requestHandler = null, BricklinkCredentials? defaultCredentials = null) =>
-        new(new HttpClient(handler),
-            new BricklinkRequestExecutorOptions(BaseUri, () => defaultCredentials ?? DefaultCredentials,
-                requestHandler,
-                () => DateTimeOffset.FromUnixTimeSeconds(1700000000), () => "abc123"));
+        BricklinkTestHost.Create(handler, requestHandler, () => defaultCredentials ?? DefaultCredentials).Executor;
 
     [Test]
     public async Task Should_RequestUrlWithQuery_When_RequestHasQueryParameters()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
 
         await CreateExecutor(handler).SendAsync<Widget>(
             Get().WithQueryParameter("color_id", 5).WithQueryParameter("region", null), CancellationToken.None);
@@ -88,7 +74,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_SignWithDefaultCredentials_When_NoCredentialsPassedPerCall()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
         var url = "https://api.bricklink.com/api/store/v1/items/part/3001";
 
         await CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None);
@@ -99,7 +85,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_SignWithPerCallCredentials_When_PassedOnRequest()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
         var url = "https://api.bricklink.com/api/store/v1/items/part/3001";
 
         await CreateExecutor(handler).SendAsync<Widget>(Get().WithCredentials(CallCredentials), CancellationToken.None);
@@ -110,7 +96,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_PassResolvedDefaultCredentialsToHook_When_NoCredentialsPassedPerCall()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
         var hook = new RecordingRequestHandler();
 
         await CreateExecutor(handler, hook).SendAsync<Widget>(Get(), CancellationToken.None);
@@ -123,7 +109,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_PassPerCallCredentialsToHook_When_Provided()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
         var hook = new RecordingRequestHandler();
 
         await CreateExecutor(handler, hook).SendAsync<Widget>(Get().WithCredentials(CallCredentials), CancellationToken.None);
@@ -134,9 +120,8 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowMissingCredentials_When_NoCredentialsAvailable()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
-        var executor = new BricklinkRequestExecutor(new HttpClient(handler),
-            new BricklinkRequestExecutorOptions(BaseUri, () => null));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
+        var executor = BricklinkTestHost.Create(handler, credentialsProvider: () => null).Executor;
 
         Assert.ThrowsAsync<BricklinkMissingCredentialsException>(
             () => executor.SendAsync<Widget>(Get(), CancellationToken.None));
@@ -146,7 +131,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowMissingCredentials_When_CredentialsAreIncomplete()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
 
         Assert.ThrowsAsync<BricklinkMissingCredentialsException>(
             () => CreateExecutor(handler).SendAsync<Widget>(
@@ -156,7 +141,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_DisposeResponse_When_RequestCompletes()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
 
         await CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None);
 
@@ -211,7 +196,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowHttpError_When_MetaCodeDiffersFromExpected()
     {
-        var handler = new StubHttpMessageHandler(Envelope(404));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(404));
 
         var exception = Assert.ThrowsAsync<BricklinkHttpErrorException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None))!;
@@ -225,7 +210,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_MapObject_When_DataIsObject()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"brick\",\"size\":3}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"brick\",\"size\":3}"));
 
         var widget = await CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None);
 
@@ -238,7 +223,7 @@ public class BricklinkRequestExecutorTests
     [TestCase("{}")]
     public void Should_ThrowNoDataReceived_When_ObjectExpectedButDataIsEmpty(string? data)
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, data));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, data));
 
         Assert.ThrowsAsync<BricklinkNoDataReceivedException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None));
@@ -249,7 +234,7 @@ public class BricklinkRequestExecutorTests
     [TestCase("[1]")]
     public void Should_ThrowUnexpectedDataKind_When_ObjectExpectedButDataIsNotObject(string data)
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, data));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, data));
 
         var exception = Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None))!;
@@ -260,7 +245,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowInvalidResponse_When_DataCannotBeMappedToType()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"size\":\"not a number\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"size\":\"not a number\"}"));
 
         Assert.ThrowsAsync<BricklinkInvalidResponseException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None));
@@ -269,7 +254,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_MapArray_When_DataIsArray()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "[{\"name\":\"a\"},{\"name\":\"b\"}]"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[{\"name\":\"a\"},{\"name\":\"b\"}]"));
 
         var widgets = await CreateExecutor(handler).SendAsync<Widget[]>(Get(), CancellationToken.None);
 
@@ -279,7 +264,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_ReturnEmptyArray_When_ArrayTypeAndDataIsEmptyArray()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "[]"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[]"));
 
         var widgets = await CreateExecutor(handler).SendAsync<Widget[]>(Get(), CancellationToken.None);
 
@@ -289,7 +274,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowNoDataReceived_When_NonEmptyArrayRequiredButDataIsEmptyArray()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "[]"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[]"));
         var request = Get().WithShape(ResponseShape.ArrayNonEmpty);
 
         Assert.ThrowsAsync<BricklinkNoDataReceivedException>(
@@ -299,7 +284,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowUnexpectedDataKind_When_ArrayExpectedButDataIsObject()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
 
         var exception = Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
             () => CreateExecutor(handler).SendAsync<Widget[]>(Get(), CancellationToken.None))!;
@@ -310,7 +295,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowNoDataReceived_When_ArrayExpectedButDataIsAbsent()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200));
 
         Assert.ThrowsAsync<BricklinkNoDataReceivedException>(
             () => CreateExecutor(handler).SendAsync<Widget[]>(Get(), CancellationToken.None));
@@ -321,7 +306,7 @@ public class BricklinkRequestExecutorTests
     [TestCase("{}")]
     public async Task Should_Succeed_When_NoDataExpectedAndDataIsEmpty(string? data)
     {
-        var handler = new StubHttpMessageHandler(Envelope(204, data));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, data));
         var request = new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
 
         await CreateExecutor(handler).SendAsync<NoData>(request, CancellationToken.None);
@@ -332,7 +317,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowEmptyDataExpected_When_NoDataExpectedButObjectHasContent()
     {
-        var handler = new StubHttpMessageHandler(Envelope(204, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, "{\"name\":\"x\"}"));
         var request = new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
 
         Assert.ThrowsAsync<BricklinkEmptyDataExpectedException>(
@@ -342,7 +327,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowUnexpectedDataKind_When_NoDataExpectedButDataIsArray()
     {
-        var handler = new StubHttpMessageHandler(Envelope(204, "[1]"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, "[1]"));
         var request = new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
 
         Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
@@ -354,7 +339,7 @@ public class BricklinkRequestExecutorTests
     [TestCase(HttpVerb.Post, 201)]
     public async Task Should_ExpectDefaultCodeForVerb_When_ReadingObject(HttpVerb verb, int code)
     {
-        var handler = new StubHttpMessageHandler(Envelope(code, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(code, "{\"name\":\"x\"}"));
         var request = new BricklinkRequest(BricklinkApiResourceType.Item, verb, "items");
 
         var widget = await CreateExecutor(handler).SendAsync<Widget>(request, CancellationToken.None);
@@ -367,7 +352,7 @@ public class BricklinkRequestExecutorTests
     [TestCase(HttpVerb.Post, 201)]
     public async Task Should_ExpectDefaultCodeForVerb_When_NoDataExpected(HttpVerb verb, int code)
     {
-        var handler = new StubHttpMessageHandler(Envelope(code));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(code));
         var request = new BricklinkRequest(BricklinkApiResourceType.Item, verb, "items");
 
         await CreateExecutor(handler).SendAsync<NoData>(request, CancellationToken.None);
@@ -376,7 +361,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_UseExplicitCode_When_ExpectCodeIsSet()
     {
-        var handler = new StubHttpMessageHandler(Envelope(202, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(202, "{\"name\":\"x\"}"));
 
         var widget = await CreateExecutor(handler).SendAsync<Widget>(Get().WithExpectedMetaCode(202), CancellationToken.None);
 
@@ -386,7 +371,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_OmitNullProperties_When_SerializingBody()
     {
-        var handler = new StubHttpMessageHandler(Envelope(201, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(201, "{\"name\":\"x\"}"));
         var request = new BricklinkRequest(BricklinkApiResourceType.Item, HttpVerb.Post, "items")
             .WithBody(new Widget { Name = "x", Size = null });
 
@@ -400,7 +385,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_SendNoContent_When_RequestHasNoBody()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
 
         await CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None);
 
@@ -410,8 +395,8 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_IncludeQueryInSignature_When_RequestHasQuery()
     {
-        var withQuery = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
-        var withoutQuery = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var withQuery = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
+        var withoutQuery = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
 
         await CreateExecutor(withQuery).SendAsync<Widget>(Get().WithQueryParameter("color_id", 5), CancellationToken.None);
         await CreateExecutor(withoutQuery).SendAsync<Widget>(Get(), CancellationToken.None);
@@ -424,8 +409,8 @@ public class BricklinkRequestExecutorTests
     public void Should_NotCallHook_When_CredentialsAreMissing()
     {
         var hook = new RecordingRequestHandler();
-        var executor = new BricklinkRequestExecutor(new HttpClient(new StubHttpMessageHandler(Envelope(200))),
-            new BricklinkRequestExecutorOptions(BaseUri, () => null, hook));
+        var executor = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200)), hook,
+            () => null).Executor;
 
         Assert.ThrowsAsync<BricklinkMissingCredentialsException>(
             () => executor.SendAsync<Widget>(Get(), CancellationToken.None));
@@ -435,7 +420,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_CallHookBeforeSending_When_HookIsConfigured()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
         var hook = new RecordingRequestHandler();
         hook.OnCall = () => ClassicAssert.IsEmpty(handler.CapturedRequests);
 
@@ -447,7 +432,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_PassCancellationTokenToHook_When_Provided()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"name\":\"x\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
         var hook = new RecordingRequestHandler();
         using var source = new CancellationTokenSource();
 
@@ -459,7 +444,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowInvalidResponse_When_ConverterRejectsValue()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "{\"type\":\"BOGUS\"}"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"type\":\"BOGUS\"}"));
 
         Assert.ThrowsAsync<BricklinkInvalidResponseException>(
             () => CreateExecutor(handler).SendAsync<TypedWidget>(Get(), CancellationToken.None));
@@ -468,7 +453,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public async Task Should_MapList_When_ResultTypeIsList()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200, "[{\"name\":\"a\"}]"));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[{\"name\":\"a\"}]"));
 
         var widgets = await CreateExecutor(handler).SendAsync<List<Widget>>(Get(), CancellationToken.None);
 
@@ -478,7 +463,7 @@ public class BricklinkRequestExecutorTests
     [Test]
     public void Should_ThrowInvalidOperation_When_NoDataShapeUsedWithOtherResultType()
     {
-        var handler = new StubHttpMessageHandler(Envelope(200));
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200));
 
         Assert.ThrowsAsync<InvalidOperationException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get().WithShape(ResponseShape.NoData), CancellationToken.None));

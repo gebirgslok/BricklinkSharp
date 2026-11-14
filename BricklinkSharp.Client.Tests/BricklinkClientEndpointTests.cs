@@ -29,6 +29,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BricklinkSharp.Client.Extensions;
+using BricklinkSharp.Client.Tests.Support;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
@@ -36,27 +37,9 @@ namespace BricklinkSharp.Client.Tests;
 
 public class BricklinkClientEndpointTests
 {
-    private const string BaseUrl = "https://api.bricklink.com/api/store/v1/";
+    private const string BaseUrl = BricklinkTestHost.BaseUrl;
 
-    private static readonly BricklinkCredentials Credentials = new()
-    {
-        ConsumerKey = "ck",
-        ConsumerSecret = "cs",
-        TokenValue = "tk",
-        TokenSecret = "ts"
-    };
-
-    private static string CreateEnvelopeJson(int metaCode, string? dataJson = null) =>
-        "{\"meta\":{\"description\":\"d\",\"message\":\"m\",\"code\":" + metaCode + "}" +
-        (dataJson == null ? "" : ",\"data\":" + dataJson) + "}";
-
-    private static BricklinkClient CreateClient(StubHttpMessageHandler handler)
-    {
-        var httpClient = new HttpClient(handler);
-        var options = new BricklinkRequestExecutorOptions(new Uri(BaseUrl), () => null,
-            clock: () => DateTimeOffset.FromUnixTimeSeconds(1700000000), nonceGenerator: () => "abc123");
-        return new BricklinkClient(new BricklinkRequestExecutor(httpClient, options), httpClient, disposeHttpClient: false);
-    }
+    private static readonly BricklinkCredentials Credentials = BricklinkTestHost.DefaultCredentials;
 
     private static string PartSegment => ItemType.Part.ToDomainString();
 
@@ -149,8 +132,9 @@ public class BricklinkClientEndpointTests
     public void Should_SendExpectedRequest_When_EndpointIsCalled(EndpointCase endpoint)
     {
         // an error envelope ends the call after the request was captured, so no model JSON is needed
-        var handler = new StubHttpMessageHandler(CreateEnvelopeJson(404));
-        using var client = CreateClient(handler);
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(404));
+        using var host = BricklinkTestHost.Create(handler);
+        var client = host.Client;
 
         Assert.ThrowsAsync<BricklinkHttpErrorException>(() => endpoint.Call(client));
 
@@ -165,7 +149,8 @@ public class BricklinkClientEndpointTests
     public async Task Should_MapColorFields_When_ColorIsReturned()
     {
         var data = "{\"color_id\":5,\"color_name\":\"Red\",\"color_code\":\"C91A09\",\"color_type\":\"Solid\"}";
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200, data)));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, data)));
+        var client = host.Client;
 
         var color = await client.GetColorAsync(5, Credentials);
 
@@ -176,7 +161,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public void Should_Throw_When_ColorListIsEmpty()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200, "[]")));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "[]")));
+        var client = host.Client;
 
         Assert.ThrowsAsync<BricklinkNoDataReceivedException>(() => client.GetColorListAsync(Credentials));
     }
@@ -184,7 +170,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public async Task Should_ReturnEmptyArray_When_NotificationsAreEmpty()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200, "[]")));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "[]")));
+        var client = host.Client;
 
         var notifications = await client.GetNotificationsAsync(Credentials);
 
@@ -194,7 +181,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public async Task Should_ReturnBatches_When_OrderItemsAreNestedArrays()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200, "[[],[]]")));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "[[],[]]")));
+        var client = host.Client;
 
         var batches = await client.GetOrderItemsAsync(11, Credentials);
 
@@ -204,16 +192,18 @@ public class BricklinkClientEndpointTests
     [Test]
     public void Should_Throw_When_OrderItemsDataIsNotAnArray()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200, "{\"a\":1}")));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"a\":1}")));
+        var client = host.Client;
 
         Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(() => client.GetOrderItemsAsync(11, Credentials));
     }
 
     [Test]
-    public async Task Should_Complete_When_DeleteReturnsNoContentCreateEnvelopeJson()
+    public async Task Should_Complete_When_DeleteReturnsNoContentEnvelope()
     {
-        var handler = new StubHttpMessageHandler(CreateEnvelopeJson(204));
-        using var client = CreateClient(handler);
+        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204));
+        using var host = BricklinkTestHost.Create(handler);
+        var client = host.Client;
 
         await client.DeleteCouponAsync(2, Credentials);
 
@@ -223,7 +213,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public async Task Should_Complete_When_DriveThruReturnsNoContentEnvelope()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(204)));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(204)));
+        var client = host.Client;
 
         await client.SendDriveThruAsync(11, false, Credentials);
     }
@@ -231,7 +222,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public void Should_Throw_When_ReplyFeedbackGetsUnexpectedCode()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200)));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200)));
+        var client = host.Client;
 
         Assert.ThrowsAsync<BricklinkHttpErrorException>(() => client.ReplyFeedbackAsync(4, "hi", Credentials));
     }
@@ -239,7 +231,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public void Should_ReturnFaultedTask_When_ValidationFails()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(200)));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200)));
+        var client = host.Client;
         Task task = null!;
 
         Assert.DoesNotThrow(() => task = client.CreateInventoriesAsync(new[] { (NewInventory)null! }, Credentials));
@@ -249,7 +242,8 @@ public class BricklinkClientEndpointTests
     [Test]
     public async Task Should_Complete_When_ReplyFeedbackReturnsCreatedEnvelope()
     {
-        using var client = CreateClient(new StubHttpMessageHandler(CreateEnvelopeJson(201)));
+        using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(201)));
+        var client = host.Client;
 
         await client.ReplyFeedbackAsync(4, "hi", Credentials);
     }

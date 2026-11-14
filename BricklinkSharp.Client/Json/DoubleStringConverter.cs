@@ -32,17 +32,11 @@ namespace BricklinkSharp.Client.Json;
 
 internal class DoubleStringConverter : JsonConverter<double>
 {
-    private static readonly CultureInfo _culture = new CultureInfo("en-US");
+    private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
 
     public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var stringValue = reader.GetString();
-        if (double.TryParse(stringValue, NumberStyles.Any, _culture, out var value))
-        {
-            return value;
-        }
-
-        return 0.0;
+        return Scalars.ParseDouble(reader.GetString());
     }
 
     public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)

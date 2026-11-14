@@ -23,23 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class OrderStatusStringConverter : JsonConverter<OrderStatus>
+internal class OrderStatusStringConverter : WireStringConverter<OrderStatus>
 {
-    public override OrderStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public OrderStatusStringConverter() : base(WireMaps.OrderStatus)
     {
-        return (OrderStatus)Enum.Parse(typeof(OrderStatus), reader.GetString()!, true);
-    }
-
-    public override void Write(Utf8JsonWriter writer, OrderStatus value, JsonSerializerOptions options)
-    {
-        var typeString = value.ToDomainString();
-        writer.WriteStringValue(typeString);
     }
 }

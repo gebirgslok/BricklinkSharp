@@ -1,0 +1,11 @@
+{
+  "feedback_id": 777,
+  "order_id": 1234567,
+  "from": "buyer1",
+  "to": "seller1",
+  "date_rated": "2023-05-10T11:00:00.000Z",
+  "rating_of_bs": "S",
+  "rating": 2,
+  "comment": "as described",
+  "reply": "thanks"
+}
