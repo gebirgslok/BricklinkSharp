@@ -1,6 +1,6 @@
 ---
 github_issue: 37
-status: draft
+status: in-progress (phase 1 done)
 created: 2026-11-14
 ---
 
@@ -55,12 +55,12 @@ Each phase leaves the repo building with tests green. New code is added before o
 
 ### Phase 1 — Test host, fixtures and characterization
 Goal: current mapping behaviour is pinned end to end; no production code changes.
-- [ ] 1.1 Add `BricklinkTestHost`, `Fixtures` and the embedded-resource wiring in the test csproj
-- [ ] 1.2 Move `BricklinkRequestExecutorTests` and `BricklinkClientEndpointTests` onto the test host, removing the duplicated setup
-- [ ] 1.3 Add realistic fixtures for Order, Inventory, Coupon and Feedback, with deserialisation tests asserting every mapped enum and number field
-- [ ] 1.4 Pin every current `ToDomainString` mapping and every current converter `Read` result for known values
-- [ ] 1.5 Pin today's behaviour for unknown values (the silent defaults) in clearly named tests, to be flipped in phase 3
-- [ ] 1.6 Run `dotnet build` and `dotnet test`
+- [x] 1.1 Add `BricklinkTestHost`, `Fixtures` and the embedded-resource wiring in the test csproj
+- [x] 1.2 Move `BricklinkRequestExecutorTests` and `BricklinkClientEndpointTests` onto the test host, removing the duplicated setup
+- [x] 1.3 Add realistic fixtures for Order, Inventory, Coupon and Feedback, with deserialisation tests asserting every mapped enum and number field
+- [x] 1.4 Pin every current `ToDomainString` mapping and every current converter `Read` result for known values
+- [x] 1.5 Pin today's behaviour for unknown values (the silent defaults) in clearly named tests, to be flipped in phase 3
+- [x] 1.6 Run `dotnet build` and `dotnet test`
 
 ### Phase 2 — `WireMap` core and adapters (no behaviour change)
 Goal: both directions of every enum come from one table; phase 1 tests pass unchanged.
