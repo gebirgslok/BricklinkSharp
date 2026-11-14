@@ -33,7 +33,7 @@ internal static class PushNotificationDemos
     public static async Task GetNotificationsDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var notifications = await client.GetNotificationsAsync();
+        var notifications = await client.GetPushNotificationsAsync();
 
         PrintHelper.PrintAsJson(notifications);
     }

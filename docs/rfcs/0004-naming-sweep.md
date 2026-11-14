@@ -1,6 +1,6 @@
 ---
 github_issue: 39
-status: in-progress
+status: done
 created: 2026-11-14
 ---
 
@@ -64,6 +64,7 @@ Constraints:
 - Shipping: `Shipping.Id` (wire `method_id`) → `ShippingMethodId`; `Address.FullAddressAsString` (wire `full`) → `FullAddress`.
 - Item number: `Item.Number` and `ContainedItemSummary.Number` → `ItemNumber` (wire name `no` unchanged).
 - Catalog: `DimX`/`DimY`/`DimZ` → `DimensionX`/`DimensionY`/`DimensionZ`, `AlternateNo` → `AlternateNumber`.
+- Final pass: `Color.ColorId`, `Category.CategoryId` → `Id`; `Shipping.TrackingNo`, `UpdateShipping.TrackingNo` → `TrackingNumber`; `Subset.MatchNo` → `MatchNumber`.
 - Exceptions: `ExpectedCode` → `ExpectedStatusCode`, `ReceivedCode` → `ReceivedStatusCode`, `TypeOfDataObject` → `DataObjectType`.
 
 ### Unchanged
@@ -111,11 +112,11 @@ Goal: `IBricklinkClient` surface is final; demos and tests use the new names.
 
 ### Phase 5 — Docs and migration guide
 Goal: documentation is complete for release.
-- [ ] Task 5.0: Final client renames (rule-driven leftovers from the Phase 4 review): `GetOrderFeedbackAsync` → `GetOrderFeedbacksAsync`, `GetNotificationsAsync` → `GetPushNotificationsAsync` (and its demo), parameter `priceGuideType` → `source`; build, test
-- [ ] Task 5.1: `CHANGELOG.md` `## Unreleased`: old → new table under Changed/Removed
-- [ ] Task 5.2: README: update all examples and add a migration section
-- [ ] Task 5.3: `CONTEXT.md` check against final names
-- [ ] Task 5.4: Final `naming-specialist` pass over the whole public surface; build, test
+- [x] Task 5.0: Final client renames (rule-driven leftovers from the Phase 4 review): `GetOrderFeedbackAsync` → `GetOrderFeedbacksAsync`, `GetNotificationsAsync` → `GetPushNotificationsAsync` (and its demo), parameter `priceGuideType` → `source`; build, test
+- [x] Task 5.1: `CHANGELOG.md` `## Unreleased`: old → new table under Changed/Removed
+- [x] Task 5.2: README: update all examples and add a migration section
+- [x] Task 5.3: `CONTEXT.md` check against final names
+- [x] Task 5.4: Final `naming-specialist` pass over the whole public surface; build, test (leftovers `ColorId`, `CategoryId`, `TrackingNo`, `MatchNo` renamed)
 
 ## Risks & alternatives
 - **Collision order:** `Rating` swaps meaning in one release. Mitigated by strict rename order and by a changelog note calling it out.

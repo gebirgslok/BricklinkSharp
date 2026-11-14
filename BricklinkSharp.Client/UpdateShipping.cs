@@ -35,7 +35,7 @@ public class UpdateShipping
     public DateTime? ShippedOn { get; set; }
 
     [JsonPropertyName("tracking_no")]
-    public string? TrackingNo { get; set; }
+    public string? TrackingNumber { get; set; }
 
     [JsonPropertyName("tracking_link")]
     public string? TrackingLink { get; set; }

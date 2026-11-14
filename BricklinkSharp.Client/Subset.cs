@@ -35,5 +35,5 @@ public class Subset
     public SubsetEntry[]? Entries { get; set; }
 
     [JsonPropertyName("match_no")]
-    public int MatchNo { get; set; }
+    public int MatchNumber { get; set; }
 }

@@ -38,7 +38,7 @@ public class Shipping
     public int ShippingMethodId { get; set; }
 
     [JsonPropertyName("tracking_no")]
-    public string? TrackingNo { get; set; }
+    public string? TrackingNumber { get; set; }
 
     [JsonPropertyName("tracking_link")]
     public string? TrackingLink { get; set; }

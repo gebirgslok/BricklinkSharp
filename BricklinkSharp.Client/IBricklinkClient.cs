@@ -90,7 +90,7 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<PriceGuide> GetPriceGuideAsync(ItemType type, string itemNumber,
-        int colorId = 0, PriceGuideSource? priceGuideType = null,
+        int colorId = 0, PriceGuideSource? source = null,
         Condition? condition = null, string? countryCode = null,
         string? region = null,
         string? currencyCode = null,
@@ -165,7 +165,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<PushNotification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+    Task<PushNotification[]> GetPushNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<MemberRating> GetMemberRatingAsync(string username,
@@ -210,7 +210,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Feedback[]> GetOrderFeedbackAsync(int orderId,
+    Task<Feedback[]> GetOrderFeedbacksAsync(int orderId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 

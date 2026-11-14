@@ -16,6 +16,68 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Behaviour change:** unknown enum wire values (`new_or_used`, `completeness`, `status`, `payment.status`, `rating_of_bs`, coupon `discount_type`/`applies_to.type`, event type, item type and others) no longer silently map to a default member (for example `Condition.New`); they raise `BricklinkInvalidResponseException`. The same applies to malformed decimal/double strings (previously `0`) and out-of-range feedback `rating` values
 - Enum wire formats now come from one table per enum (`WireMap`), shared by request building and response parsing
 
+- **Breaking (naming sweep, [ADR 0001](docs/adr/0001-clean-break-2-0-0.md)):** public names follow one set of rules, with no `[Obsolete]` forwarders. JSON wire names are unchanged. **`Rating` now means the verdict of one feedback (formerly `RatingType`); the counts class formerly named `Rating` is `FeedbackCounts`.** Old → new:
+
+  | Area | Old | New |
+  |---|---|---|
+  | Types | `OrderDirection` | `Direction` (merged) |
+  | | `ItemBase` | `Item` |
+  | | `CostBase` | `CostSummary` (`Order.Cost`/`DisplayCost` are `CostSummary`) |
+  | | `SuperSubSetItem` | `ContainedItemSummary` |
+  | | `CouponBase` | `CouponTerms` |
+  | | `InventoryBase` | `InventoryFields` |
+  | | `Rating` (class) | `FeedbackCounts` |
+  | | `RatingType` | `Rating` |
+  | | `RatingTargetRole` | `FeedbackTargetRole` |
+  | | `Notification` | `PushNotification` |
+  | | `EventType` | `PushNotificationEventType` |
+  | | `InventoryStatusType` | `InventoryStatus` |
+  | | `PriceGuideType` | `PriceGuideSource` |
+  | | `Name` | `PersonName` |
+  | | `IBricklinkRequestHandler` | `IRequestHandler` |
+  | | `BricklinkApiResourceType` | `ApiResourceType` |
+  | Client methods | `GetColorListAsync` | `GetColorsAsync` |
+  | | `GetCategoryListAsync` | `GetCategoriesAsync` |
+  | | `GetInventoryListAsync` | `GetInventoriesAsync` |
+  | | `GetFeedbackListAsync` | `GetFeedbacksAsync` |
+  | | `GetShippingMethodListAsync` | `GetShippingMethodsAsync` |
+  | | `GetOrderFeedbackAsync` | `GetOrderFeedbacksAsync` |
+  | | `GetNotificationsAsync` | `GetPushNotificationsAsync` |
+  | | `GetItemAsync` | `GetCatalogItemAsync` |
+  | | `GetItemImageAsync` | `GetCatalogImageAsync` |
+  | | `GetElementIdAsync` | `GetItemMappingsByItemAsync` |
+  | | `GetItemNumberAsync` | `GetItemMappingsByElementIdAsync` |
+  | | `ReplyFeedbackAsync` | `ReplyToFeedbackAsync` |
+  | | `IRequestHandler.OnRequestAsync` | `BeforeRequestAsync` |
+  | Parameters | `no`, `number`, `partNo` | `itemNumber` |
+  | | `methodId` | `shippingMethodId` |
+  | | `priceGuideType` | `source` |
+  | | `ct` | `cancellationToken` |
+  | Ids | `Feedback.FeedbackId`, `Inventory.InventoryId`, `OrderDetails.OrderId`, `ShippingMethod.MethodId` | `Id` |
+  | | `UpdateShipping.MethodId`, `Shipping.Id` | `ShippingMethodId` |
+  | Dates | `Coupon.DateIssued` / `DateExpire` | `IssuedOn` / `ExpiresOn` |
+  | | `UpdateShipping.DateShipped`, `Shipping.ShipmentDate` | `ShippedOn` |
+  | | `Payment.DatePaid` | `PaidOn` |
+  | | `OrderMessage.DateSent` | `SentOn` |
+  | | `Order.OrderDate` | `OrderedOn` |
+  | | `OrderDetails.StatusChangedDate` | `StatusChangedOn` |
+  | | `PushNotification.Timestamp` | `OccurredOn` |
+  | Counts | `NumOfPraises` / `NumOfNeutrals` / `NumOfComplaints` | `PraiseCount` / `NeutralCount` / `ComplaintCount` |
+  | Cost | `Cost.Coupon` / `Shipping` / `Insurance` (also `UpdateCost`) | `CouponDiscount` / `ShippingCost` / `InsuranceCost` |
+  | Inventory | `IsRetain` | `RetainsWhenSoldOut` |
+  | | `Bulk` | `BulkQuantity` |
+  | | `MyCost` / `MyWeight` | `OwnCost` / `OwnWeight` |
+  | | `SaleRate` | `SaleRatePercent` |
+  | Other | `Address.FullAddressAsString` | `FullAddress` |
+  | | `Item.Number`, `ContainedItemSummary.Number` | `ItemNumber` |
+  | | `DimX` / `DimY` / `DimZ` | `DimensionX` / `DimensionY` / `DimensionZ` |
+  | | `AlternateNo` | `AlternateNumber` |
+  | Exceptions | `ExpectedCode` / `ReceivedCode` | `ExpectedStatusCode` / `ReceivedStatusCode` |
+  | | `TypeOfDataObject` | `DataObjectType` |
+  | Final pass | `Color.ColorId`, `Category.CategoryId` | `Id` |
+  | | `Shipping.TrackingNo`, `UpdateShipping.TrackingNo` | `TrackingNumber` |
+  | | `Subset.MatchNo` | `MatchNumber` |
+
 ### Fixed
 - A non-JSON response body (e.g. an HTML error page) or a JSON converter error no longer leaks a raw `JsonException`; it surfaces as a `BricklinkException`
 - `IRequestHandler` now receives the resolved credentials (per-call, else `BricklinkClientConfiguration.Instance`) instead of `null`
@@ -24,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `NewInventory` and `UpdateInventory` validation rejected ascending tier quantities (`TierQuantity1 < TierQuantity2 < TierQuantity3`), the order its own error message demands, and accepted descending ones
 
 ### Removed
+- **Breaking:** `OrderBase` (`OrderDetails` now derives from `Order`), `FeedbackBase` (now an internal post body) and `SuperSubSetEntryBase` (`Item` and `Quantity` are declared on `SupersetEntry` and `SubsetEntry`)
 - **Breaking:** `IBricklinkClient.GetPartOutValueFromPageAsync` and everything that existed only for it: `PartOutResult`, `PartOutItemType`, `BricklinkPartOutParseErrorException`, `BricklinkPartOutRequestErrorException` and the exchange rate service (`BricklinkSharp.Client.CurrencyRates`, including `ExchangeRatesApiDotIoConfiguration`). BrickLink now protects the scraped page with a bot challenge, so the method no longer works. The public `BricklinkClient` constructor no longer takes an `IExchangeRatesService`
 
 ## 1.9.1 - 2026-06-19

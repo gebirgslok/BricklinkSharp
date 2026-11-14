@@ -44,7 +44,7 @@ internal static class CatalogDemos
     {
         using var client = BricklinkClientFactory.Build();
         var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1,
-            priceGuideType: PriceGuideSource.Sold, condition: Condition.Used);
+            source: PriceGuideSource.Sold, condition: Condition.Used);
 
         PrintHelper.PrintAsJson(priceGuide);
     }

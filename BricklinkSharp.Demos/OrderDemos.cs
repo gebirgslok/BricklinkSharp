@@ -79,7 +79,7 @@ internal static class OrderDemos
             OrderStatus.Paid
         });
         var orderId = orders[orders.Length - 1].Id;
-        var feedbackArray = await client.GetOrderFeedbackAsync(orderId);
+        var feedbackArray = await client.GetOrderFeedbacksAsync(orderId);
 
         PrintHelper.PrintAsJson(feedbackArray);
     }

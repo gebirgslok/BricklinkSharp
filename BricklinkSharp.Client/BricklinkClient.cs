@@ -288,7 +288,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     }
 
     public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string itemNumber, int colorId = 0,
-        PriceGuideSource? priceGuideType = null, Condition? condition = null,
+        PriceGuideSource? source = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
         VatOption? vat = null,
         BricklinkCredentials? credentials = null,
@@ -298,7 +298,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             new BricklinkRequest(ApiResourceType.PriceGuide, HttpVerb.Get,
                     $"items/{type.ToDomainString()}/{itemNumber}/price")
                 .WithQueryParameter("color_id", colorId)
-                .WithQueryParameter("guide_type", priceGuideType?.ToDomainString())
+                .WithQueryParameter("guide_type", source?.ToDomainString())
                 .WithQueryParameter("new_or_used", condition?.ToDomainString())
                 .WithQueryParameter("country_code", countryCode)
                 .WithQueryParameter("region", region)
@@ -493,7 +493,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<PushNotification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+    public Task<PushNotification[]> GetPushNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<PushNotification[]>(
@@ -615,7 +615,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<Feedback[]> GetOrderFeedbackAsync(int orderId,
+    public Task<Feedback[]> GetOrderFeedbacksAsync(int orderId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {

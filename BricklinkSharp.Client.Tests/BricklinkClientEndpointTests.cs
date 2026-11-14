@@ -93,7 +93,7 @@ public class BricklinkClientEndpointTests
             $"{BaseUrl}settings/shipping_methods");
         yield return new("GetShippingMethod", client => client.GetShippingMethodAsync(3, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}settings/shipping_methods/3");
-        yield return new("GetNotifications", client => client.GetNotificationsAsync(credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetNotifications", client => client.GetPushNotificationsAsync(credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}notifications");
         yield return new("GetMemberRating", client => client.GetMemberRatingAsync("bob", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}members/bob/ratings");
@@ -112,7 +112,7 @@ public class BricklinkClientEndpointTests
             $"{BaseUrl}orders/11/items");
         yield return new("GetOrderMessages", client => client.GetOrderMessagesAsync(11, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}orders/11/messages");
-        yield return new("GetOrderFeedback", client => client.GetOrderFeedbackAsync(11, credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetOrderFeedback", client => client.GetOrderFeedbacksAsync(11, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}orders/11/feedback");
         yield return new("UpdateOrderStatus", client => client.UpdateOrderStatusAsync(11, OrderStatus.Shipped, credentials, cancellationToken),
             HttpMethod.Put, $"{BaseUrl}orders/11/status",
@@ -154,7 +154,7 @@ public class BricklinkClientEndpointTests
 
         var color = await client.GetColorAsync(5, Credentials);
 
-        ClassicAssert.AreEqual(5, color.ColorId);
+        ClassicAssert.AreEqual(5, color.Id);
         ClassicAssert.AreEqual("Red", color.Name);
     }
 
@@ -173,7 +173,7 @@ public class BricklinkClientEndpointTests
         using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "[]")));
         var client = host.Client;
 
-        var notifications = await client.GetNotificationsAsync(Credentials);
+        var notifications = await client.GetPushNotificationsAsync(Credentials);
 
         ClassicAssert.IsEmpty(notifications);
     }

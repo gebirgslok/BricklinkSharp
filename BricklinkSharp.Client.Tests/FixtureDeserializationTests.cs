@@ -71,7 +71,7 @@ public class FixtureDeserializationTests
 
         ClassicAssert.AreEqual("Standard", order.Shipping.Method);
         ClassicAssert.AreEqual(7, order.Shipping.ShippingMethodId);
-        ClassicAssert.AreEqual("TRK123", order.Shipping.TrackingNo);
+        ClassicAssert.AreEqual("TRK123", order.Shipping.TrackingNumber);
         ClassicAssert.AreEqual("https://tracking.example.com/TRK123", order.Shipping.TrackingLink);
         ClassicAssert.AreEqual(Utc(2023, 5, 2, 9, 0, 0), order.Shipping.ShippedOn);
         ClassicAssert.AreEqual("Jane Doe", order.Shipping.Address.Name.FullName);

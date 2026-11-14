@@ -42,6 +42,10 @@ _Avoid_: Inventory, parts list
 Sold or current-stock price statistics for an Item in a Color and Condition.
 _Avoid_: Price history
 
+**Price Guide Source**:
+Whether a Price Guide reports sold items or current stock.
+_Avoid_: Guide type
+
 **Item Mapping**:
 The link between an item number plus Color and a BrickLink Element ID.
 _Avoid_: Element lookup
