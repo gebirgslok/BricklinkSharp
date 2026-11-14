@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `BricklinkInvalidResponseException`, thrown when a response body is not valid JSON, lacks `meta` or does not match the expected shape
 
 ### Changed
+- `UpdateInventory` with `IsStockRoom == true` and no `StockRoomId` now fails with the same message and parameter value (`"Null"`) as `NewInventory`, instead of the "must be either A, B or C (set to: null" message
 - `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` now derive from `BricklinkException` (`RequestUrl` and `HttpMethod` are `null` for them) instead of `Exception`
 
 ### Fixed

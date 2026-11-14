@@ -1,6 +1,6 @@
 ---
 github_issue: 35
-status: in-progress
+status: done
 created: 2026-11-14
 ---
 
@@ -67,10 +67,10 @@ Goal: all validation lives in `DtoValidation`; all phase 1 tests pass unchanged 
 
 ### Phase 3 — Intentional behaviour changes and changelog
 Goal: the two deliberate changes are made, tested and documented.
-- [ ] 3.1 Make the null `UnitPrice` skip in `UpdateInventory` explicit, with a test and a comment on the reason
-- [ ] 3.2 Unify the null `StockRoomId` message in `UpdateInventory` with `NewInventory`'s; update the affected test
-- [ ] 3.3 Add `CHANGELOG.md` entries under `## Unreleased` (Changed)
-- [ ] 3.4 Run the demos' build and a final `dotnet test`; mention the issue can be closed
+- [x] 3.1 Make the null `UnitPrice` skip in `UpdateInventory` explicit, with a test and a comment on the reason
+- [x] 3.2 Unify the null `StockRoomId` message in `UpdateInventory` with `NewInventory`'s; update the affected test
+- [x] 3.3 Add `CHANGELOG.md` entries under `## Unreleased` (Changed)
+- [x] 3.4 Run the demos' build and a final `dotnet test`; mention the issue can be closed
 
 ## Risks & alternatives
 - A behaviour regression in a rule nobody tested before is the main risk; phase 1 exists to remove it.

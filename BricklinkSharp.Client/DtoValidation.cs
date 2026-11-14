@@ -45,16 +45,6 @@ internal static class DtoValidation
                 dtoType);
         }
 
-        if (dto.IsStockRoom && string.IsNullOrEmpty(dto.StockRoomId))
-        {
-            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
-                {
-                    {nameof(dto.StockRoomId), "Null"}
-                },
-                $"{nameof(dto.StockRoomId)} cannot be Null if {nameof(dto.IsStockRoom)} is true.",
-                dtoType);
-        }
-
         ValidateStockRoomId(dto.IsStockRoom, dto.StockRoomId, dtoType);
 
         TierRules.Validate(dtoType,
@@ -83,6 +73,8 @@ internal static class DtoValidation
 
         ValidateStockRoomId(dto.IsStockRoom == true, dto.StockRoomId, dtoType);
 
+        // A partial update cannot know the base price, so the TierPrice1 < UnitPrice rule only applies
+        // when UnitPrice is part of the same update (a null maxFirstTierPrice skips it).
         TierRules.Validate(dtoType,
             quantityTiers: new[]
             {
@@ -130,13 +122,23 @@ internal static class DtoValidation
 
     private static void ValidateStockRoomId(bool isStockRoom, string? stockRoomId, Type dtoType)
     {
+        if (isStockRoom && string.IsNullOrEmpty(stockRoomId))
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object>
+                {
+                    {"StockRoomId", "Null"}
+                },
+                "StockRoomId cannot be Null if IsStockRoom is true.",
+                dtoType);
+        }
+
         if (isStockRoom && stockRoomId != "A" && stockRoomId != "B" && stockRoomId != "C")
         {
             throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                 {
-                    {"StockRoomId", stockRoomId ?? "null"}
+                    {"StockRoomId", stockRoomId!}
                 },
-                $"StockRoomId must be either A, B or C (set to: {stockRoomId ?? "null"}.",
+                $"StockRoomId must be either A, B or C (set to: {stockRoomId}.",
                 dtoType);
         }
     }

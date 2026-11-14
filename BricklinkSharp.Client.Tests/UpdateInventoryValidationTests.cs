@@ -73,8 +73,8 @@ public class UpdateInventoryValidationTests
         var exception = ValidateAndCatch(inventory);
 
         Assert.That(exception.InvalidParameters!.Keys, Is.EqualTo(new[] { "StockRoomId" }));
-        Assert.That(exception.InvalidParameters["StockRoomId"], Is.EqualTo("null"));
-        Assert.That(exception.Message, Does.StartWith("StockRoomId must be either A, B or C (set to: null."));
+        Assert.That(exception.InvalidParameters["StockRoomId"], Is.EqualTo("Null"));
+        Assert.That(exception.Message, Does.StartWith("StockRoomId cannot be Null if IsStockRoom is true."));
     }
 
     [Test]
