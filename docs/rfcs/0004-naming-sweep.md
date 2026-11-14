@@ -61,6 +61,7 @@ Constraints:
 - Rating counts: `NumOfPraises` → `PraiseCount`, `NumOfNeutrals` → `NeutralCount`, `NumOfComplaints` → `ComplaintCount`.
 - Cost: `Cost.Coupon` → `CouponDiscount`, `Cost.Shipping` → `ShippingCost`, `Cost.Insurance` → `InsuranceCost`; same for `UpdateCost.Shipping`/`Insurance`.
 - Inventory: `IsRetain` → `RetainsWhenSoldOut`, `Bulk` → `BulkQuantity`, `MyCost` → `OwnCost`, `MyWeight` → `OwnWeight`, `SaleRate` → `SaleRatePercent`.
+- Shipping: `Shipping.Id` (wire `method_id`) → `ShippingMethodId`; `Address.FullAddressAsString` (wire `full`) → `FullAddress`.
 - Item number: `Item.Number` and `ContainedItemSummary.Number` → `ItemNumber` (wire name `no` unchanged).
 - Catalog: `DimX`/`DimY`/`DimZ` → `DimensionX`/`DimensionY`/`DimensionZ`, `AlternateNo` → `AlternateNumber`.
 - Exceptions: `ExpectedCode` → `ExpectedStatusCode`, `ReceivedCode` → `ReceivedStatusCode`, `TypeOfDataObject` → `DataObjectType`.
@@ -93,10 +94,10 @@ Goal: all remaining public type names match the glossary.
 
 ### Phase 3 — Property renames
 Goal: all public properties follow the Naming rules; wire names unchanged.
-- [ ] Task 3.1: Id properties → `Id`; `UpdateShipping.MethodId` → `ShippingMethodId`
+- [ ] Task 3.1: Id properties → `Id`; `UpdateShipping.MethodId` and `Shipping.Id` → `ShippingMethodId`
 - [ ] Task 3.2: Date properties → `…On`
 - [ ] Task 3.3: Rating count and Cost properties
-- [ ] Task 3.4: Inventory and catalog properties, including `Item.Number`/`ContainedItemSummary.Number` → `ItemNumber`
+- [ ] Task 3.4: `Address.FullAddressAsString` → `FullAddress`; inventory and catalog properties, including `Item.Number`/`ContainedItemSummary.Number` → `ItemNumber`
 - [ ] Task 3.5: Exception members
 - [ ] Task 3.6: Verify `WireMap` characterization tests and JSON property names are unchanged
 - [ ] Task 3.7: Review, format, build, test
