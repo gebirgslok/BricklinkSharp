@@ -23,31 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class CouponStatusStringConverter : JsonConverter<CouponStatus>
+internal class CouponStatusStringConverter : WireStringConverter<CouponStatus>
 {
-    public override CouponStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public CouponStatusStringConverter() : base(WireMaps.CouponStatus, _ => CouponStatus.Expired)
     {
-        var stringValue = reader.GetString();
-        return stringValue switch
-        {
-            "O" => CouponStatus.Open,
-            "A" => CouponStatus.Redeemed,
-            "D" => CouponStatus.Declined,
-            "E" => CouponStatus.Expired,
-            _ => CouponStatus.Expired,
-        };
-    }
-
-    public override void Write(Utf8JsonWriter writer, CouponStatus value, JsonSerializerOptions options)
-    {
-        var typeString = value.ToDomainString();
-        writer.WriteStringValue(typeString);
     }
 }

@@ -23,29 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class PaymentStatusStringConverter : JsonConverter<PaymentStatus>
+internal class PaymentStatusStringConverter : WireStringConverter<PaymentStatus>
 {
-    public override PaymentStatus Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public PaymentStatusStringConverter() : base(WireMaps.PaymentStatus, ThrowArgumentExceptionForUnknownWire)
     {
-        var stringValue = reader.GetString();
-
-        if (stringValue == null)
-        {
-            throw new NullReferenceException(nameof(stringValue));
-        }
-
-        return (PaymentStatus)Enum.Parse(typeof(PaymentStatus), stringValue, true);
-    }
-
-    public override void Write(Utf8JsonWriter writer, PaymentStatus value, JsonSerializerOptions options)
-    {
-        writer.WriteStringValue(value.ToDomainString());
     }
 }

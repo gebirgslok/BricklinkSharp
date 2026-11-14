@@ -1,6 +1,6 @@
 ---
 github_issue: 37
-status: in-progress (phase 1 done)
+status: in-progress (phase 2 done)
 created: 2026-11-14
 ---
 
@@ -64,13 +64,13 @@ Goal: current mapping behaviour is pinned end to end; no production code changes
 
 ### Phase 2 — `WireMap` core and adapters (no behaviour change)
 Goal: both directions of every enum come from one table; phase 1 tests pass unchanged.
-- [ ] 2.1 Add `WireMap<TEnum>` with duplicate detection, `ByNameUpper`/`ByNameLower`, and netstandard2.0-safe enumeration
-- [ ] 2.2 Add `WireMaps` with one map per enum, using literal wire strings for irregular enums
-- [ ] 2.3 Add `WireStringConverter<T>` and `NullableWireStringConverter<T>`; reduce the existing converter classes to one-line subclasses that keep today's unknown-value behaviour
-- [ ] 2.4 Make `ToDomainString` one-line forwarders to `WireMaps`
-- [ ] 2.5 Decide the thrown exception type (`JsonException` vs `FormatException`) and check the parser's catch list
-- [ ] 2.6 Add a round-trip test per map over `Enum.GetValues`
-- [ ] 2.7 Run `dotnet build` and `dotnet test`
+- [x] 2.1 Add `WireMap<TEnum>` with duplicate detection, `ByNameUpper`/`ByNameLower`, and netstandard2.0-safe enumeration
+- [x] 2.2 Add `WireMaps` with one map per enum, using literal wire strings for irregular enums
+- [x] 2.3 Add `WireStringConverter<T>` and `NullableWireStringConverter<T>`; reduce the existing converter classes to one-line subclasses that keep today's unknown-value behaviour
+- [x] 2.4 Make `ToDomainString` one-line forwarders to `WireMaps`
+- [x] 2.5 Decide the thrown exception type: `WireMap.FromWire` throws `FormatException`; strict converters wrap it in `JsonException`. Both are already in the parser's catch list (narrowed in phase 3)
+- [x] 2.6 Add a round-trip test per map over `Enum.GetValues`
+- [x] 2.7 Run `dotnet build` and `dotnet test`
 
 ### Phase 3 — Strict unknown values and changelog
 Goal: unknown wire values fail as `CODING.md` requires; the change is tested and documented.

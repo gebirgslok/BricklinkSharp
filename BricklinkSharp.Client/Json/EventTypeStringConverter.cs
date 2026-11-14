@@ -23,29 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Extensions;
-
 namespace BricklinkSharp.Client.Json;
 
-internal class EventTypeStringConverter : JsonConverter<EventType>
+internal class EventTypeStringConverter : WireStringConverter<EventType>
 {
-    public override EventType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public EventTypeStringConverter() : base(WireMaps.EventType, _ => EventType.Order)
     {
-        var stringValue = reader.GetString();
-
-        if (Enum.TryParse(stringValue, true, out EventType result))
-        {
-            return result;
-        }
-
-        return 0;
-    }
-
-    public override void Write(Utf8JsonWriter writer, EventType value, JsonSerializerOptions options)
-    {
-        writer.WriteStringValue(value.ToDomainString());
     }
 }
