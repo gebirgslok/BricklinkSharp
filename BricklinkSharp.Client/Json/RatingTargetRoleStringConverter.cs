@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class RatingTargetRoleStringConverter : WireStringConverter<RatingTargetRole>
 {
-    public RatingTargetRoleStringConverter() : base(WireMaps.RatingTargetRole, _ => RatingTargetRole.Buyer)
+    public RatingTargetRoleStringConverter() : base(WireMaps.RatingTargetRole)
     {
     }
 }

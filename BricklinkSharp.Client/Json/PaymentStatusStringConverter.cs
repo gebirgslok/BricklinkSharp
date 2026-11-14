@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class PaymentStatusStringConverter : WireStringConverter<PaymentStatus>
 {
-    public PaymentStatusStringConverter() : base(WireMaps.PaymentStatus, ThrowArgumentExceptionForUnknownWire)
+    public PaymentStatusStringConverter() : base(WireMaps.PaymentStatus)
     {
     }
 }

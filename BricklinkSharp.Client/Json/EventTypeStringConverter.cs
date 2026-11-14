@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class EventTypeStringConverter : WireStringConverter<EventType>
 {
-    public EventTypeStringConverter() : base(WireMaps.EventType, _ => EventType.Order)
+    public EventTypeStringConverter() : base(WireMaps.EventType)
     {
     }
 }

@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 - `UpdateInventory` with `IsStockRoom == true` and no `StockRoomId` now fails with the same message and parameter value (`"Null"`) as `NewInventory`, instead of the "must be either A, B or C (set to: null" message
 - `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` now derive from `BricklinkException` (`RequestUrl` and `HttpMethod` are `null` for them) instead of `Exception`
+- **Behaviour change:** unknown enum wire values (`new_or_used`, `completeness`, `status`, `payment.status`, `rating_of_bs`, coupon `discount_type`/`applies_to.type`, event type, item type and others) no longer silently map to a default member (for example `Condition.New`); they raise `BricklinkInvalidResponseException`. The same applies to malformed decimal/double strings (previously `0`) and out-of-range feedback `rating` values
+- Enum wire formats now come from one table per enum (`WireMap`), shared by request building and response parsing
 
 ### Fixed
 - A non-JSON response body (e.g. an HTML error page) or a JSON converter error no longer leaks a raw `JsonException`; it surfaces as a `BricklinkException`

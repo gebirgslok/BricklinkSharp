@@ -1,6 +1,6 @@
 ---
 github_issue: 37
-status: in-progress (phase 2 done)
+status: done (all phases)
 created: 2026-11-14
 ---
 
@@ -68,17 +68,17 @@ Goal: both directions of every enum come from one table; phase 1 tests pass unch
 - [x] 2.2 Add `WireMaps` with one map per enum, using literal wire strings for irregular enums
 - [x] 2.3 Add `WireStringConverter<T>` and `NullableWireStringConverter<T>`; reduce the existing converter classes to one-line subclasses that keep today's unknown-value behaviour
 - [x] 2.4 Make `ToDomainString` one-line forwarders to `WireMaps`
-- [x] 2.5 Decide the thrown exception type: `WireMap.FromWire` throws `FormatException`; strict converters wrap it in `JsonException`. Both are already in the parser's catch list (narrowed in phase 3)
+- [x] 2.5 Decide the thrown exception type: `WireMap.FromWire` throws `FormatException`; strict converters wrap it in `JsonException`. The parser's catch list was narrowed to `JsonException` in phase 3
 - [x] 2.6 Add a round-trip test per map over `Enum.GetValues`
 - [x] 2.7 Run `dotnet build` and `dotnet test`
 
 ### Phase 3 — Strict unknown values and changelog
 Goal: unknown wire values fail as `CODING.md` requires; the change is tested and documented.
-- [ ] 3.1 Switch every enum converter to strict `FromWire`; flip the phase 1.5 tests to expect `BricklinkInvalidResponseException`
-- [ ] 3.2 Make `DecimalStringConverter`, `DoubleStringConverter` and `RatingTypeIntConverter` strict via `Scalars`
-- [ ] 3.3 Narrow the parser's catch list now that converters throw cleanly
-- [ ] 3.4 Add `CHANGELOG.md` entries under `## Unreleased` (Changed)
-- [ ] 3.5 Run the demos' build and a final `dotnet test`; mention the issue can be closed
+- [x] 3.1 Switch every enum converter to strict `FromWire`; flip the phase 1.5 tests to expect `BricklinkInvalidResponseException`
+- [x] 3.2 Make `DecimalStringConverter`, `DoubleStringConverter` and `RatingTypeIntConverter` strict via `Scalars`
+- [x] 3.3 Narrow the parser's catch list now that converters throw cleanly
+- [x] 3.4 Add `CHANGELOG.md` entries under `## Unreleased` (Changed)
+- [x] 3.5 Run the demos' build and a final `dotnet test`; mention the issue can be closed
 
 ## Risks & alternatives
 - BrickLink may return undocumented values (for example a new order status); strict parsing then raises `BricklinkInvalidResponseException`. Intended per `CODING.md`, but visible to callers, hence the changelog entry and phase 3 being separate.

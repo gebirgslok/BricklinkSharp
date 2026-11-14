@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class NullableCouponRestrictionTypeStringConverter : NullableWireStringConverter<CouponRestrictionType>
 {
-    public NullableCouponRestrictionTypeStringConverter() : base(WireMaps.CouponRestrictionType, _ => null)
+    public NullableCouponRestrictionTypeStringConverter() : base(WireMaps.CouponRestrictionType)
     {
     }
 }

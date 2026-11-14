@@ -27,9 +27,9 @@ namespace BricklinkSharp.Client.Json;
 
 internal class NullableItemTypeStringConverter : NullableWireStringConverter<ItemType>
 {
-    public NullableItemTypeStringConverter() : base(WireMaps.ItemType, _ => ItemType.Minifig)
+    public NullableItemTypeStringConverter() : base(WireMaps.ItemType)
     {
     }
 
-    protected override string Format(string wire) => wire.ToUpperInvariant();
+    protected override string NormalizeWireForWrite(string wire) => wire.ToUpperInvariant();
 }

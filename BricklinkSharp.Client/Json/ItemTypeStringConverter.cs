@@ -27,9 +27,9 @@ namespace BricklinkSharp.Client.Json;
 
 internal class ItemTypeStringConverter : WireStringConverter<ItemType>
 {
-    public ItemTypeStringConverter() : base(WireMaps.ItemType, ThrowArgumentExceptionForUnknownWire)
+    public ItemTypeStringConverter() : base(WireMaps.ItemType)
     {
     }
 
-    protected override string Format(string wire) => wire.ToUpperInvariant();
+    protected override string NormalizeWireForWrite(string wire) => wire.ToUpperInvariant();
 }

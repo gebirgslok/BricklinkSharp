@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class OrderStatusStringConverter : WireStringConverter<OrderStatus>
 {
-    public OrderStatusStringConverter() : base(WireMaps.OrderStatus, ThrowArgumentExceptionForUnknownWire)
+    public OrderStatusStringConverter() : base(WireMaps.OrderStatus)
     {
     }
 }

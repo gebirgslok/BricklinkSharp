@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class DiscountTypeStringConverter : WireStringConverter<DiscountType>
 {
-    public DiscountTypeStringConverter() : base(WireMaps.DiscountType, _ => DiscountType.Fixed)
+    public DiscountTypeStringConverter() : base(WireMaps.DiscountType)
     {
     }
 }

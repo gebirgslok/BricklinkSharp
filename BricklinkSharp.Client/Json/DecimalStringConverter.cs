@@ -32,17 +32,11 @@ namespace BricklinkSharp.Client.Json;
 
 internal class DecimalStringConverter : JsonConverter<decimal>
 {
-    private static readonly CultureInfo _culture = new CultureInfo("en-US");
+    private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
 
     public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var stringValue = reader.GetString();
-        if (decimal.TryParse(stringValue, NumberStyles.Any, _culture, out var value))
-        {
-            return value;
-        }
-
-        return 0.0M;
+        return Scalars.ParseDecimal(reader.GetString());
     }
 
     public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)

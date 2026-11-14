@@ -34,8 +34,7 @@ internal class RatingTypeIntConverter : JsonConverter<RatingType>
 {
     public override RatingType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var intVal = reader.GetInt32();
-        return (RatingType)intVal;
+        return Scalars.ParseRatingType(reader.GetInt32());
     }
 
     public override void Write(Utf8JsonWriter writer, RatingType value, JsonSerializerOptions options)

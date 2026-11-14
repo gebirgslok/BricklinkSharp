@@ -32,47 +32,29 @@ namespace BricklinkSharp.Client.Json;
 internal class WireStringConverter<TEnum> : JsonConverter<TEnum> where TEnum : struct, Enum
 {
     private readonly WireMap<TEnum> _map;
-    private readonly Func<string?, TEnum>? _unknownWireFallback;
 
-    /// <param name="unknownWireFallback">Legacy fallback for unknown wire values; strict (throws) when null.</param>
-    internal WireStringConverter(WireMap<TEnum> map, Func<string?, TEnum>? unknownWireFallback = null)
+    internal WireStringConverter(WireMap<TEnum> map)
     {
         _map = map;
-        _unknownWireFallback = unknownWireFallback;
     }
 
     public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var wire = reader.GetString();
-
-        if (_map.TryFromWire(wire, out var value))
-        {
-            return value;
-        }
-
-        return _unknownWireFallback != null ? _unknownWireFallback(wire) : ReadStrict(wire);
-    }
-
-    public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
-    {
-        writer.WriteStringValue(Format(_map.ToWire(value)));
-    }
-
-    /// <summary>Post-lookup massaging of the written string.</summary>
-    protected virtual string Format(string wire) => wire;
-
-    internal static TEnum ThrowArgumentExceptionForUnknownWire(string? wire) =>
-        throw new ArgumentException($"'{wire}' is not a known wire value of {typeof(TEnum).Name}.");
-
-    private TEnum ReadStrict(string? wire)
-    {
         try
         {
-            return _map.FromWire(wire);
+            return _map.FromWire(reader.GetString());
         }
         catch (FormatException exception)
         {
             throw new JsonException(exception.Message, exception);
         }
     }
+
+    public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(NormalizeWireForWrite(_map.ToWire(value)));
+    }
+
+    /// <summary>Hook to adjust the wire string before it is written.</summary>
+    protected virtual string NormalizeWireForWrite(string wire) => wire;
 }

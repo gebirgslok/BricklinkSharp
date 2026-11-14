@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class AppearsAsStringConverter : WireStringConverter<AppearsAs>
 {
-    public AppearsAsStringConverter() : base(WireMaps.AppearsAs, _ => AppearsAs.Regular)
+    public AppearsAsStringConverter() : base(WireMaps.AppearsAs)
     {
     }
 }

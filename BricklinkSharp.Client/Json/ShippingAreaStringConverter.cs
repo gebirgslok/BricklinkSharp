@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class ShippingAreaStringConverter : WireStringConverter<ShippingArea>
 {
-    public ShippingAreaStringConverter() : base(WireMaps.ShippingArea, _ => ShippingArea.Domestic)
+    public ShippingAreaStringConverter() : base(WireMaps.ShippingArea)
     {
     }
 }

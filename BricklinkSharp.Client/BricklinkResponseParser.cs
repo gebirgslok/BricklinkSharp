@@ -178,15 +178,9 @@ internal static class BricklinkResponseParser
         {
             result = JsonSerializer.Deserialize<T>(data.GetRawText());
         }
-        catch (Exception exception) when (exception is JsonException
-                                              or ArgumentException
-                                              or FormatException
-                                              or InvalidOperationException
-                                              or NotSupportedException
-                                              or NullReferenceException
-                                              or OverflowException)
+        catch (JsonException exception)
         {
-            // custom converters throw these for unknown or malformed values
+            // converters throw JsonException for unknown or malformed values
             throw new BricklinkInvalidResponseException("the 'data' element could not be mapped", httpStatusCode,
                 responseBody, url, httpMethod, exception);
         }

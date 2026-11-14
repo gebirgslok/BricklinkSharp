@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class CouponStatusStringConverter : WireStringConverter<CouponStatus>
 {
-    public CouponStatusStringConverter() : base(WireMaps.CouponStatus, _ => CouponStatus.Expired)
+    public CouponStatusStringConverter() : base(WireMaps.CouponStatus)
     {
     }
 }

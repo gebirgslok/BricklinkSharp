@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class CompletenessStringConverter : WireStringConverter<Completeness>
 {
-    public CompletenessStringConverter() : base(WireMaps.Completeness, _ => Completeness.Complete)
+    public CompletenessStringConverter() : base(WireMaps.Completeness)
     {
     }
 }

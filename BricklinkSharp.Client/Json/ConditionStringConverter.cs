@@ -27,7 +27,7 @@ namespace BricklinkSharp.Client.Json;
 
 internal class ConditionStringConverter : WireStringConverter<Condition>
 {
-    public ConditionStringConverter() : base(WireMaps.Condition, _ => Condition.New)
+    public ConditionStringConverter() : base(WireMaps.Condition)
     {
     }
 }

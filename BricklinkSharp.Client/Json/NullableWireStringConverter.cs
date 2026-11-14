@@ -33,13 +33,10 @@ namespace BricklinkSharp.Client.Json;
 internal class NullableWireStringConverter<TEnum> : JsonConverter<TEnum?> where TEnum : struct, Enum
 {
     private readonly WireMap<TEnum> _map;
-    private readonly Func<string?, TEnum?>? _unknownWireFallback;
 
-    /// <param name="unknownWireFallback">Legacy fallback for unknown wire values; strict (throws) when null.</param>
-    internal NullableWireStringConverter(WireMap<TEnum> map, Func<string?, TEnum?>? unknownWireFallback = null)
+    internal NullableWireStringConverter(WireMap<TEnum> map)
     {
         _map = map;
-        _unknownWireFallback = unknownWireFallback;
     }
 
     public override TEnum? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -51,28 +48,6 @@ internal class NullableWireStringConverter<TEnum> : JsonConverter<TEnum?> where 
             return null;
         }
 
-        if (_map.TryFromWire(wire, out var value))
-        {
-            return value;
-        }
-
-        return _unknownWireFallback != null ? _unknownWireFallback(wire) : ReadStrict(wire);
-    }
-
-    public override void Write(Utf8JsonWriter writer, TEnum? value, JsonSerializerOptions options)
-    {
-        if (value == null)
-        {
-            return;
-        }
-
-        writer.WriteStringValue(Format(_map.ToWire(value.Value)));
-    }
-
-    protected virtual string Format(string wire) => wire;
-
-    private TEnum ReadStrict(string? wire)
-    {
         try
         {
             return _map.FromWire(wire);
@@ -82,4 +57,16 @@ internal class NullableWireStringConverter<TEnum> : JsonConverter<TEnum?> where 
             throw new JsonException(exception.Message, exception);
         }
     }
+
+    public override void Write(Utf8JsonWriter writer, TEnum? value, JsonSerializerOptions options)
+    {
+        if (value == null)
+        {
+            return;
+        }
+
+        writer.WriteStringValue(NormalizeWireForWrite(_map.ToWire(value.Value)));
+    }
+
+    protected virtual string NormalizeWireForWrite(string wire) => wire;
 }
