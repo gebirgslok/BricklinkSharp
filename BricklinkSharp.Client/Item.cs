@@ -33,13 +33,13 @@ namespace BricklinkSharp.Client;
 public class Item
 {
     [JsonPropertyName("no")]
-    public string Number { get; set; } = null!;
+    public string ItemNumber { get; set; } = null!;
 
     [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
     public ItemType Type { get; set; }
 
     public override string ToString()
     {
-        return $"{Type} - {Number}";
+        return $"{Type} - {ItemNumber}";
     }
 }

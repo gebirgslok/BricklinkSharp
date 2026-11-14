@@ -54,10 +54,10 @@ public class InventoryFields
     public string? Remarks { get; set; }
 
     [JsonPropertyName("bulk")]
-    public int Bulk { get; set; } = 1;
+    public int BulkQuantity { get; set; } = 1;
 
     [JsonPropertyName("is_retain")]
-    public bool IsRetain { get; set; }
+    public bool RetainsWhenSoldOut { get; set; }
 
     [JsonPropertyName("is_stock_room")]
     public bool IsStockRoom { get; set; }
@@ -66,7 +66,7 @@ public class InventoryFields
     public string? StockRoomId { get; set; }
 
     [JsonPropertyName("my_cost"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal MyCost { get; set; }
+    public decimal OwnCost { get; set; }
 
     [JsonPropertyName("tier_quantity1")]
     public int TierQuantity1 { get; set; }

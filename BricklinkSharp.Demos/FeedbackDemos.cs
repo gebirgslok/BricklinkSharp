@@ -49,7 +49,7 @@ internal static class FeedbackDemos
     {
         using var client = BricklinkClientFactory.Build();
         var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
-        var id = feedbackInList.First().FeedbackId;
+        var id = feedbackInList.First().Id;
 
         var feedback = await client.GetFeedbackAsync(id);
 

@@ -45,16 +45,16 @@ public class Cost : CostSummary
     public decimal Etc2 { get; set; }
 
     [JsonPropertyName("insurance"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal Insurance { get; set; }
+    public decimal InsuranceCost { get; set; }
 
     [JsonPropertyName("shipping"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal Shipping { get; set; }
+    public decimal ShippingCost { get; set; }
 
     [JsonPropertyName("credit"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal Credit { get; set; }
 
     [JsonPropertyName("coupon"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal Coupon { get; set; }
+    public decimal CouponDiscount { get; set; }
 
     [JsonPropertyName("vat_rate"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal VatRate { get; set; }

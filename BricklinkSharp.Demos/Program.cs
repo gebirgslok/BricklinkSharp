@@ -62,15 +62,15 @@ internal static class Program
 
         await InventoryDemos.CreateInventoriesDemo();
         var inventory = await InventoryDemos.CreateInventoryDemo();
-        await InventoryDemos.UpdatedInventoryDemo(inventory.InventoryId);
-        await InventoryDemos.DeleteInventoryDemo(inventory.InventoryId);
+        await InventoryDemos.UpdatedInventoryDemo(inventory.Id);
+        await InventoryDemos.DeleteInventoryDemo(inventory.Id);
         await InventoryDemos.GetInventoryListDemo();
 
         await ItemMappingDemos.GetElementIdDemo();
         await ItemMappingDemos.GetItemNumberDemo();
 
         var shippingMethods = await SettingDemos.GetShippingMethodListDemo();
-        var id = shippingMethods.First().MethodId;
+        var id = shippingMethods.First().Id;
         await SettingDemos.GetShippingMethodDemo(id);
 
         await PushNotificationDemos.GetNotificationsDemo();

@@ -227,9 +227,9 @@ var newInventory = new NewInventory
 {
 	ColorId = 1,
 	Condition = Condition.Used,
-	Item = new ItemBase
+	Item = new Item
 	{
-		Number = "3003",
+		ItemNumber = "3003",
 		Type = ItemType.Part
 	},
 	Quantity = 5,
@@ -251,7 +251,7 @@ await client.CreateInventoriesAsync(newInventories);
 
 ```csharp
 var inventoryList = await client.GetInventoryListAsync();
-var id = inventoryList.First().InventoryId;
+var id = inventoryList.First().Id;
 var updateInventory = new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
 var inventory = await client.UpdateInventoryAsync(id, updateInventory);
 ```
@@ -260,7 +260,7 @@ var inventory = await client.UpdateInventoryAsync(id, updateInventory);
 
 ```csharp
 var inventoryList = await client.GetInventoryListAsync();
-var id = inventoryList.First().InventoryId;
+var id = inventoryList.First().Id;
 await client.DeleteInventoryAsync(id);
 ```
 
@@ -324,7 +324,7 @@ var feedbackListAll = await client.GetFeedbackListAsync();
 
 ```csharp
 var feedbackListAll = await client.GetFeedbackListAsync()
-var id = feedbackListAll.First().FeedbackId;
+var id = feedbackListAll.First().Id;
 var feedback = await client.GetFeedbackAsync(id);
 ```
 
@@ -407,7 +407,7 @@ var orderId = 123456789; //Must be a valid order ID.
 var updateOrder = new UpdateOrder();
 updateOrder.Remarks = "Add remark";
 updateOrder.IsFiled = true;
-updateOrder.Cost.Insurance = 2.5m;
+updateOrder.Cost.InsuranceCost = 2.5m;
 updateOrder.Cost.Etc1 = 1.0m;
 updateOrder.Shipping.TrackingNo = "1234567892";
 updateOrder.Shipping.TrackingLink = "www.foo.bar/123456789";

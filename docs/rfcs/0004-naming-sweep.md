@@ -94,13 +94,13 @@ Goal: all remaining public type names match the glossary.
 
 ### Phase 3 — Property renames
 Goal: all public properties follow the Naming rules; wire names unchanged.
-- [ ] Task 3.1: Id properties → `Id`; `UpdateShipping.MethodId` and `Shipping.Id` → `ShippingMethodId`
-- [ ] Task 3.2: Date properties → `…On`
-- [ ] Task 3.3: Rating count and Cost properties
-- [ ] Task 3.4: `Address.FullAddressAsString` → `FullAddress`; inventory and catalog properties, including `Item.Number`/`ContainedItemSummary.Number` → `ItemNumber`
-- [ ] Task 3.5: Exception members
-- [ ] Task 3.6: Verify `WireMap` characterization tests and JSON property names are unchanged
-- [ ] Task 3.7: Review, format, build, test
+- [x] Task 3.1: Id properties → `Id`; `UpdateShipping.MethodId` and `Shipping.Id` → `ShippingMethodId`
+- [x] Task 3.2: Date properties → `…On`
+- [x] Task 3.3: Rating count and Cost properties
+- [x] Task 3.4: `Address.FullAddressAsString` → `FullAddress`; inventory and catalog properties, including `Item.Number`/`ContainedItemSummary.Number` → `ItemNumber`
+- [x] Task 3.5: Exception members
+- [x] Task 3.6: Verify `WireMap` characterization tests and JSON property names are unchanged
+- [x] Task 3.7: Review, format, build, test
 
 ### Phase 4 — Client methods, parameters, demos, tests
 Goal: `IBricklinkClient` surface is final; demos and tests use the new names.

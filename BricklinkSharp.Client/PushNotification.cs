@@ -39,12 +39,12 @@ public class PushNotification
     public int ResourceId { get; set; }
 
     [JsonPropertyName("timestamp")]
-    public DateTime Timestamp { get; set; }
+    public DateTime OccurredOn { get; set; }
 
     public override string ToString()
     {
         return $"{nameof(EventType)}: {EventType}, " +
                $"{nameof(ResourceId)}: {ResourceId}, " +
-               $"{nameof(Timestamp)}: {Timestamp}";
+               $"{nameof(OccurredOn)}: {OccurredOn}";
     }
 }

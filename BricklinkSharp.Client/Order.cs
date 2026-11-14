@@ -54,10 +54,10 @@ public class UpdateOrder
 public class Order
 {
     [JsonPropertyName("order_id")]
-    public int OrderId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("date_ordered")]
-    public DateTime OrderDate { get; set; }
+    public DateTime OrderedOn { get; set; }
 
     [JsonPropertyName("seller_name")]
     public string SellerName { get; set; } = null!;

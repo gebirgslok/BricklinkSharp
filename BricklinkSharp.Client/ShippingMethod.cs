@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client;
 public class ShippingMethod
 {
     [JsonPropertyName("method_id")]
-    public int MethodId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = null!;
@@ -55,7 +55,7 @@ public class ShippingMethod
 
     public override string ToString()
     {
-        return $"{nameof(MethodId)}: {MethodId}, {nameof(ShippingArea)}: {Area}, {nameof(Name)}: {Name}" +
+        return $"{nameof(Id)}: {Id}, {nameof(Area)}: {Area}, {nameof(Name)}: {Name}" +
                Environment.NewLine +
                $"{nameof(Note)}: {Note ?? "null"}" +
                Environment.NewLine +

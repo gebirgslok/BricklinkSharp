@@ -36,10 +36,10 @@ public class Coupon : CouponTerms
     public int Id { get; set; }
 
     [JsonPropertyName("date_issued")]
-    public DateTime DateIssued { get; set; }
+    public DateTime IssuedOn { get; set; }
 
     [JsonPropertyName("date_expire")]
-    public DateTime DateExpire { get; set; }
+    public DateTime ExpiresOn { get; set; }
 
     [JsonPropertyName("buyer_name")]
     public string BuyerName { get; set; } = null!;

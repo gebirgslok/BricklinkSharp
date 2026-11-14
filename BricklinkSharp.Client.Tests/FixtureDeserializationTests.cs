@@ -46,9 +46,9 @@ public class FixtureDeserializationTests
 
         var order = await host.Client.GetOrderAsync(1234567, Credentials);
 
-        ClassicAssert.AreEqual(1234567, order.OrderId);
-        ClassicAssert.AreEqual(Utc(2023, 5, 1, 12, 30, 45), order.OrderDate);
-        ClassicAssert.AreEqual(Utc(2023, 5, 2, 8, 0, 0), order.StatusChangedDate);
+        ClassicAssert.AreEqual(1234567, order.Id);
+        ClassicAssert.AreEqual(Utc(2023, 5, 1, 12, 30, 45), order.OrderedOn);
+        ClassicAssert.AreEqual(Utc(2023, 5, 2, 8, 0, 0), order.StatusChangedOn);
         ClassicAssert.AreEqual("seller1", order.SellerName);
         ClassicAssert.AreEqual("buyer1", order.BuyerName);
         ClassicAssert.AreEqual("buyer1@example.com", order.BuyerEmail);
@@ -66,18 +66,18 @@ public class FixtureDeserializationTests
 
         ClassicAssert.AreEqual("PayPal", order.Payment.Method);
         ClassicAssert.AreEqual("EUR", order.Payment.CurrencyCode);
-        ClassicAssert.AreEqual(Utc(2023, 5, 1, 13, 0, 0), order.Payment.DatePaid);
+        ClassicAssert.AreEqual(Utc(2023, 5, 1, 13, 0, 0), order.Payment.PaidOn);
         ClassicAssert.AreEqual(PaymentStatus.Received, order.Payment.Status);
 
         ClassicAssert.AreEqual("Standard", order.Shipping.Method);
-        ClassicAssert.AreEqual(7, order.Shipping.Id);
+        ClassicAssert.AreEqual(7, order.Shipping.ShippingMethodId);
         ClassicAssert.AreEqual("TRK123", order.Shipping.TrackingNo);
         ClassicAssert.AreEqual("https://tracking.example.com/TRK123", order.Shipping.TrackingLink);
-        ClassicAssert.AreEqual(Utc(2023, 5, 2, 9, 0, 0), order.Shipping.ShipmentDate);
+        ClassicAssert.AreEqual(Utc(2023, 5, 2, 9, 0, 0), order.Shipping.ShippedOn);
         ClassicAssert.AreEqual("Jane Doe", order.Shipping.Address.Name.FullName);
         ClassicAssert.AreEqual("Jane", order.Shipping.Address.Name.FirstName);
         ClassicAssert.AreEqual("Doe", order.Shipping.Address.Name.LastName);
-        ClassicAssert.AreEqual("Jane Doe, Main St 1, Berlin", order.Shipping.Address.FullAddressAsString);
+        ClassicAssert.AreEqual("Jane Doe, Main St 1, Berlin", order.Shipping.Address.FullAddress);
         ClassicAssert.AreEqual("Main St 1", order.Shipping.Address.Address1);
         ClassicAssert.AreEqual("Floor 2", order.Shipping.Address.Address2);
         ClassicAssert.AreEqual("DE", order.Shipping.Address.CountryCode);
@@ -103,10 +103,10 @@ public class FixtureDeserializationTests
         ClassicAssert.AreEqual(finalTotal, cost.FinalTotal);
         ClassicAssert.AreEqual(etc1, cost.Etc1);
         ClassicAssert.AreEqual(etc2, cost.Etc2);
-        ClassicAssert.AreEqual(insurance, cost.Insurance);
-        ClassicAssert.AreEqual(shipping, cost.Shipping);
+        ClassicAssert.AreEqual(insurance, cost.InsuranceCost);
+        ClassicAssert.AreEqual(shipping, cost.ShippingCost);
         ClassicAssert.AreEqual(credit, cost.Credit);
-        ClassicAssert.AreEqual(coupon, cost.Coupon);
+        ClassicAssert.AreEqual(coupon, cost.CouponDiscount);
         ClassicAssert.AreEqual(vatRate, cost.VatRate);
         ClassicAssert.AreEqual(vatAmount, cost.VatAmount);
     }
@@ -119,7 +119,7 @@ public class FixtureDeserializationTests
         var orders = await host.Client.GetOrdersAsync(Direction.In, null, null, false, Credentials);
 
         var order = orders[0];
-        ClassicAssert.AreEqual(1234567, order.OrderId);
+        ClassicAssert.AreEqual(1234567, order.Id);
         ClassicAssert.AreEqual(OrderStatus.Shipped, order.Status);
         ClassicAssert.AreEqual(PaymentStatus.Received, order.Payment.Status);
         ClassicAssert.AreEqual("EUR", order.Cost.CurrencyCode);
@@ -136,8 +136,8 @@ public class FixtureDeserializationTests
 
         var inventory = await host.Client.GetInventoryAsync(99001, Credentials);
 
-        ClassicAssert.AreEqual(99001, inventory.InventoryId);
-        ClassicAssert.AreEqual("3001", inventory.Item.Number);
+        ClassicAssert.AreEqual(99001, inventory.Id);
+        ClassicAssert.AreEqual("3001", inventory.Item.ItemNumber);
         ClassicAssert.AreEqual(ItemType.Part, inventory.Item.Type);
         ClassicAssert.AreEqual("Brick 2 x 4", inventory.Item.Name);
         ClassicAssert.AreEqual(5, inventory.Item.CategoryId);
@@ -150,20 +150,20 @@ public class FixtureDeserializationTests
         ClassicAssert.AreEqual(7, inventory.BindId);
         ClassicAssert.AreEqual("used, clean", inventory.Description);
         ClassicAssert.AreEqual("box 3", inventory.Remarks);
-        ClassicAssert.AreEqual(10, inventory.Bulk);
-        ClassicAssert.IsTrue(inventory.IsRetain);
+        ClassicAssert.AreEqual(10, inventory.BulkQuantity);
+        ClassicAssert.IsTrue(inventory.RetainsWhenSoldOut);
         ClassicAssert.IsTrue(inventory.IsStockRoom);
         ClassicAssert.AreEqual("B", inventory.StockRoomId);
         ClassicAssert.AreEqual(Utc(2023, 4, 1, 10, 0, 0), inventory.CreatedOn);
-        ClassicAssert.AreEqual(0.05m, inventory.MyCost);
-        ClassicAssert.AreEqual(20, inventory.SaleRate);
+        ClassicAssert.AreEqual(0.05m, inventory.OwnCost);
+        ClassicAssert.AreEqual(20, inventory.SaleRatePercent);
         ClassicAssert.AreEqual(100, inventory.TierQuantity1);
         ClassicAssert.AreEqual(200, inventory.TierQuantity2);
         ClassicAssert.AreEqual(300, inventory.TierQuantity3);
         ClassicAssert.AreEqual(0.14m, inventory.TierPrice1);
         ClassicAssert.AreEqual(0.13m, inventory.TierPrice2);
         ClassicAssert.AreEqual(0.12m, inventory.TierPrice3);
-        ClassicAssert.AreEqual(2.35, inventory.MyWeight);
+        ClassicAssert.AreEqual(2.35, inventory.OwnWeight);
     }
 
     [Test]
@@ -174,8 +174,8 @@ public class FixtureDeserializationTests
         var coupon = await host.Client.GetCouponAsync(555, Credentials);
 
         ClassicAssert.AreEqual(555, coupon.Id);
-        ClassicAssert.AreEqual(Utc(2023, 3, 1, 0, 0, 0), coupon.DateIssued);
-        ClassicAssert.AreEqual(Utc(2023, 6, 1, 0, 0, 0), coupon.DateExpire);
+        ClassicAssert.AreEqual(Utc(2023, 3, 1, 0, 0, 0), coupon.IssuedOn);
+        ClassicAssert.AreEqual(Utc(2023, 6, 1, 0, 0, 0), coupon.ExpiresOn);
         ClassicAssert.AreEqual("buyer1", coupon.BuyerName);
         ClassicAssert.AreEqual("seller1", coupon.SellerName);
         ClassicAssert.AreEqual("Store One", coupon.StoreName);
@@ -223,7 +223,7 @@ public class FixtureDeserializationTests
 
         var feedback = await host.Client.GetFeedbackAsync(777, Credentials);
 
-        ClassicAssert.AreEqual(777, feedback.FeedbackId);
+        ClassicAssert.AreEqual(777, feedback.Id);
         ClassicAssert.AreEqual(1234567, feedback.OrderId);
         ClassicAssert.AreEqual("buyer1", feedback.From);
         ClassicAssert.AreEqual("seller1", feedback.To);

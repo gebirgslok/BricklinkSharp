@@ -38,7 +38,7 @@ public class OrderMessageTests
         var orderMessage = new OrderMessage
         {
             Body = "Hello world",
-            DateSent = now,
+            SentOn = now,
             From = "Foo",
             To = "Bar",
             Subject = null

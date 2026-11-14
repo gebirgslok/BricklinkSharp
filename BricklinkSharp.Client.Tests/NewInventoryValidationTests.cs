@@ -51,7 +51,7 @@ public class NewInventoryValidationTests
     private static BricklinkInvalidParameterException ValidateAndCatch(NewInventory inventory)
     {
         var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(inventory));
-        Assert.That(exception!.TypeOfDataObject, Is.EqualTo(typeof(NewInventory)));
+        Assert.That(exception!.DataObjectType, Is.EqualTo(typeof(NewInventory)));
         return exception;
     }
 
@@ -271,20 +271,20 @@ public class NewInventoryValidationTests
     public void Should_Throw_When_BulkIsLessThanOne(int bulk)
     {
         var inventory = CreateValid();
-        inventory.Bulk = bulk;
+        inventory.BulkQuantity = bulk;
 
         var exception = ValidateAndCatch(inventory);
 
-        Assert.That(exception.InvalidParameters!.Keys, Is.EqualTo(new[] { "Bulk" }));
-        Assert.That(exception.InvalidParameters["Bulk"], Is.EqualTo(bulk));
-        Assert.That(exception.Message, Does.StartWith("Bulk must be > 0."));
+        Assert.That(exception.InvalidParameters!.Keys, Is.EqualTo(new[] { "BulkQuantity" }));
+        Assert.That(exception.InvalidParameters["BulkQuantity"], Is.EqualTo(bulk));
+        Assert.That(exception.Message, Does.StartWith("BulkQuantity must be > 0."));
     }
 
     [Test]
     public void Should_NotThrow_When_BulkIsOne()
     {
         var inventory = CreateValid();
-        inventory.Bulk = 1;
+        inventory.BulkQuantity = 1;
 
         Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
@@ -297,7 +297,7 @@ public class NewInventoryValidationTests
         inventory.IsStockRoom = true;
         inventory.StockRoomId = null;
         inventory.TierPrice1 = 9M;
-        inventory.Bulk = 0;
+        inventory.BulkQuantity = 0;
 
         var exception = ValidateAndCatch(inventory);
 
@@ -311,7 +311,7 @@ public class NewInventoryValidationTests
         inventory.IsStockRoom = true;
         inventory.StockRoomId = "D";
         inventory.TierPrice1 = 9M;
-        inventory.Bulk = 0;
+        inventory.BulkQuantity = 0;
 
         var exception = ValidateAndCatch(inventory);
 
@@ -323,11 +323,11 @@ public class NewInventoryValidationTests
     {
         var inventory = CreateValid();
         inventory.TierPrice1 = 9M;
-        inventory.Bulk = 0;
+        inventory.BulkQuantity = 0;
 
         var exception = ValidateAndCatch(inventory);
 
         Assert.That(exception.InvalidParameters!.Keys, Does.Contain("TierPrice1"));
-        Assert.That(exception.InvalidParameters.Keys, Does.Not.Contain("Bulk"));
+        Assert.That(exception.InvalidParameters.Keys, Does.Not.Contain("BulkQuantity"));
     }
 }

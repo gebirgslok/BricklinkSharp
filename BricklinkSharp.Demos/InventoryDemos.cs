@@ -58,7 +58,7 @@ internal static class InventoryDemos
                 Condition = Condition.Used,
                 Item = new Item
                 {
-                    Number = "3003",
+                    ItemNumber = "3003",
                     Type = ItemType.Part
                 },
                 Quantity = 5,
@@ -72,7 +72,7 @@ internal static class InventoryDemos
                 Condition = Condition.Used,
                 Item = new Item
                 {
-                    Number = "3003",
+                    ItemNumber = "3003",
                     Type = ItemType.Part
                 },
                 Quantity = 5,
@@ -93,7 +93,7 @@ internal static class InventoryDemos
             Condition = Condition.Used,
             Item = new Item
             {
-                Number = "3003",
+                ItemNumber = "3003",
                 Type = ItemType.Part
             },
             Quantity = 5,

@@ -40,7 +40,7 @@ public class CatalogItem : Item
     public int CategoryId { get; set; }
 
     [JsonPropertyName("alternate_no")]
-    public string? AlternateNo { get; set; }
+    public string? AlternateNumber { get; set; }
 
     [JsonPropertyName("image_url")]
     public string? ImageUrl { get; set; }
@@ -52,13 +52,13 @@ public class CatalogItem : Item
     public double Weight { get; set; }
 
     [JsonPropertyName("dim_x"), JsonConverter(typeof(DoubleStringConverter))]
-    public double DimX { get; set; }
+    public double DimensionX { get; set; }
 
     [JsonPropertyName("dim_y"), JsonConverter(typeof(DoubleStringConverter))]
-    public double DimY { get; set; }
+    public double DimensionY { get; set; }
 
     [JsonPropertyName("dim_z"), JsonConverter(typeof(DoubleStringConverter))]
-    public double DimZ { get; set; }
+    public double DimensionZ { get; set; }
 
     [JsonPropertyName("year_released")]
     public int YearReleased { get; set; }

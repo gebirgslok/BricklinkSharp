@@ -44,7 +44,7 @@ public class CouponValidationTests
     private static BricklinkInvalidParameterException ValidateAndCatch(CouponTerms coupon)
     {
         var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(coupon));
-        Assert.That(exception!.TypeOfDataObject, Is.EqualTo(coupon.GetType()));
+        Assert.That(exception!.DataObjectType, Is.EqualTo(coupon.GetType()));
         return exception;
     }
 

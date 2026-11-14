@@ -35,7 +35,7 @@ public class UpdateCost
     public decimal? Credit { get; set; }
 
     [JsonPropertyName("insurance")]
-    public decimal? Insurance { get; set; }
+    public decimal? InsuranceCost { get; set; }
 
     [JsonPropertyName("etc1")]
     public decimal? Etc1 { get; set; }
@@ -44,11 +44,11 @@ public class UpdateCost
     public decimal? Etc2 { get; set; }
 
     [JsonPropertyName("shipping")]
-    public decimal? Shipping { get; set; }
+    public decimal? ShippingCost { get; set; }
 
     internal bool AllPropertiesUnset => Credit != null &&
-                                        Insurance != null &&
-                                        Shipping != null &&
+                                        InsuranceCost != null &&
+                                        ShippingCost != null &&
                                         Etc1 != null &&
                                         Etc2 != null;
 

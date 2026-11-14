@@ -43,7 +43,7 @@ public class Feedback
     public string Comment { get; set; } = null!;
 
     [JsonPropertyName("feedback_id")]
-    public int FeedbackId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("from")]
     public string From { get; set; } = null!;

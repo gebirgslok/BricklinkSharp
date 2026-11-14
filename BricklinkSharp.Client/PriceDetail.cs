@@ -48,7 +48,7 @@ public class PriceDetail
     public string? BuyerCountryCode { get; set; }
 
     [JsonPropertyName("date_ordered")]
-    public DateTime? OrderDate { get; set; }
+    public DateTime? OrderedOn { get; set; }
 
     public override string ToString()
     {

@@ -33,17 +33,17 @@ public class BricklinkInvalidParameterException : BricklinkException
 {
     public Dictionary<string, object>? InvalidParameters { get; }
 
-    public Type? TypeOfDataObject { get; }
+    public Type? DataObjectType { get; }
 
     internal BricklinkInvalidParameterException(Dictionary<string, object> invalidParameters,
         string? baseMessage = null,
-        Type? typeOfDataObject = null) : base(BuildMessage(baseMessage, invalidParameters, typeOfDataObject))
+        Type? dataObjectType = null) : base(BuildMessage(baseMessage, invalidParameters, dataObjectType))
     {
         InvalidParameters = invalidParameters;
-        TypeOfDataObject = typeOfDataObject;
+        DataObjectType = dataObjectType;
     }
 
-    private static string BuildMessage(string? baseMessage, Dictionary<string, object> invalidParameters, Type? typeOfDataObject)
+    private static string BuildMessage(string? baseMessage, Dictionary<string, object> invalidParameters, Type? dataObjectType)
     {
         var builder = new StringBuilder();
 
@@ -52,13 +52,13 @@ public class BricklinkInvalidParameterException : BricklinkException
             builder.AppendLine(baseMessage);
         }
 
-        if (typeOfDataObject == null)
+        if (dataObjectType == null)
         {
             builder.AppendLine("The following parameters are invalid:");
         }
         else
         {
-            builder.AppendLine($"The following parameters ({typeOfDataObject.Name}) are invalid:");
+            builder.AppendLine($"The following parameters ({dataObjectType.Name}) are invalid:");
         }
 
         var count = 0;

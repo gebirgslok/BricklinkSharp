@@ -201,8 +201,8 @@ public class BricklinkRequestExecutorTests
         var exception = Assert.ThrowsAsync<BricklinkHttpErrorException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None))!;
 
-        ClassicAssert.AreEqual(404, exception.ReceivedCode);
-        ClassicAssert.AreEqual(200, exception.ExpectedCode);
+        ClassicAssert.AreEqual(404, exception.ReceivedStatusCode);
+        ClassicAssert.AreEqual(200, exception.ExpectedStatusCode);
         ClassicAssert.AreEqual("d", exception.Description);
         ClassicAssert.AreEqual("m", exception.RawMessage);
     }

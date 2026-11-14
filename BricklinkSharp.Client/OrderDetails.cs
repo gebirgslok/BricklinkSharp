@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client;
 public class OrderDetails : Order
 {
     [JsonPropertyName("date_status_changed")]
-    public DateTime StatusChangedDate { get; set; }
+    public DateTime StatusChangedOn { get; set; }
 
     [JsonPropertyName("buyer_email")]
     public string BuyerEmail { get; set; } = null!;

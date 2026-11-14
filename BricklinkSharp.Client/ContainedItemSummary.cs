@@ -35,7 +35,7 @@ namespace BricklinkSharp.Client;
 public class ContainedItemSummary
 {
     [JsonPropertyName("no")]
-    public string Number { get; set; } = null!;
+    public string ItemNumber { get; set; } = null!;
 
     [JsonPropertyName("name")]
     public string Name { get; set; } = null!;
@@ -48,6 +48,6 @@ public class ContainedItemSummary
 
     public override string ToString()
     {
-        return $"{Type}, {Number}, {Name}";
+        return $"{Type}, {ItemNumber}, {Name}";
     }
 }

@@ -31,11 +31,11 @@ namespace BricklinkSharp.Client;
 public class FeedbackCounts
 {
     [JsonPropertyName("PRAISE")]
-    public int NumOfPraises { get; set; }
+    public int PraiseCount { get; set; }
 
     [JsonPropertyName("NEUTRAL")]
-    public int NumOfNeutrals { get; set; }
+    public int NeutralCount { get; set; }
 
     [JsonPropertyName("COMPLAINT")]
-    public int NumOfComplaints { get; set; }
+    public int ComplaintCount { get; set; }
 }
