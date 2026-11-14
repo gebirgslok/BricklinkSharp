@@ -39,7 +39,7 @@ internal static class Program
         BricklinkClientConfiguration.Instance.ConsumerKey = "<Your Consumer Key>";
         BricklinkClientConfiguration.Instance.ConsumerSecret = "<Your Consumer Secret>";
 
-        await CatalogDemos.GetItemImageDemo();
+        await CatalogDemos.GetCatalogItemImageDemo();
         CatalogDemos.GetPartImageForColorDemo();
         CatalogDemos.GetBookImageDemo();
         CatalogDemos.GetGearImageDemo();
@@ -47,29 +47,29 @@ internal static class Program
         CatalogDemos.GetInstructionImageDemo();
         CatalogDemos.GetOriginalBoxImageDemo();
         CatalogDemos.EnsureImageUrlSchemeDemo();
-        await CatalogDemos.GetItemDemo();
+        await CatalogDemos.GetCatalogItemDemo();
         await CatalogDemos.GetSupersetsDemo();
         await CatalogDemos.GetSupersetsDemo2();
         await CatalogDemos.GetSubsetsDemo();
         await CatalogDemos.GetPriceGuideDemo();
         await CatalogDemos.GetKnownColorsDemo();
 
-        await ColorDemos.GetColorListDemo();
+        await ColorDemos.GetColorsDemo();
         await ColorDemos.GetColorDemo();
 
-        await CategoryDemos.GetCategoryListDemo();
+        await CategoryDemos.GetCategoriesDemo();
         await CategoryDemos.GetCategoryDemo();
 
         await InventoryDemos.CreateInventoriesDemo();
         var inventory = await InventoryDemos.CreateInventoryDemo();
-        await InventoryDemos.UpdatedInventoryDemo(inventory.Id);
+        await InventoryDemos.UpdateInventoryDemo(inventory.Id);
         await InventoryDemos.DeleteInventoryDemo(inventory.Id);
-        await InventoryDemos.GetInventoryListDemo();
+        await InventoryDemos.GetInventoriesDemo();
 
-        await ItemMappingDemos.GetElementIdDemo();
-        await ItemMappingDemos.GetItemNumberDemo();
+        await ItemMappingDemos.GetItemMappingsByItemDemo();
+        await ItemMappingDemos.GetItemMappingsByElementIdDemo();
 
-        var shippingMethods = await SettingDemos.GetShippingMethodListDemo();
+        var shippingMethods = await SettingDemos.GetShippingMethodsDemo();
         var id = shippingMethods.First().Id;
         await SettingDemos.GetShippingMethodDemo(id);
 
@@ -77,12 +77,12 @@ internal static class Program
 
         await MemberDemos.GetMemberRatingDemo();
 
-        await FeedbackDemos.GetFeedbackListDemo();
+        await FeedbackDemos.GetFeedbacksDemo();
         await FeedbackDemos.GetFeedbackDemo();
         var orderId = 123456789; //replace with a valid order ID.
         await FeedbackDemos.PostFeedbackDemo(orderId);
         var feedbackId = 123456789; //replace with a valid feedback ID.
-        await FeedbackDemos.ReplyFeedbackDemo(feedbackId);
+        await FeedbackDemos.ReplyToFeedbackDemo(feedbackId);
 
         await OrderDemos.GetOrdersDemo();
         await OrderDemos.GetOrderDemo();

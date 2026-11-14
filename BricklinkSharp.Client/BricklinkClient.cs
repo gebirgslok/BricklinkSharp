@@ -112,140 +112,140 @@ internal sealed class BricklinkClient : IBricklinkClient
         _isDisposed = true;
     }
 
-    public Task<CatalogItem> GetItemAsync(ItemType type,
-        string no,
+    public Task<CatalogItem> GetCatalogItemAsync(ItemType type,
+        string itemNumber,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<CatalogItem>(
-            new BricklinkRequest(ApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{no}")
+            new BricklinkRequest(ApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{itemNumber}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<CatalogImage> GetItemImageAsync(ItemType type,
-        string no,
+    public Task<CatalogImage> GetCatalogImageAsync(ItemType type,
+        string itemNumber,
         int colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<CatalogImage>(
             new BricklinkRequest(ApiResourceType.ItemImage, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/images/{colorId}")
+                    $"items/{type.ToDomainString()}/{itemNumber}/images/{colorId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Uri? GetImage(string number, ItemType type, int? colorId = null, string scheme = "https")
+    public Uri? GetImage(string itemNumber, ItemType type, int? colorId = null, string scheme = "https")
     {
         return type switch
         {
-            ItemType.Minifig => GetMinifigImage(number, scheme),
-            ItemType.Part => colorId.HasValue ? GetPartImageForColor(number, colorId.Value, scheme) : null,
-            ItemType.Set => GetSetImage(number, scheme),
-            ItemType.Book => GetBookImage(number, scheme),
-            ItemType.Gear => GetGearImage(number, scheme),
-            ItemType.Catalog => GetCatalogImage(number, scheme),
-            ItemType.Instruction => GetInstructionImage(number, scheme),
-            ItemType.OriginalBox => GetOriginalBoxImage(number, scheme),
+            ItemType.Minifig => GetMinifigImage(itemNumber, scheme),
+            ItemType.Part => colorId.HasValue ? GetPartImageForColor(itemNumber, colorId.Value, scheme) : null,
+            ItemType.Set => GetSetImage(itemNumber, scheme),
+            ItemType.Book => GetBookImage(itemNumber, scheme),
+            ItemType.Gear => GetGearImage(itemNumber, scheme),
+            ItemType.Catalog => GetCatalogImage(itemNumber, scheme),
+            ItemType.Instruction => GetInstructionImage(itemNumber, scheme),
+            ItemType.OriginalBox => GetOriginalBoxImage(itemNumber, scheme),
             _ => null
         };
     }
 
-    public Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https")
+    public Uri GetPartImageForColor(string itemNumber, int colorId, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), partNo)}");
+        return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), itemNumber)}");
     }
 
-    public Uri GetMinifigImage(string number, string scheme = "https")
+    public Uri GetMinifigImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_minifigImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_minifigImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetSetImage(string number, string scheme = "https")
+    public Uri GetSetImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_setImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_setImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetBookImage(string number, string scheme = "https")
+    public Uri GetBookImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_bookImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_bookImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetGearImage(string number, string scheme = "https")
+    public Uri GetGearImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_gearImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_gearImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetCatalogImage(string number, string scheme = "https")
+    public Uri GetCatalogImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_catalogImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_catalogImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetInstructionImage(string number, string scheme = "https")
+    public Uri GetInstructionImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_instructionImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_instructionImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetOriginalBoxImage(string number, string scheme = "https")
+    public Uri GetOriginalBoxImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri? GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https")
+    public Uri? GetThumbnail(string itemNumber, ItemType type, int? colorId = null, string scheme = "https")
     {
         return type switch
         {
-            ItemType.Minifig => GetMinifigThumbnail(number, scheme),
-            ItemType.Part => colorId.HasValue ? GetPartThumbnailForColor(number, colorId.Value, scheme) : null,
-            ItemType.Set => GetSetThumbnail(number, scheme),
-            ItemType.Book => GetBookThumbnail(number, scheme),
-            ItemType.Gear => GetGearThumbnail(number, scheme),
-            ItemType.Catalog => GetCatalogThumbnail(number, scheme),
-            ItemType.Instruction => GetInstructionThumbnail(number, scheme),
-            ItemType.OriginalBox => GetOriginalBoxThumbnail(number, scheme),
+            ItemType.Minifig => GetMinifigThumbnail(itemNumber, scheme),
+            ItemType.Part => colorId.HasValue ? GetPartThumbnailForColor(itemNumber, colorId.Value, scheme) : null,
+            ItemType.Set => GetSetThumbnail(itemNumber, scheme),
+            ItemType.Book => GetBookThumbnail(itemNumber, scheme),
+            ItemType.Gear => GetGearThumbnail(itemNumber, scheme),
+            ItemType.Catalog => GetCatalogThumbnail(itemNumber, scheme),
+            ItemType.Instruction => GetInstructionThumbnail(itemNumber, scheme),
+            ItemType.OriginalBox => GetOriginalBoxThumbnail(itemNumber, scheme),
             _ => null
         };
     }
 
-    public Uri GetPartThumbnailForColor(string partNo, int colorId, string scheme = "https")
+    public Uri GetPartThumbnailForColor(string itemNumber, int colorId, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), partNo)}");
+        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), itemNumber)}");
     }
 
-    public Uri GetMinifigThumbnail(string number, string scheme = "https")
+    public Uri GetMinifigThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetSetThumbnail(string number, string scheme = "https")
+    public Uri GetSetThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetBookThumbnail(string number, string scheme = "https")
+    public Uri GetBookThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetGearThumbnail(string number, string scheme = "https")
+    public Uri GetGearThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetCatalogThumbnail(string number, string scheme = "https")
+    public Uri GetCatalogThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetInstructionThumbnail(string number, string scheme = "https")
+    public Uri GetInstructionThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetOriginalBoxThumbnail(string number, string scheme = "https")
+    public Uri GetOriginalBoxThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, itemNumber)}");
     }
 
     public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")
@@ -253,21 +253,21 @@ internal sealed class BricklinkClient : IBricklinkClient
         return new Uri($"{scheme}:{imageUrl}");
     }
 
-    public Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
+    public Task<Superset[]> GetSupersetsAsync(ItemType type, string itemNumber,
         int colorId = 0,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Superset[]>(
             new BricklinkRequest(ApiResourceType.Superset, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/supersets")
+                    $"items/{type.ToDomainString()}/{itemNumber}/supersets")
                 .WithQueryParameter("color_id", colorId > 0 ? colorId : null)
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Subset[]> GetSubsetsAsync(ItemType type, string no,
+    public Task<Subset[]> GetSubsetsAsync(ItemType type, string itemNumber,
         int colorId = 0, bool? includeOriginalBox = null,
         bool? includeInstruction = null, bool? breakMinifigs = null,
         bool? breakSubsets = null,
@@ -276,7 +276,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         return _executor.SendAsync<Subset[]>(
             new BricklinkRequest(ApiResourceType.Subset, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/subsets")
+                    $"items/{type.ToDomainString()}/{itemNumber}/subsets")
                 .WithQueryParameter("color_id", colorId)
                 .WithQueryParameter("box", includeOriginalBox)
                 .WithQueryParameter("instruction", includeInstruction)
@@ -287,7 +287,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
+    public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string itemNumber, int colorId = 0,
         PriceGuideSource? priceGuideType = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
         VatOption? vat = null,
@@ -296,7 +296,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         return _executor.SendAsync<PriceGuide>(
             new BricklinkRequest(ApiResourceType.PriceGuide, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/price")
+                    $"items/{type.ToDomainString()}/{itemNumber}/price")
                 .WithQueryParameter("color_id", colorId)
                 .WithQueryParameter("guide_type", priceGuideType?.ToDomainString())
                 .WithQueryParameter("new_or_used", condition?.ToDomainString())
@@ -308,19 +308,19 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
+    public Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string itemNumber,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<KnownColor[]>(
             new BricklinkRequest(ApiResourceType.KnownColor, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/colors")
+                    $"items/{type.ToDomainString()}/{itemNumber}/colors")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Color[]> GetColorListAsync(BricklinkCredentials? credentials = null,
+    public Task<Color[]> GetColorsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Color[]>(
@@ -340,7 +340,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
+    public Task<Category[]> GetCategoriesAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Category[]>(
@@ -360,7 +360,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
+    public Task<Inventory[]> GetInventoriesAsync(IEnumerable<ItemType>? includedItemTypes = null,
         IEnumerable<ItemType>? excludedItemTypes = null,
         IEnumerable<InventoryStatus>? includedStatusFlags = null,
         IEnumerable<InventoryStatus>? excludedStatusFlags = null,
@@ -451,18 +451,18 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId,
+    public Task<ItemMapping[]> GetItemMappingsByItemAsync(string itemNumber, int? colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ItemMapping[]>(
-            new BricklinkRequest(ApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{partNo}")
+            new BricklinkRequest(ApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{itemNumber}")
                 .WithQueryParameter("color_id", colorId)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<ItemMapping[]> GetItemNumberAsync(string elementId,
+    public Task<ItemMapping[]> GetItemMappingsByElementIdAsync(string elementId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
@@ -473,7 +473,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null,
+    public Task<ShippingMethod[]> GetShippingMethodsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ShippingMethod[]>(
@@ -482,13 +482,13 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<ShippingMethod> GetShippingMethodAsync(int methodId,
+    public Task<ShippingMethod> GetShippingMethodAsync(int shippingMethodId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ShippingMethod>(
             new BricklinkRequest(ApiResourceType.ShippingMethod, HttpVerb.Get,
-                    $"settings/shipping_methods/{methodId}")
+                    $"settings/shipping_methods/{shippingMethodId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -512,7 +512,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
+    public Task<Feedback[]> GetFeedbacksAsync(Direction? direction = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
@@ -553,7 +553,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task ReplyFeedbackAsync(int feedbackId,
+    public Task ReplyToFeedbackAsync(int feedbackId,
         string reply,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)

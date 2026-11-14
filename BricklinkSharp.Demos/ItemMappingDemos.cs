@@ -31,21 +31,21 @@ namespace BricklinkSharp.Demos;
 
 internal static class ItemMappingDemos
 {
-    public static async Task GetItemNumberDemo()
+    public static async Task GetItemMappingsByElementIdDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var itemMapping = await client.GetItemNumberAsync("300301");
+        var itemMapping = await client.GetItemMappingsByElementIdAsync("300301");
 
         PrintHelper.PrintAsJson(itemMapping);
     }
 
-    public static async Task GetElementIdDemo()
+    public static async Task GetItemMappingsByItemDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var itemMapping = await client.GetElementIdAsync("3003", 1);
+        var itemMapping = await client.GetItemMappingsByItemAsync("3003", 1);
 
         //Green Brick, Modified Facet 3 x 3 - No element ID exists
-        var empty = await client.GetElementIdAsync("2462", 6);
+        var empty = await client.GetItemMappingsByItemAsync("2462", 6);
         Debug.Assert(empty.Length == 0);
 
         PrintHelper.PrintAsJson(itemMapping);

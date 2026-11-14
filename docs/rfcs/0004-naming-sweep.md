@@ -104,10 +104,10 @@ Goal: all public properties follow the Naming rules; wire names unchanged.
 
 ### Phase 4 — Client methods, parameters, demos, tests
 Goal: `IBricklinkClient` surface is final; demos and tests use the new names.
-- [ ] Task 4.1: Plural `Get<Things>Async` renames, catalog and item-mapping methods, `ReplyToFeedbackAsync`
-- [ ] Task 4.2: Parameters → `itemNumber`, `shippingMethodId`
-- [ ] Task 4.3: Update `BricklinkSharp.Demos/` and rename affected tests
-- [ ] Task 4.4: Review, format, build, test
+- [x] Task 4.1: Plural `Get<Things>Async` renames, catalog and item-mapping methods, `ReplyToFeedbackAsync`
+- [x] Task 4.2: Parameters → `itemNumber`, `shippingMethodId`
+- [x] Task 4.3: Update `BricklinkSharp.Demos/` and rename affected tests
+- [x] Task 4.4: Review, format, build, test
 
 ### Phase 5 — Docs and migration guide
 Goal: documentation is complete for release.

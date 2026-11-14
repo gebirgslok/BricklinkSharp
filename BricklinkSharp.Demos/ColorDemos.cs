@@ -38,10 +38,10 @@ internal static class ColorDemos
         PrintHelper.PrintAsJson(color);
     }
 
-    public static async Task GetColorListDemo()
+    public static async Task GetColorsDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var colors = await client.GetColorListAsync();
+        var colors = await client.GetColorsAsync();
 
         PrintHelper.PrintAsJson(colors);
     }

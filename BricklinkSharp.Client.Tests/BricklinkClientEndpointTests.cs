@@ -54,9 +54,9 @@ public class BricklinkClientEndpointTests
         var credentials = Credentials;
         var cancellationToken = default(System.Threading.CancellationToken);
 
-        yield return new("GetItem", client => client.GetItemAsync(ItemType.Part, "3001", credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetCatalogItem", client => client.GetCatalogItemAsync(ItemType.Part, "3001", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}items/{PartSegment}/3001");
-        yield return new("GetItemImage", client => client.GetItemImageAsync(ItemType.Part, "3001", 5, credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetCatalogImage", client => client.GetCatalogImageAsync(ItemType.Part, "3001", 5, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}items/{PartSegment}/3001/images/5");
         yield return new("GetSupersets", client => client.GetSupersetsAsync(ItemType.Part, "3001", 0, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}items/{PartSegment}/3001/supersets");
@@ -73,23 +73,23 @@ public class BricklinkClientEndpointTests
             $"&new_or_used={Condition.Used.ToDomainString()}&country_code=DE&currency_code=EUR");
         yield return new("GetKnownColors", client => client.GetKnownColorsAsync(ItemType.Part, "3001", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}items/{PartSegment}/3001/colors");
-        yield return new("GetColorList", client => client.GetColorListAsync(credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}colors");
+        yield return new("GetColors", client => client.GetColorsAsync(credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}colors");
         yield return new("GetColor", client => client.GetColorAsync(5, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}colors/5");
-        yield return new("GetCategoryList", client => client.GetCategoryListAsync(credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}categories");
+        yield return new("GetCategories", client => client.GetCategoriesAsync(credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}categories");
         yield return new("GetCategory", client => client.GetCategoryAsync(7, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}categories/7");
-        yield return new("GetInventoryList",
-            client => client.GetInventoryListAsync(new[] { ItemType.Part }, new[] { ItemType.Set }, null, null,
+        yield return new("GetInventories",
+            client => client.GetInventoriesAsync(new[] { ItemType.Part }, new[] { ItemType.Set }, null, null,
                 new[] { 1, 2 }, new[] { 3 }, null, null, credentials, cancellationToken),
             HttpMethod.Get,
             $"{BaseUrl}inventories?item_type={PartSegment}%2C-{ItemType.Set.ToDomainString()}&category_id=1%2C2%2C-3");
         yield return new("GetInventory", client => client.GetInventoryAsync(9, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}inventories/9");
         yield return new("DeleteInventory", client => client.DeleteInventoryAsync(9, credentials, cancellationToken), HttpMethod.Delete,
             $"{BaseUrl}inventories/9");
-        yield return new("GetElementId", client => client.GetElementIdAsync("3001", 5, credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetItemMappingsByItem", client => client.GetItemMappingsByItemAsync("3001", 5, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}item_mapping/part/3001?color_id=5");
-        yield return new("GetItemNumber", client => client.GetItemNumberAsync("300101", credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetItemMappingsByElementId", client => client.GetItemMappingsByElementIdAsync("300101", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}item_mapping/300101");
-        yield return new("GetShippingMethodList", client => client.GetShippingMethodListAsync(credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetShippingMethods", client => client.GetShippingMethodsAsync(credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}settings/shipping_methods");
         yield return new("GetShippingMethod", client => client.GetShippingMethodAsync(3, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}settings/shipping_methods/3");
@@ -97,10 +97,10 @@ public class BricklinkClientEndpointTests
             $"{BaseUrl}notifications");
         yield return new("GetMemberRating", client => client.GetMemberRatingAsync("bob", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}members/bob/ratings");
-        yield return new("GetFeedbackList", client => client.GetFeedbackListAsync(Direction.In, credentials, cancellationToken), HttpMethod.Get,
+        yield return new("GetFeedbacks", client => client.GetFeedbacksAsync(Direction.In, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}feedback?direction=in");
         yield return new("GetFeedback", client => client.GetFeedbackAsync(4, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}feedback/4");
-        yield return new("ReplyFeedback", client => client.ReplyFeedbackAsync(4, "thanks", credentials, cancellationToken), HttpMethod.Post,
+        yield return new("ReplyToFeedback", client => client.ReplyToFeedbackAsync(4, "thanks", credentials, cancellationToken), HttpMethod.Post,
             $"{BaseUrl}feedback/4/reply", "{\"reply\":\"thanks\"}");
         yield return new("PostFeedback", client => client.PostFeedbackAsync(11, Rating.Praise, "ok", credentials, cancellationToken),
             HttpMethod.Post, $"{BaseUrl}feedback",
@@ -159,12 +159,12 @@ public class BricklinkClientEndpointTests
     }
 
     [Test]
-    public void Should_Throw_When_ColorListIsEmpty()
+    public void Should_Throw_When_ColorsAreEmpty()
     {
         using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "[]")));
         var client = host.Client;
 
-        Assert.ThrowsAsync<BricklinkNoDataReceivedException>(() => client.GetColorListAsync(Credentials));
+        Assert.ThrowsAsync<BricklinkNoDataReceivedException>(() => client.GetColorsAsync(Credentials));
     }
 
     [Test]
@@ -220,12 +220,12 @@ public class BricklinkClientEndpointTests
     }
 
     [Test]
-    public void Should_Throw_When_ReplyFeedbackGetsUnexpectedCode()
+    public void Should_Throw_When_ReplyToFeedbackGetsUnexpectedCode()
     {
         using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200)));
         var client = host.Client;
 
-        Assert.ThrowsAsync<BricklinkHttpErrorException>(() => client.ReplyFeedbackAsync(4, "hi", Credentials));
+        Assert.ThrowsAsync<BricklinkHttpErrorException>(() => client.ReplyToFeedbackAsync(4, "hi", Credentials));
     }
 
     [Test]
@@ -240,11 +240,11 @@ public class BricklinkClientEndpointTests
     }
 
     [Test]
-    public async Task Should_Complete_When_ReplyFeedbackReturnsCreatedEnvelope()
+    public async Task Should_Complete_When_ReplyToFeedbackReturnsCreatedEnvelope()
     {
         using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(201)));
         var client = host.Client;
 
-        await client.ReplyFeedbackAsync(4, "hi", Credentials);
+        await client.ReplyToFeedbackAsync(4, "hi", Credentials);
     }
 }

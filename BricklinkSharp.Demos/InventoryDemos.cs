@@ -32,19 +32,19 @@ namespace BricklinkSharp.Demos;
 
 internal static class InventoryDemos
 {
-    public static async Task UpdatedInventoryDemo(int id)
+    public static async Task UpdateInventoryDemo(int inventoryId)
     {
         using var client = BricklinkClientFactory.Build();
-        var inventory = await client.UpdateInventoryAsync(id, new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
+        var inventory = await client.UpdateInventoryAsync(inventoryId, new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." });
 
         PrintHelper.PrintAsJson(inventory);
     }
 
-    public static async Task DeleteInventoryDemo(int id)
+    public static async Task DeleteInventoryDemo(int inventoryId)
     {
         using var client = BricklinkClientFactory.Build();
-        await client.DeleteInventoryAsync(id);
-        Console.WriteLine($"Successfully deleted inventory with ID = {id}.");
+        await client.DeleteInventoryAsync(inventoryId);
+        Console.WriteLine($"Successfully deleted inventory with ID = {inventoryId}.");
     }
 
     public static async Task CreateInventoriesDemo()
@@ -114,10 +114,10 @@ internal static class InventoryDemos
         PrintHelper.PrintAsJson(inventory);
     }
 
-    public static async Task GetInventoryListDemo()
+    public static async Task GetInventoriesDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var inventories = await client.GetInventoryListAsync(new List<ItemType> { ItemType.Part, ItemType.Minifig },
+        var inventories = await client.GetInventoriesAsync(new List<ItemType> { ItemType.Part, ItemType.Minifig },
             excludedStatusFlags: new List<InventoryStatus> { InventoryStatus.Reserved });
 
         PrintHelper.PrintAsJson(inventories);

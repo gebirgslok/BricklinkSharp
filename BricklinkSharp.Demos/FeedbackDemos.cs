@@ -32,15 +32,15 @@ namespace BricklinkSharp.Demos;
 
 internal static class FeedbackDemos
 {
-    public static async Task GetFeedbackListDemo()
+    public static async Task GetFeedbacksDemo()
     {
         using var client = BricklinkClientFactory.Build();
 
-        var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
+        var feedbackInList = await client.GetFeedbacksAsync(Direction.In);
         Console.WriteLine("Received feedback ('In'):");
         PrintHelper.PrintAsJson(feedbackInList);
 
-        var feedbackOutList = await client.GetFeedbackListAsync(Direction.Out);
+        var feedbackOutList = await client.GetFeedbacksAsync(Direction.Out);
         Console.WriteLine("Posted feedback ('Out'):");
         PrintHelper.PrintAsJson(feedbackOutList);
     }
@@ -48,7 +48,7 @@ internal static class FeedbackDemos
     public static async Task GetFeedbackDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var feedbackInList = await client.GetFeedbackListAsync(Direction.In);
+        var feedbackInList = await client.GetFeedbacksAsync(Direction.In);
         var id = feedbackInList.First().Id;
 
         var feedback = await client.GetFeedbackAsync(id);
@@ -65,9 +65,9 @@ internal static class FeedbackDemos
         PrintHelper.PrintAsJson(feedback);
     }
 
-    public static async Task ReplyFeedbackDemo(int feedbackId)
+    public static async Task ReplyToFeedbackDemo(int feedbackId)
     {
         using var client = BricklinkClientFactory.Build();
-        await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
+        await client.ReplyToFeedbackAsync(feedbackId, "Thank you for your kind comment.");
     }
 }

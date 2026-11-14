@@ -38,10 +38,10 @@ internal static class CategoryDemos
         PrintHelper.PrintAsJson(category);
     }
 
-    public static async Task GetCategoryListDemo()
+    public static async Task GetCategoriesDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var categories = await client.GetCategoryListAsync();
+        var categories = await client.GetCategoriesAsync();
 
         PrintHelper.PrintAsJson(categories);
     }
