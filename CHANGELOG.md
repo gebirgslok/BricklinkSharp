@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `IBricklinkRequestHandler` now receives the resolved credentials (per-call, else `BricklinkClientConfiguration.Instance`) instead of `null`
 - `HttpResponseMessage` is now disposed after every request
 - Trailing separator in the `BricklinkInvalidParameterException` message listed `,` after the last parameter
+- `NewInventory` and `UpdateInventory` validation rejected ascending tier quantities (`TierQuantity1 < TierQuantity2 < TierQuantity3`), the order its own error message demands, and accepted descending ones
 
 ### Removed
 - **Breaking:** `IBricklinkClient.GetPartOutValueFromPageAsync` and everything that existed only for it: `PartOutResult`, `PartOutItemType`, `BricklinkPartOutParseErrorException`, `BricklinkPartOutRequestErrorException` and the exchange rate service (`BricklinkSharp.Client.CurrencyRates`, including `ExchangeRatesApiDotIoConfiguration`). BrickLink now protects the scraped page with a bot challenge, so the method no longer works. The public `BricklinkClient` constructor no longer takes an `IExchangeRatesService`

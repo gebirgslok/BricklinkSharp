@@ -1,6 +1,6 @@
 ---
 github_issue: 35
-status: draft
+status: in-progress
 created: 2026-11-14
 ---
 
@@ -49,12 +49,13 @@ Intentional behaviour changes (phase 3, listed in `CHANGELOG.md`):
 Each phase leaves the repo building with tests green. New code is added before old code is removed.
 
 ### Phase 1 — Characterization tests
-Goal: current validation behaviour is pinned through the existing internal `ValidateThrowException()`; no production code changes.
-- [ ] 1.1 `NewInventory` tests: completeness vs item type, stock room (null, invalid, valid), tier all-or-none, tier ordering (each offending key), bulk, and check-order precedence
-- [ ] 1.2 `UpdateInventory` tests: stock room (null folded into the A/B/C message), tier all-or-none, ordering, null `UnitPrice` skip, bulk
-- [ ] 1.3 `CouponBase` tests via `NewCoupon`/`UpdateCoupon`: tiers validated only for `Percentage`, all-or-none, ascending order (each offending key)
-- [ ] 1.4 Assert `InvalidParameters` keys, `TypeOfDataObject` and exact message text (including the existing typos)
-- [ ] 1.5 Run `dotnet build` and `dotnet test`
+Goal: current validation behaviour is pinned through the existing internal `ValidateThrowException()`; no production code changes except the tier-quantity fix below.
+- [x] 1.1 `NewInventory` tests: completeness vs item type, stock room (null, invalid, valid), tier all-or-none, tier ordering (each offending key), bulk, and check-order precedence
+- [x] 1.2 `UpdateInventory` tests: stock room (null folded into the A/B/C message), tier all-or-none, ordering, null `UnitPrice` skip, bulk
+- [x] 1.3 `CouponBase` tests via `NewCoupon`/`UpdateCoupon`: tiers validated only for `Percentage`, all-or-none, ascending order (each offending key)
+- [x] 1.4 Assert `InvalidParameters` keys, `TypeOfDataObject` and exact message text (including the existing typos)
+- [x] 1.5 Run `dotnet build` and `dotnet test`
+- [x] 1.6 Fix inverted tier-quantity comparison found by 1.1/1.2 (`NewInventory`, `UpdateInventory` rejected ascending quantities); changelog entry under Fixed
 
 ### Phase 2 — Introduce `DtoValidation` and migrate (pure refactor)
 Goal: all validation lives in `DtoValidation`; all phase 1 tests pass unchanged apart from their entry point.

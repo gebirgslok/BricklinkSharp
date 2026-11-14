@@ -150,12 +150,12 @@ public class UpdateInventory
         if (setCount == 6)
         {
             var invalidParameters = new Dictionary<string, object>();
-            if (TierQuantity2 >= TierQuantity1)
+            if (TierQuantity2 <= TierQuantity1)
             {
                 invalidParameters.Add(nameof(TierQuantity2), TierQuantity2!);
             }
 
-            if (TierQuantity3 >= TierQuantity2)
+            if (TierQuantity3 <= TierQuantity2)
             {
                 invalidParameters.Add(nameof(TierQuantity3), TierQuantity3!);
             }
