@@ -23,11 +23,14 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Json;
+namespace BricklinkSharp.Client;
 
-internal class EventTypeStringConverter : WireStringConverter<EventType>
+public enum InventoryStatus
 {
-    public EventTypeStringConverter() : base(WireMaps.EventType)
-    {
-    }
+    Available = 0,
+    InStockRoomA = 1,
+    InStockRoomB = 2,
+    InStockRoomC = 3,
+    Unavailable = 4,
+    Reserved = 5
 }

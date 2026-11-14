@@ -44,5 +44,5 @@ public class OrderMessage
     public string To { get; set; } = null!;
 
     [JsonPropertyName("dateSent")]
-    public DateTime DateSent { get; set; }
+    public DateTime SentOn { get; set; }
 }

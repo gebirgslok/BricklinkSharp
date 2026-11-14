@@ -30,23 +30,23 @@ namespace BricklinkSharp.Client;
 
 public class BricklinkHttpErrorException : BricklinkException
 {
-    public int ExpectedCode { get; }
+    public int ExpectedStatusCode { get; }
 
-    public int ReceivedCode { get; }
+    public int ReceivedStatusCode { get; }
 
     public string? Description { get; }
 
     public string? RawMessage { get; }
 
-    internal BricklinkHttpErrorException(int receivedCode, int expectedCode, string description, string message, string url, HttpMethod httpMethod)
+    internal BricklinkHttpErrorException(int receivedStatusCode, int expectedStatusCode, string description, string message, string url, HttpMethod httpMethod)
         : base($"Received unexpected HTTP status code for request '{httpMethod}' {url}:" +
                Environment.NewLine +
-               $"Expected = {expectedCode}, received = {receivedCode}." +
+               $"Expected = {expectedStatusCode}, received = {receivedStatusCode}." +
                Environment.NewLine +
                $"Description: {description}, message: {message}.", url, httpMethod)
     {
-        ExpectedCode = expectedCode;
-        ReceivedCode = receivedCode;
+        ExpectedStatusCode = expectedStatusCode;
+        ReceivedStatusCode = receivedStatusCode;
         Description = description;
         RawMessage = message;
     }

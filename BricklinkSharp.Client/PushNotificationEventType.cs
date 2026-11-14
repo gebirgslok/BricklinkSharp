@@ -23,22 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-// ReSharper disable UnusedType.Global
+namespace BricklinkSharp.Client;
 
-namespace BricklinkSharp.Client.Json;
-
-internal class RatingTypeIntConverter : JsonConverter<RatingType>
+public enum PushNotificationEventType
 {
-    public override RatingType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        return Scalars.ParseRatingType(reader.GetInt32());
-    }
-
-    public override void Write(Utf8JsonWriter writer, RatingType value, JsonSerializerOptions options)
-    {
-        writer.WriteNumberValue((int)value);
-    }
+    Order = 0,
+    Message = 1,
+    Feedback = 2
 }

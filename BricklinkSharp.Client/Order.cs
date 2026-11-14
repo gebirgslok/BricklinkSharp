@@ -25,6 +25,7 @@
 
 using System;
 using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client;
 
@@ -50,11 +51,38 @@ public class UpdateOrder
 }
 
 [Serializable]
-public class Order : OrderBase
+public class Order
 {
+    [JsonPropertyName("order_id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("date_ordered")]
+    public DateTime OrderedOn { get; set; }
+
+    [JsonPropertyName("seller_name")]
+    public string SellerName { get; set; } = null!;
+
+    [JsonPropertyName("buyer_name")]
+    public string BuyerName { get; set; } = null!;
+
+    [JsonPropertyName("store_name")]
+    public string StoreName { get; set; } = null!;
+
+    [JsonPropertyName("total_count")]
+    public int TotalCount { get; set; }
+
+    [JsonPropertyName("unique_count")]
+    public int UniqueCount { get; set; }
+
+    [JsonPropertyName("status"), JsonConverter(typeof(OrderStatusStringConverter))]
+    public OrderStatus Status { get; set; }
+
+    [JsonPropertyName("payment")]
+    public Payment Payment { get; set; } = null!;
+
     [JsonPropertyName("cost")]
-    public CostBase Cost { get; set; } = null!;
+    public CostSummary Cost { get; set; } = null!;
 
     [JsonPropertyName("disp_cost")]
-    public CostBase DisplayCost { get; set; } = null!;
+    public CostSummary DisplayCost { get; set; } = null!;
 }

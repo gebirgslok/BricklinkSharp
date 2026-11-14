@@ -62,7 +62,7 @@ internal sealed class BricklinkRequestExecutor
         if (_options.RequestHandler != null)
         {
             await _options.RequestHandler
-                .OnRequestAsync(request.Resource, request.Verb, credentials, cancellationToken)
+                .BeforeRequestAsync(request.Resource, request.Verb, credentials, cancellationToken)
                 .ConfigureAwait(false);
         }
 

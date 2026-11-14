@@ -32,10 +32,10 @@ namespace BricklinkSharp.Client;
 public class Address
 {
     [JsonPropertyName("name")]
-    public Name Name { get; set; } = null!;
+    public PersonName Name { get; set; } = null!;
 
     [JsonPropertyName("full")]
-    public string FullAddressAsString { get; set; } = null!;
+    public string FullAddress { get; set; } = null!;
 
     [JsonPropertyName("address1")]
     public string? Address1 { get; set; }
@@ -60,6 +60,6 @@ public class Address
 
     public override string ToString()
     {
-        return FullAddressAsString;
+        return FullAddress;
     }
 }

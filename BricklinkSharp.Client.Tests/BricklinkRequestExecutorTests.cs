@@ -52,10 +52,10 @@ public class BricklinkRequestExecutorTests
     };
 
     private static BricklinkRequest Get(string path = "items/part/3001") =>
-        new(BricklinkApiResourceType.Item, HttpVerb.Get, path);
+        new(ApiResourceType.Item, HttpVerb.Get, path);
 
     private static BricklinkRequestExecutor CreateExecutor(StubHttpMessageHandler handler,
-        IBricklinkRequestHandler? requestHandler = null, BricklinkCredentials? defaultCredentials = null) =>
+        IRequestHandler? requestHandler = null, BricklinkCredentials? defaultCredentials = null) =>
         BricklinkTestHost.Create(handler, requestHandler, () => defaultCredentials ?? DefaultCredentials).Executor;
 
     [Test]
@@ -102,7 +102,7 @@ public class BricklinkRequestExecutorTests
         await CreateExecutor(handler, hook).SendAsync<Widget>(Get(), CancellationToken.None);
 
         ClassicAssert.AreSame(DefaultCredentials, hook.Credentials);
-        ClassicAssert.AreEqual(BricklinkApiResourceType.Item, hook.Resource);
+        ClassicAssert.AreEqual(ApiResourceType.Item, hook.Resource);
         ClassicAssert.AreEqual(HttpVerb.Get, hook.Verb);
     }
 
@@ -201,8 +201,8 @@ public class BricklinkRequestExecutorTests
         var exception = Assert.ThrowsAsync<BricklinkHttpErrorException>(
             () => CreateExecutor(handler).SendAsync<Widget>(Get(), CancellationToken.None))!;
 
-        ClassicAssert.AreEqual(404, exception.ReceivedCode);
-        ClassicAssert.AreEqual(200, exception.ExpectedCode);
+        ClassicAssert.AreEqual(404, exception.ReceivedStatusCode);
+        ClassicAssert.AreEqual(200, exception.ExpectedStatusCode);
         ClassicAssert.AreEqual("d", exception.Description);
         ClassicAssert.AreEqual("m", exception.RawMessage);
     }
@@ -307,7 +307,7 @@ public class BricklinkRequestExecutorTests
     public async Task Should_Succeed_When_NoDataExpectedAndDataIsEmpty(string? data)
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, data));
-        var request = new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
+        var request = new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
 
         await CreateExecutor(handler).SendAsync<NoData>(request, CancellationToken.None);
 
@@ -318,7 +318,7 @@ public class BricklinkRequestExecutorTests
     public void Should_ThrowEmptyDataExpected_When_NoDataExpectedButObjectHasContent()
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, "{\"name\":\"x\"}"));
-        var request = new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
+        var request = new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
 
         Assert.ThrowsAsync<BricklinkEmptyDataExpectedException>(
             () => CreateExecutor(handler).SendAsync<NoData>(request, CancellationToken.None));
@@ -328,7 +328,7 @@ public class BricklinkRequestExecutorTests
     public void Should_ThrowUnexpectedDataKind_When_NoDataExpectedButDataIsArray()
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, "[1]"));
-        var request = new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
+        var request = new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Delete, "inventories/1");
 
         Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
             () => CreateExecutor(handler).SendAsync<NoData>(request, CancellationToken.None));
@@ -340,7 +340,7 @@ public class BricklinkRequestExecutorTests
     public async Task Should_ExpectDefaultCodeForVerb_When_ReadingObject(HttpVerb verb, int code)
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(code, "{\"name\":\"x\"}"));
-        var request = new BricklinkRequest(BricklinkApiResourceType.Item, verb, "items");
+        var request = new BricklinkRequest(ApiResourceType.Item, verb, "items");
 
         var widget = await CreateExecutor(handler).SendAsync<Widget>(request, CancellationToken.None);
 
@@ -353,7 +353,7 @@ public class BricklinkRequestExecutorTests
     public async Task Should_ExpectDefaultCodeForVerb_When_NoDataExpected(HttpVerb verb, int code)
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(code));
-        var request = new BricklinkRequest(BricklinkApiResourceType.Item, verb, "items");
+        var request = new BricklinkRequest(ApiResourceType.Item, verb, "items");
 
         await CreateExecutor(handler).SendAsync<NoData>(request, CancellationToken.None);
     }
@@ -372,7 +372,7 @@ public class BricklinkRequestExecutorTests
     public async Task Should_OmitNullProperties_When_SerializingBody()
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(201, "{\"name\":\"x\"}"));
-        var request = new BricklinkRequest(BricklinkApiResourceType.Item, HttpVerb.Post, "items")
+        var request = new BricklinkRequest(ApiResourceType.Item, HttpVerb.Post, "items")
             .WithBody(new Widget { Name = "x", Size = null });
 
         await CreateExecutor(handler).SendAsync<Widget>(request, CancellationToken.None);
@@ -490,9 +490,9 @@ public class BricklinkRequestExecutorTests
         public int? Size { get; set; }
     }
 
-    private sealed class RecordingRequestHandler : IBricklinkRequestHandler
+    private sealed class RecordingRequestHandler : IRequestHandler
     {
-        public BricklinkApiResourceType Resource { get; private set; }
+        public ApiResourceType Resource { get; private set; }
 
         public HttpVerb Verb { get; private set; }
 
@@ -504,14 +504,14 @@ public class BricklinkRequestExecutorTests
 
         public Action? OnCall { get; set; }
 
-        public Task OnRequestAsync(BricklinkApiResourceType resourceType, HttpVerb verb,
-            BricklinkCredentials? credentials, CancellationToken ct)
+        public Task BeforeRequestAsync(ApiResourceType resourceType, HttpVerb verb,
+            BricklinkCredentials? credentials, CancellationToken cancellationToken)
         {
             Resource = resourceType;
             Verb = verb;
             Credentials = credentials;
             WasCalled = true;
-            Token = ct;
+            Token = cancellationToken;
             OnCall?.Invoke();
             return Task.CompletedTask;
         }

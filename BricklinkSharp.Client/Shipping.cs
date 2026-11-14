@@ -35,16 +35,16 @@ public class Shipping
     public string? Method { get; set; }
 
     [JsonPropertyName("method_id")]
-    public int Id { get; set; }
+    public int ShippingMethodId { get; set; }
 
     [JsonPropertyName("tracking_no")]
-    public string? TrackingNo { get; set; }
+    public string? TrackingNumber { get; set; }
 
     [JsonPropertyName("tracking_link")]
     public string? TrackingLink { get; set; }
 
     [JsonPropertyName("date_shipped")]
-    public DateTime ShipmentDate { get; set; }
+    public DateTime ShippedOn { get; set; }
 
     [JsonPropertyName("address")]
     public Address Address { get; set; } = null!;

@@ -29,8 +29,14 @@ using System.Text.Json.Serialization;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class SubsetEntry : SuperSubSetEntryBase
+public class SubsetEntry
 {
+    [JsonPropertyName("item")]
+    public ContainedItemSummary Item { get; set; } = null!;
+
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+
     [JsonPropertyName("color_id")]
     public int ColorId { get; set; }
 
@@ -45,6 +51,6 @@ public class SubsetEntry : SuperSubSetEntryBase
 
     public override string ToString()
     {
-        return $"{base.ToString()}, color ID: {ColorId}";
+        return $"{Quantity}x({Item}), color ID: {ColorId}";
     }
 }

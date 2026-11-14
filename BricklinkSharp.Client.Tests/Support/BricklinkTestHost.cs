@@ -66,7 +66,7 @@ internal sealed class BricklinkTestHost : IDisposable
     internal StubHttpMessageHandler.CapturedRequest CapturedRequest => Handler.CapturedRequests.Single();
 
     internal static BricklinkTestHost Create(StubHttpMessageHandler handler,
-        IBricklinkRequestHandler? requestHandler = null, Func<BricklinkCredentials?>? credentialsProvider = null)
+        IRequestHandler? requestHandler = null, Func<BricklinkCredentials?>? credentialsProvider = null)
     {
         var httpClient = new HttpClient(handler);
         var options = new BricklinkRequestExecutorOptions(BaseUri, credentialsProvider ?? (() => DefaultCredentials),

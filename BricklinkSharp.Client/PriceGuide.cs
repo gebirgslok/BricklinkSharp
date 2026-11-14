@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client;
 public class PriceGuide
 {
     [JsonPropertyName("item")]
-    public ItemBase Item { get; set; } = null!;
+    public Item Item { get; set; } = null!;
 
     [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
     public Condition Condition { get; set; }
@@ -64,7 +64,7 @@ public class PriceGuide
 
     public override string ToString()
     {
-        return $"({Item.Type}, {Item.Number}): {Condition}, {CurrencyCode}, min: {MinPrice}, " +
+        return $"({Item.Type}, {Item.ItemNumber}): {Condition}, {CurrencyCode}, min: {MinPrice}, " +
                $"max: {MaxPrice}, avg: {AveragePrice}, qty_avg: {QuantityAveragePrice}";
     }
 }

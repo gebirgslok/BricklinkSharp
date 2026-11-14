@@ -30,59 +30,41 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class InventoryBase
+public abstract class CouponTerms
 {
-    [JsonPropertyName("quantity")]
-    public int Quantity { get; set; }
-
-    [JsonPropertyName("color_id")]
-    public int ColorId { get; set; }
-
-    [JsonPropertyName("unit_price"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal UnitPrice { get; set; }
-
-    [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
-    public Condition Condition { get; set; }
-
-    [JsonPropertyName("completeness"), JsonConverter(typeof(CompletenessStringConverter))]
-    public Completeness Completeness { get; set; }
-
-    [JsonPropertyName("description")]
-    public string? Description { get; set; }
-
     [JsonPropertyName("remarks")]
     public string? Remarks { get; set; }
 
-    [JsonPropertyName("bulk")]
-    public int Bulk { get; set; } = 1;
+    [JsonPropertyName("applies_to")]
+    public CouponAppliesTo AppliesTo { get; set; } = null!;
 
-    [JsonPropertyName("is_retain")]
-    public bool IsRetain { get; set; }
+    [JsonPropertyName("discount_type"), JsonConverter(typeof(DiscountTypeStringConverter))]
+    public DiscountType DiscountType { get; set; }
 
-    [JsonPropertyName("is_stock_room")]
-    public bool IsStockRoom { get; set; }
+    [JsonPropertyName("discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal DiscountAmount { get; set; }
 
-    [JsonPropertyName("stock_room_id")]
-    public string? StockRoomId { get; set; }
+    [JsonPropertyName("discount_rate")]
+    public int DiscountRate { get; set; }
 
-    [JsonPropertyName("my_cost"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal MyCost { get; set; }
-
-    [JsonPropertyName("tier_quantity1")]
-    public int TierQuantity1 { get; set; }
-
-    [JsonPropertyName("tier_quantity2")]
-    public int TierQuantity2 { get; set; }
-
-    [JsonPropertyName("tier_quantity3")]
-    public int TierQuantity3 { get; set; }
+    [JsonPropertyName("max_discount_amount"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal MaxDiscountAmount { get; set; }
 
     [JsonPropertyName("tier_price1"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal TierPrice1 { get; set; }
 
+    [JsonPropertyName("tier_discount_rate1")]
+    public int TierDiscountRate1 { get; set; }
+
     [JsonPropertyName("tier_price2"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal TierPrice2 { get; set; }
 
+    [JsonPropertyName("tier_discount_rate2")]
+    public int TierDiscountRate2 { get; set; }
+
     [JsonPropertyName("tier_price3"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal TierPrice3 { get; set; }
+
+    [JsonPropertyName("tier_discount_rate3")]
+    public int TierDiscountRate3 { get; set; }
 }

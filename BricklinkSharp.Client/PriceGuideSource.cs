@@ -25,8 +25,8 @@
 
 namespace BricklinkSharp.Client;
 
-public enum OrderDirection
+public enum PriceGuideSource
 {
-    In = 0,
-    Out = 1
+    Sold = 0,
+    Stock = 1
 }

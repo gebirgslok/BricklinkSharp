@@ -25,7 +25,7 @@
 
 namespace BricklinkSharp.Client;
 
-public enum RatingTargetRole
+public enum FeedbackTargetRole
 {
     Seller = 0,
     Buyer = 1

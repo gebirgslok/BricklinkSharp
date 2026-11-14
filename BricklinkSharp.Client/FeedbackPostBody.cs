@@ -23,26 +23,19 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client;
 
-[Serializable]
-public class CostBase
+internal class FeedbackPostBody
 {
-    [JsonPropertyName("currency_code")]
-    public string CurrencyCode { get; set; } = null!;
+    [JsonPropertyName("order_id")]
+    public int OrderId { get; set; }
 
-    [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal Subtotal { get; set; }
+    [JsonPropertyName("rating"), JsonConverter(typeof(RatingIntConverter))]
+    public Rating Rating { get; set; }
 
-    [JsonPropertyName("grand_total"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal GrandTotal { get; set; }
-
-    public override string ToString()
-    {
-        return $"{GrandTotal:F2} (subtotal {Subtotal:F2}) - {CurrencyCode}";
-    }
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; } = null!;
 }

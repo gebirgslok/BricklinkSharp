@@ -47,19 +47,18 @@ public class WireMapTests
         yield return Case(WireMaps.OrderStatus);
         yield return Case(WireMaps.ItemType);
         yield return Case(WireMaps.Condition);
-        yield return Case(WireMaps.PriceGuideType);
-        yield return Case(WireMaps.OrderDirection);
+        yield return Case(WireMaps.PriceGuideSource);
         yield return Case(WireMaps.Direction);
-        yield return Case(WireMaps.InventoryStatusType);
+        yield return Case(WireMaps.InventoryStatus);
         yield return Case(WireMaps.CouponStatus);
         yield return Case(WireMaps.ShippingArea);
         yield return Case(WireMaps.AppearsAs);
-        yield return Case(WireMaps.RatingTargetRole);
+        yield return Case(WireMaps.FeedbackTargetRole);
         yield return Case(WireMaps.DiscountType);
         yield return Case(WireMaps.Completeness);
         yield return Case(WireMaps.CouponRestrictionType);
-        yield return Case(WireMaps.EventType);
-        yield return Case(WireMaps.RatingType);
+        yield return Case(WireMaps.PushNotificationEventType);
+        yield return Case(WireMaps.Rating);
         yield return Case(WireMaps.PaymentStatus);
         yield return Case(WireMaps.VatOption);
     }
@@ -116,8 +115,8 @@ public class WireMapTests
     public void Should_WriteUpperAndLowerCase_When_MapIsByNameUpperOrLower()
     {
         ClassicAssert.AreEqual("PENDING", WireMaps.OrderStatus.ToWire(OrderStatus.Pending));
-        ClassicAssert.AreEqual("sold", WireMaps.PriceGuideType.ToWire(PriceGuideType.Sold));
-        ClassicAssert.AreEqual("Praise", WireMaps.RatingType.ToWire(RatingType.Praise));
+        ClassicAssert.AreEqual("sold", WireMaps.PriceGuideSource.ToWire(PriceGuideSource.Sold));
+        ClassicAssert.AreEqual("Praise", WireMaps.Rating.ToWire(Rating.Praise));
     }
 
     [Test]

@@ -43,10 +43,10 @@ public class UpdateInventory
     public string? Remarks { get; set; }
 
     [JsonPropertyName("bulk")]
-    public int? Bulk { get; set; }
+    public int? BulkQuantity { get; set; }
 
     [JsonPropertyName("is_retain")]
-    public bool? IsRetain { get; set; }
+    public bool? RetainsWhenSoldOut { get; set; }
 
     [JsonPropertyName("is_stock_room")]
     public bool? IsStockRoom { get; set; }
@@ -55,10 +55,10 @@ public class UpdateInventory
     public string? StockRoomId { get; set; }
 
     [JsonPropertyName("my_cost")]
-    public decimal? MyCost { get; set; }
+    public decimal? OwnCost { get; set; }
 
     [JsonPropertyName("sale_rate")]
-    public int? SaleRate { get; set; }
+    public int? SaleRatePercent { get; set; }
 
     [JsonPropertyName("tier_quantity1")]
     public int? TierQuantity1 { get; set; }

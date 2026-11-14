@@ -81,22 +81,12 @@ public class EnumExtensionsTests
     }
 
     [Test]
-    public void ToDomainString_PriceGuideType()
+    public void ToDomainString_PriceGuideSource()
     {
-        ClassicAssert.AreEqual("sold", PriceGuideType.Sold.ToDomainString());
-        ClassicAssert.AreEqual("stock", PriceGuideType.Stock.ToDomainString());
+        ClassicAssert.AreEqual("sold", PriceGuideSource.Sold.ToDomainString());
+        ClassicAssert.AreEqual("stock", PriceGuideSource.Stock.ToDomainString());
 
-        PriceGuideType? nullHolder = null;
-        ClassicAssert.IsNull(nullHolder?.ToDomainString());
-    }
-
-    [Test]
-    public void ToDomainString_OrderDirection()
-    {
-        ClassicAssert.AreEqual("in", OrderDirection.In.ToDomainString());
-        ClassicAssert.AreEqual("out", OrderDirection.Out.ToDomainString());
-
-        OrderDirection? nullHolder = null;
+        PriceGuideSource? nullHolder = null;
         ClassicAssert.IsNull(nullHolder?.ToDomainString());
     }
 
@@ -111,16 +101,16 @@ public class EnumExtensionsTests
     }
 
     [Test]
-    public void ToDomainString_InventoryStatusType()
+    public void ToDomainString_InventoryStatus()
     {
-        ClassicAssert.AreEqual("Y", InventoryStatusType.Available.ToDomainString());
-        ClassicAssert.AreEqual("S", InventoryStatusType.InStockRoomA.ToDomainString());
-        ClassicAssert.AreEqual("B", InventoryStatusType.InStockRoomB.ToDomainString());
-        ClassicAssert.AreEqual("C", InventoryStatusType.InStockRoomC.ToDomainString());
-        ClassicAssert.AreEqual("N", InventoryStatusType.Unavailable.ToDomainString());
-        ClassicAssert.AreEqual("R", InventoryStatusType.Reserved.ToDomainString());
+        ClassicAssert.AreEqual("Y", InventoryStatus.Available.ToDomainString());
+        ClassicAssert.AreEqual("S", InventoryStatus.InStockRoomA.ToDomainString());
+        ClassicAssert.AreEqual("B", InventoryStatus.InStockRoomB.ToDomainString());
+        ClassicAssert.AreEqual("C", InventoryStatus.InStockRoomC.ToDomainString());
+        ClassicAssert.AreEqual("N", InventoryStatus.Unavailable.ToDomainString());
+        ClassicAssert.AreEqual("R", InventoryStatus.Reserved.ToDomainString());
 
-        InventoryStatusType? nullHolder = null;
+        InventoryStatus? nullHolder = null;
         ClassicAssert.IsNull(nullHolder?.ToDomainString());
     }
 
@@ -160,12 +150,12 @@ public class EnumExtensionsTests
     }
 
     [Test]
-    public void ToDomainString_RatingTargetRole()
+    public void ToDomainString_FeedbackTargetRole()
     {
-        ClassicAssert.AreEqual("S", RatingTargetRole.Seller.ToDomainString());
-        ClassicAssert.AreEqual("B", RatingTargetRole.Buyer.ToDomainString());
+        ClassicAssert.AreEqual("S", FeedbackTargetRole.Seller.ToDomainString());
+        ClassicAssert.AreEqual("B", FeedbackTargetRole.Buyer.ToDomainString());
 
-        RatingTargetRole? nullHolder = null;
+        FeedbackTargetRole? nullHolder = null;
         ClassicAssert.IsNull(nullHolder?.ToDomainString());
     }
 
@@ -201,24 +191,24 @@ public class EnumExtensionsTests
     }
 
     [Test]
-    public void ToDomainString_EventType()
+    public void ToDomainString_PushNotificationEventType()
     {
-        ClassicAssert.AreEqual("Order", EventType.Order.ToDomainString());
-        ClassicAssert.AreEqual("Message", EventType.Message.ToDomainString());
-        ClassicAssert.AreEqual("Feedback", EventType.Feedback.ToDomainString());
+        ClassicAssert.AreEqual("Order", PushNotificationEventType.Order.ToDomainString());
+        ClassicAssert.AreEqual("Message", PushNotificationEventType.Message.ToDomainString());
+        ClassicAssert.AreEqual("Feedback", PushNotificationEventType.Feedback.ToDomainString());
 
-        EventType? nullHolder = null;
+        PushNotificationEventType? nullHolder = null;
         ClassicAssert.IsNull(nullHolder?.ToDomainString());
     }
 
     [Test]
-    public void ToDomainString_RatingType()
+    public void ToDomainString_Rating()
     {
-        ClassicAssert.AreEqual("Complaint", RatingType.Complaint.ToDomainString());
-        ClassicAssert.AreEqual("Neutral", RatingType.Neutral.ToDomainString());
-        ClassicAssert.AreEqual("Praise", RatingType.Praise.ToDomainString());
+        ClassicAssert.AreEqual("Complaint", Rating.Complaint.ToDomainString());
+        ClassicAssert.AreEqual("Neutral", Rating.Neutral.ToDomainString());
+        ClassicAssert.AreEqual("Praise", Rating.Praise.ToDomainString());
 
-        RatingType? nullHolder = null;
+        Rating? nullHolder = null;
         ClassicAssert.IsNull(nullHolder?.ToDomainString());
     }
 

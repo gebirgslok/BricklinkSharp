@@ -24,18 +24,18 @@
 #endregion
 
 using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Json;
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client;
 
-public class FeedbackBase
+public class FeedbackCounts
 {
-    [JsonPropertyName("order_id")]
-    public int OrderId { get; set; }
+    [JsonPropertyName("PRAISE")]
+    public int PraiseCount { get; set; }
 
-    [JsonPropertyName("rating"), JsonConverter(typeof(RatingTypeIntConverter))]
-    public RatingType Rating { get; set; }
+    [JsonPropertyName("NEUTRAL")]
+    public int NeutralCount { get; set; }
 
-    [JsonPropertyName("comment")]
-    public string Comment { get; set; } = null!;
+    [JsonPropertyName("COMPLAINT")]
+    public int ComplaintCount { get; set; }
 }

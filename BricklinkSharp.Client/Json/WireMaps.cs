@@ -48,19 +48,17 @@ internal static class WireMaps
         (Client.Condition.New, "N"),
         (Client.Condition.Used, "U"));
 
-    internal static readonly WireMap<PriceGuideType> PriceGuideType = WireMap<PriceGuideType>.ByNameLower();
-
-    internal static readonly WireMap<OrderDirection> OrderDirection = WireMap<OrderDirection>.ByNameLower();
+    internal static readonly WireMap<PriceGuideSource> PriceGuideSource = WireMap<PriceGuideSource>.ByNameLower();
 
     internal static readonly WireMap<Direction> Direction = WireMap<Direction>.ByNameLower();
 
-    internal static readonly WireMap<InventoryStatusType> InventoryStatusType = WireMap<InventoryStatusType>.Of(
-        (Client.InventoryStatusType.Available, "Y"),
-        (Client.InventoryStatusType.InStockRoomA, "S"),
-        (Client.InventoryStatusType.InStockRoomB, "B"),
-        (Client.InventoryStatusType.InStockRoomC, "C"),
-        (Client.InventoryStatusType.Unavailable, "N"),
-        (Client.InventoryStatusType.Reserved, "R"));
+    internal static readonly WireMap<InventoryStatus> InventoryStatus = WireMap<InventoryStatus>.Of(
+        (Client.InventoryStatus.Available, "Y"),
+        (Client.InventoryStatus.InStockRoomA, "S"),
+        (Client.InventoryStatus.InStockRoomB, "B"),
+        (Client.InventoryStatus.InStockRoomC, "C"),
+        (Client.InventoryStatus.Unavailable, "N"),
+        (Client.InventoryStatus.Reserved, "R"));
 
     internal static readonly WireMap<CouponStatus> CouponStatus = WireMap<CouponStatus>.Of(
         (Client.CouponStatus.Open, "O"),
@@ -79,9 +77,9 @@ internal static class WireMaps
         (Client.AppearsAs.Counterpart, "C"),
         (Client.AppearsAs.Extra, "E"));
 
-    internal static readonly WireMap<RatingTargetRole> RatingTargetRole = WireMap<RatingTargetRole>.Of(
-        (Client.RatingTargetRole.Seller, "S"),
-        (Client.RatingTargetRole.Buyer, "B"));
+    internal static readonly WireMap<FeedbackTargetRole> FeedbackTargetRole = WireMap<FeedbackTargetRole>.Of(
+        (Client.FeedbackTargetRole.Seller, "S"),
+        (Client.FeedbackTargetRole.Buyer, "B"));
 
     internal static readonly WireMap<DiscountType> DiscountType = WireMap<DiscountType>.Of(
         (Client.DiscountType.Fixed, "F"),
@@ -96,9 +94,9 @@ internal static class WireMaps
         (Client.CouponRestrictionType.ApplyToSpecifiedItemType, "A"),
         (Client.CouponRestrictionType.ExcludeSpecifiedType, "E"));
 
-    internal static readonly WireMap<EventType> EventType = WireMap<EventType>.ByName();
+    internal static readonly WireMap<PushNotificationEventType> PushNotificationEventType = WireMap<PushNotificationEventType>.ByName();
 
-    internal static readonly WireMap<RatingType> RatingType = WireMap<RatingType>.ByName();
+    internal static readonly WireMap<Rating> Rating = WireMap<Rating>.ByName();
 
     internal static readonly WireMap<PaymentStatus> PaymentStatus = WireMap<PaymentStatus>.ByName();
 

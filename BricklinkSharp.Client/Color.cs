@@ -32,7 +32,7 @@ namespace BricklinkSharp.Client;
 public class Color
 {
     [JsonPropertyName("color_id")]
-    public int ColorId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("color_name")]
     public string Name { get; set; } = null!;
@@ -45,6 +45,6 @@ public class Color
 
     public override string ToString()
     {
-        return $"{ColorId}-{Name} ({Type})";
+        return $"{Id}-{Name} ({Type})";
     }
 }

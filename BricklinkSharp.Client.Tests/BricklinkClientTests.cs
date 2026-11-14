@@ -62,12 +62,12 @@ public class BricklinkClientTests
     [TestCase("2540", 10, "https")]
     [TestCase("2540", 10, "http")]
     [TestCase("43898pb006", 34, "https")]
-    public async Task GetPartImageForColorAsync(string partNo, int colorId, string scheme)
+    public async Task GetPartImageForColor(string itemNumber, int colorId, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetPartImageForColor(partNo, colorId, scheme);
+        var uri = client.GetPartImageForColor(itemNumber, colorId, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/{colorId}/{partNo}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/PN/{colorId}/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -75,12 +75,12 @@ public class BricklinkClientTests
     [TestCase("soc130", "http")]
     [TestCase("85863pb095", "https")]
     [TestCase("sw1093", "https")]
-    public async Task GetMinifigImage(string number, string scheme)
+    public async Task GetMinifigImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetMinifigImage(number, scheme);
+        var uri = client.GetMinifigImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/MN/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/MN/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -88,12 +88,12 @@ public class BricklinkClientTests
     [TestCase("723-1", "http")]
     [TestCase("7774-1", "https")]
     [TestCase("6090-1", "https")]
-    public async Task GetSetImage(string number, string scheme)
+    public async Task GetSetImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetSetImage(number, scheme);
+        var uri = client.GetSetImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/SN/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/SN/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -101,12 +101,12 @@ public class BricklinkClientTests
     [TestCase("DKPiratesNL", "http")]
     [TestCase("5002772", "https")]
     [TestCase("b65de2", "http")]
-    public async Task GetBookImage(string number, string scheme)
+    public async Task GetBookImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetBookImage(number, scheme);
+        var uri = client.GetBookImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/BN/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/BN/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -114,12 +114,12 @@ public class BricklinkClientTests
     [TestCase("BioGMC041", "http")]
     [TestCase("GMRacer1", "https")]
     [TestCase("flyermariode", "http")]
-    public async Task GetGearImage(string number, string scheme)
+    public async Task GetGearImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetGearImage(number, scheme);
+        var uri = client.GetGearImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/GN/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/GN/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -127,12 +127,12 @@ public class BricklinkClientTests
     [TestCase("c58dk2", "http")]
     [TestCase("c77de", "https")]
     [TestCase("c84uk", "http")]
-    public async Task GetCatalogImage(string number, string scheme)
+    public async Task GetCatalogImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetCatalogImage(number, scheme);
+        var uri = client.GetCatalogImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/CN/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/CN/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -140,12 +140,12 @@ public class BricklinkClientTests
     [TestCase("1518-1", "http")]
     [TestCase("2996-1", "https")]
     [TestCase("4128-1", "http")]
-    public async Task GetInstructionImage(string number, string scheme)
+    public async Task GetInstructionImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetInstructionImage(number, scheme);
+        var uri = client.GetInstructionImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/IN/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/IN/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 
@@ -153,12 +153,12 @@ public class BricklinkClientTests
     [TestCase("3552-1", "http")]
     [TestCase("3552-1", "https")]
     [TestCase("4709-1", "http")]
-    public async Task GetOriginalBoxImage(string number, string scheme)
+    public async Task GetOriginalBoxImage(string itemNumber, string scheme)
     {
         using var client = BricklinkClientFactory.Build();
-        var uri = client.GetOriginalBoxImage(number, scheme);
+        var uri = client.GetOriginalBoxImage(itemNumber, scheme);
 
-        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/ON/0/{number}.png", uri.AbsoluteUri);
+        ClassicAssert.AreEqual($"{scheme}://img.bricklink.com/ItemImage/ON/0/{itemNumber}.png", uri.AbsoluteUri);
         ClassicAssert.IsTrue(await CheckUriExistsAsync(uri));
     }
 }

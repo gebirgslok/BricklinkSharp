@@ -23,11 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client;
+namespace BricklinkSharp.Client.Json;
 
-public enum EventType
+internal class FeedbackTargetRoleStringConverter : WireStringConverter<FeedbackTargetRole>
 {
-    Order = 0,
-    Message = 1,
-    Feedback = 2
+    public FeedbackTargetRoleStringConverter() : base(WireMaps.FeedbackTargetRole)
+    {
+    }
 }

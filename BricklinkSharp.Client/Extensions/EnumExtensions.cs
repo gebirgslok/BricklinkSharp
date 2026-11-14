@@ -35,13 +35,11 @@ internal static class EnumExtensions
 
     internal static string ToDomainString(this Condition e) => WireMaps.Condition.ToWire(e);
 
-    internal static string ToDomainString(this PriceGuideType e) => WireMaps.PriceGuideType.ToWire(e);
-
-    internal static string ToDomainString(this OrderDirection e) => WireMaps.OrderDirection.ToWire(e);
+    internal static string ToDomainString(this PriceGuideSource e) => WireMaps.PriceGuideSource.ToWire(e);
 
     internal static string ToDomainString(this Direction e) => WireMaps.Direction.ToWire(e);
 
-    internal static string ToDomainString(this InventoryStatusType e) => WireMaps.InventoryStatusType.ToWire(e);
+    internal static string ToDomainString(this InventoryStatus e) => WireMaps.InventoryStatus.ToWire(e);
 
     internal static string ToDomainString(this CouponStatus e) => WireMaps.CouponStatus.ToWire(e);
 
@@ -49,7 +47,7 @@ internal static class EnumExtensions
 
     internal static string ToDomainString(this AppearsAs e) => WireMaps.AppearsAs.ToWire(e);
 
-    internal static string ToDomainString(this RatingTargetRole e) => WireMaps.RatingTargetRole.ToWire(e);
+    internal static string ToDomainString(this FeedbackTargetRole e) => WireMaps.FeedbackTargetRole.ToWire(e);
 
     internal static string ToDomainString(this DiscountType e) => WireMaps.DiscountType.ToWire(e);
 
@@ -57,9 +55,9 @@ internal static class EnumExtensions
 
     internal static string ToDomainString(this CouponRestrictionType e) => WireMaps.CouponRestrictionType.ToWire(e);
 
-    internal static string ToDomainString(this EventType e) => WireMaps.EventType.ToWire(e);
+    internal static string ToDomainString(this PushNotificationEventType e) => WireMaps.PushNotificationEventType.ToWire(e);
 
-    internal static string ToDomainString(this RatingType e) => WireMaps.RatingType.ToWire(e);
+    internal static string ToDomainString(this Rating e) => WireMaps.Rating.ToWire(e);
 
     internal static string ToDomainString(this PaymentStatus e) => WireMaps.PaymentStatus.ToWire(e);
 

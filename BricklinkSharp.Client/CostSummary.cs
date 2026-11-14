@@ -30,32 +30,19 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public abstract class OrderBase
+public class CostSummary
 {
-    [JsonPropertyName("order_id")]
-    public int OrderId { get; set; }
+    [JsonPropertyName("currency_code")]
+    public string CurrencyCode { get; set; } = null!;
 
-    [JsonPropertyName("date_ordered")]
-    public DateTime OrderDate { get; set; }
+    [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Subtotal { get; set; }
 
-    [JsonPropertyName("seller_name")]
-    public string SellerName { get; set; } = null!;
+    [JsonPropertyName("grand_total"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal GrandTotal { get; set; }
 
-    [JsonPropertyName("buyer_name")]
-    public string BuyerName { get; set; } = null!;
-
-    [JsonPropertyName("store_name")]
-    public string StoreName { get; set; } = null!;
-
-    [JsonPropertyName("total_count")]
-    public int TotalCount { get; set; }
-
-    [JsonPropertyName("unique_count")]
-    public int UniqueCount { get; set; }
-
-    [JsonPropertyName("status"), JsonConverter(typeof(OrderStatusStringConverter))]
-    public OrderStatus Status { get; set; }
-
-    [JsonPropertyName("payment")]
-    public Payment Payment { get; set; } = null!;
+    public override string ToString()
+    {
+        return $"{GrandTotal:F2} (subtotal {Subtotal:F2}) - {CurrencyCode}";
+    }
 }

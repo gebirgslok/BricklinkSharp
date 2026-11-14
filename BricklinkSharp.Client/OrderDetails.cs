@@ -30,10 +30,10 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class OrderDetails : OrderBase
+public class OrderDetails : Order
 {
     [JsonPropertyName("date_status_changed")]
-    public DateTime StatusChangedDate { get; set; }
+    public DateTime StatusChangedOn { get; set; }
 
     [JsonPropertyName("buyer_email")]
     public string BuyerEmail { get; set; } = null!;
@@ -66,8 +66,8 @@ public class OrderDetails : OrderBase
     public Shipping Shipping { get; set; } = null!;
 
     [JsonPropertyName("cost")]
-    public Cost Cost { get; set; } = null!;
+    public new Cost Cost { get; set; } = null!;
 
     [JsonPropertyName("disp_cost")]
-    public Cost DisplayCost { get; set; } = null!;
+    public new Cost DisplayCost { get; set; } = null!;
 }

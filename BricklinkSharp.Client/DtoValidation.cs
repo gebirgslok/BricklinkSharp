@@ -64,7 +64,7 @@ internal static class DtoValidation
             maxFirstTierPriceName: nameof(dto.UnitPrice),
             maxFirstTierPrice: dto.UnitPrice);
 
-        ValidateBulk(dto.Bulk, dtoType);
+        ValidateBulk(dto.BulkQuantity, dtoType);
     }
 
     internal static void Validate(UpdateInventory dto)
@@ -92,10 +92,10 @@ internal static class DtoValidation
             maxFirstTierPriceName: nameof(dto.UnitPrice),
             maxFirstTierPrice: dto.UnitPrice);
 
-        ValidateBulk(dto.Bulk, dtoType);
+        ValidateBulk(dto.BulkQuantity, dtoType);
     }
 
-    internal static void Validate(CouponBase dto)
+    internal static void Validate(CouponTerms dto)
     {
         if (dto.DiscountType != DiscountType.Percentage)
         {
@@ -149,9 +149,9 @@ internal static class DtoValidation
         {
             throw new BricklinkInvalidParameterException(new Dictionary<string, object>
                 {
-                    {"Bulk", bulk}
+                    {"BulkQuantity", bulk}
                 },
-                "Bulk must be > 0.",
+                "BulkQuantity must be > 0.",
                 dtoType);
         }
     }

@@ -93,27 +93,25 @@ public class WireFormatCharacterizationTests
     }
 
     [Test]
-    public void Should_MapToWire_When_PriceGuideTypeToDomainString()
+    public void Should_MapToWire_When_PriceGuideSourceToDomainString()
     {
-        AssertDomainStrings<PriceGuideType>(e => e.ToDomainString(),
-            (PriceGuideType.Sold, "sold"), (PriceGuideType.Stock, "stock"));
+        AssertDomainStrings<PriceGuideSource>(e => e.ToDomainString(),
+            (PriceGuideSource.Sold, "sold"), (PriceGuideSource.Stock, "stock"));
     }
 
     [Test]
     public void Should_MapToWire_When_DirectionsToDomainString()
     {
-        AssertDomainStrings<OrderDirection>(e => e.ToDomainString(),
-            (OrderDirection.In, "in"), (OrderDirection.Out, "out"));
         AssertDomainStrings<Direction>(e => e.ToDomainString(), (Direction.In, "in"), (Direction.Out, "out"));
     }
 
     [Test]
-    public void Should_MapToWire_When_InventoryStatusTypeToDomainString()
+    public void Should_MapToWire_When_InventoryStatusToDomainString()
     {
-        AssertDomainStrings<InventoryStatusType>(e => e.ToDomainString(),
-            (InventoryStatusType.Available, "Y"), (InventoryStatusType.InStockRoomA, "S"),
-            (InventoryStatusType.InStockRoomB, "B"), (InventoryStatusType.InStockRoomC, "C"),
-            (InventoryStatusType.Unavailable, "N"), (InventoryStatusType.Reserved, "R"));
+        AssertDomainStrings<InventoryStatus>(e => e.ToDomainString(),
+            (InventoryStatus.Available, "Y"), (InventoryStatus.InStockRoomA, "S"),
+            (InventoryStatus.InStockRoomB, "B"), (InventoryStatus.InStockRoomC, "C"),
+            (InventoryStatus.Unavailable, "N"), (InventoryStatus.Reserved, "R"));
     }
 
     [Test]
@@ -139,10 +137,10 @@ public class WireFormatCharacterizationTests
     }
 
     [Test]
-    public void Should_MapToWire_When_RatingTargetRoleToDomainString()
+    public void Should_MapToWire_When_FeedbackTargetRoleToDomainString()
     {
-        AssertDomainStrings<RatingTargetRole>(e => e.ToDomainString(),
-            (RatingTargetRole.Seller, "S"), (RatingTargetRole.Buyer, "B"));
+        AssertDomainStrings<FeedbackTargetRole>(e => e.ToDomainString(),
+            (FeedbackTargetRole.Seller, "S"), (FeedbackTargetRole.Buyer, "B"));
     }
 
     [Test]
@@ -167,17 +165,17 @@ public class WireFormatCharacterizationTests
     }
 
     [Test]
-    public void Should_MapToWire_When_EventTypeToDomainString()
+    public void Should_MapToWire_When_PushNotificationEventTypeToDomainString()
     {
-        AssertDomainStrings<EventType>(e => e.ToDomainString(),
-            (EventType.Order, "Order"), (EventType.Message, "Message"), (EventType.Feedback, "Feedback"));
+        AssertDomainStrings<PushNotificationEventType>(e => e.ToDomainString(),
+            (PushNotificationEventType.Order, "Order"), (PushNotificationEventType.Message, "Message"), (PushNotificationEventType.Feedback, "Feedback"));
     }
 
     [Test]
-    public void Should_MapToWire_When_RatingTypeToDomainString()
+    public void Should_MapToWire_When_RatingToDomainString()
     {
-        AssertDomainStrings<RatingType>(e => e.ToDomainString(),
-            (RatingType.Praise, "Praise"), (RatingType.Neutral, "Neutral"), (RatingType.Complaint, "Complaint"));
+        AssertDomainStrings<Rating>(e => e.ToDomainString(),
+            (Rating.Praise, "Praise"), (Rating.Neutral, "Neutral"), (Rating.Complaint, "Complaint"));
     }
 
     [Test]
@@ -232,10 +230,10 @@ public class WireFormatCharacterizationTests
     }
 
     [Test]
-    public void Should_RoundTrip_When_RatingTargetRoleConverterIsUsed()
+    public void Should_RoundTrip_When_FeedbackTargetRoleConverterIsUsed()
     {
-        AssertConverter(new RatingTargetRoleStringConverter(),
-            (RatingTargetRole.Seller, "S"), (RatingTargetRole.Buyer, "B"));
+        AssertConverter(new FeedbackTargetRoleStringConverter(),
+            (FeedbackTargetRole.Seller, "S"), (FeedbackTargetRole.Buyer, "B"));
     }
 
     [Test]
@@ -265,10 +263,10 @@ public class WireFormatCharacterizationTests
     }
 
     [Test]
-    public void Should_RoundTrip_When_EventTypeConverterIsUsed()
+    public void Should_RoundTrip_When_PushNotificationEventTypeConverterIsUsed()
     {
-        AssertConverter(new EventTypeStringConverter(),
-            (EventType.Order, "Order"), (EventType.Message, "Message"), (EventType.Feedback, "Feedback"));
+        AssertConverter(new PushNotificationEventTypeStringConverter(),
+            (PushNotificationEventType.Order, "Order"), (PushNotificationEventType.Message, "Message"), (PushNotificationEventType.Feedback, "Feedback"));
     }
 
     [Test]
@@ -319,16 +317,16 @@ public class WireFormatCharacterizationTests
     }
 
     [Test]
-    public void Should_RoundTrip_When_RatingTypeConverterIsUsed()
+    public void Should_RoundTrip_When_RatingConverterIsUsed()
     {
-        var converter = new RatingTypeIntConverter();
+        var converter = new RatingIntConverter();
 
-        ClassicAssert.AreEqual(RatingType.Praise, ConverterHarness.Read(converter, "0"));
-        ClassicAssert.AreEqual(RatingType.Neutral, ConverterHarness.Read(converter, "1"));
-        ClassicAssert.AreEqual(RatingType.Complaint, ConverterHarness.Read(converter, "2"));
-        ClassicAssert.AreEqual("0", ConverterHarness.Write(converter, RatingType.Praise));
-        ClassicAssert.AreEqual("1", ConverterHarness.Write(converter, RatingType.Neutral));
-        ClassicAssert.AreEqual("2", ConverterHarness.Write(converter, RatingType.Complaint));
+        ClassicAssert.AreEqual(Rating.Praise, ConverterHarness.Read(converter, "0"));
+        ClassicAssert.AreEqual(Rating.Neutral, ConverterHarness.Read(converter, "1"));
+        ClassicAssert.AreEqual(Rating.Complaint, ConverterHarness.Read(converter, "2"));
+        ClassicAssert.AreEqual("0", ConverterHarness.Write(converter, Rating.Praise));
+        ClassicAssert.AreEqual("1", ConverterHarness.Write(converter, Rating.Neutral));
+        ClassicAssert.AreEqual("2", ConverterHarness.Write(converter, Rating.Complaint));
     }
 
     [Test]

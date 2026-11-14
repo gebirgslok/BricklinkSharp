@@ -30,10 +30,10 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class Inventory : InventoryBase
+public class Inventory : InventoryFields
 {
     [JsonPropertyName("inventory_id")]
-    public int InventoryId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("item")]
     public InventoryItem Item { get; set; } = null!;
@@ -48,8 +48,8 @@ public class Inventory : InventoryBase
     public DateTime CreatedOn { get; set; }
 
     [JsonPropertyName("sale_rate")]
-    public int SaleRate { get; set; }
+    public int SaleRatePercent { get; set; }
 
     [JsonPropertyName("my_weight"), JsonConverter(typeof(DoubleStringConverter))]
-    public double MyWeight { get; set; }
+    public double OwnWeight { get; set; }
 }

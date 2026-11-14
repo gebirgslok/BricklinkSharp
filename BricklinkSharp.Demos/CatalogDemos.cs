@@ -44,7 +44,7 @@ internal static class CatalogDemos
     {
         using var client = BricklinkClientFactory.Build();
         var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1,
-            priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
+            source: PriceGuideSource.Sold, condition: Condition.Used);
 
         PrintHelper.PrintAsJson(priceGuide);
     }
@@ -74,18 +74,18 @@ internal static class CatalogDemos
         PrintHelper.PrintAsJson(supersets);
     }
 
-    public static async Task GetItemDemo()
+    public static async Task GetCatalogItemDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var catalogItem = await client.GetItemAsync(ItemType.Minifig, "sw0693");
+        var catalogItem = await client.GetCatalogItemAsync(ItemType.Minifig, "sw0693");
 
         PrintHelper.PrintAsJson(catalogItem);
     }
 
-    public static async Task GetItemImageDemo()
+    public static async Task GetCatalogItemImageDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var catalogImage = await client.GetItemImageAsync(ItemType.Part, "2540", 8);
+        var catalogImage = await client.GetCatalogImageAsync(ItemType.Part, "2540", 8);
 
         PrintHelper.PrintAsJson(catalogImage);
     }

@@ -112,140 +112,140 @@ internal sealed class BricklinkClient : IBricklinkClient
         _isDisposed = true;
     }
 
-    public Task<CatalogItem> GetItemAsync(ItemType type,
-        string no,
+    public Task<CatalogItem> GetCatalogItemAsync(ItemType type,
+        string itemNumber,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<CatalogItem>(
-            new BricklinkRequest(BricklinkApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{no}")
+            new BricklinkRequest(ApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{itemNumber}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<CatalogImage> GetItemImageAsync(ItemType type,
-        string no,
+    public Task<CatalogImage> GetCatalogImageAsync(ItemType type,
+        string itemNumber,
         int colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<CatalogImage>(
-            new BricklinkRequest(BricklinkApiResourceType.ItemImage, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/images/{colorId}")
+            new BricklinkRequest(ApiResourceType.ItemImage, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{itemNumber}/images/{colorId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Uri? GetImage(string number, ItemType type, int? colorId = null, string scheme = "https")
+    public Uri? GetImage(string itemNumber, ItemType type, int? colorId = null, string scheme = "https")
     {
         return type switch
         {
-            ItemType.Minifig => GetMinifigImage(number, scheme),
-            ItemType.Part => colorId.HasValue ? GetPartImageForColor(number, colorId.Value, scheme) : null,
-            ItemType.Set => GetSetImage(number, scheme),
-            ItemType.Book => GetBookImage(number, scheme),
-            ItemType.Gear => GetGearImage(number, scheme),
-            ItemType.Catalog => GetCatalogImage(number, scheme),
-            ItemType.Instruction => GetInstructionImage(number, scheme),
-            ItemType.OriginalBox => GetOriginalBoxImage(number, scheme),
+            ItemType.Minifig => GetMinifigImage(itemNumber, scheme),
+            ItemType.Part => colorId.HasValue ? GetPartImageForColor(itemNumber, colorId.Value, scheme) : null,
+            ItemType.Set => GetSetImage(itemNumber, scheme),
+            ItemType.Book => GetBookImage(itemNumber, scheme),
+            ItemType.Gear => GetGearImage(itemNumber, scheme),
+            ItemType.Catalog => GetCatalogImage(itemNumber, scheme),
+            ItemType.Instruction => GetInstructionImage(itemNumber, scheme),
+            ItemType.OriginalBox => GetOriginalBoxImage(itemNumber, scheme),
             _ => null
         };
     }
 
-    public Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https")
+    public Uri GetPartImageForColor(string itemNumber, int colorId, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), partNo)}");
+        return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), itemNumber)}");
     }
 
-    public Uri GetMinifigImage(string number, string scheme = "https")
+    public Uri GetMinifigImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_minifigImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_minifigImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetSetImage(string number, string scheme = "https")
+    public Uri GetSetImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_setImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_setImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetBookImage(string number, string scheme = "https")
+    public Uri GetBookImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_bookImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_bookImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetGearImage(string number, string scheme = "https")
+    public Uri GetGearImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_gearImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_gearImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetCatalogImage(string number, string scheme = "https")
+    public Uri GetCatalogImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_catalogImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_catalogImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetInstructionImage(string number, string scheme = "https")
+    public Uri GetInstructionImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_instructionImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_instructionImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetOriginalBoxImage(string number, string scheme = "https")
+    public Uri GetOriginalBoxImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, itemNumber)}");
     }
 
-    public Uri? GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https")
+    public Uri? GetThumbnail(string itemNumber, ItemType type, int? colorId = null, string scheme = "https")
     {
         return type switch
         {
-            ItemType.Minifig => GetMinifigThumbnail(number, scheme),
-            ItemType.Part => colorId.HasValue ? GetPartThumbnailForColor(number, colorId.Value, scheme) : null,
-            ItemType.Set => GetSetThumbnail(number, scheme),
-            ItemType.Book => GetBookThumbnail(number, scheme),
-            ItemType.Gear => GetGearThumbnail(number, scheme),
-            ItemType.Catalog => GetCatalogThumbnail(number, scheme),
-            ItemType.Instruction => GetInstructionThumbnail(number, scheme),
-            ItemType.OriginalBox => GetOriginalBoxThumbnail(number, scheme),
+            ItemType.Minifig => GetMinifigThumbnail(itemNumber, scheme),
+            ItemType.Part => colorId.HasValue ? GetPartThumbnailForColor(itemNumber, colorId.Value, scheme) : null,
+            ItemType.Set => GetSetThumbnail(itemNumber, scheme),
+            ItemType.Book => GetBookThumbnail(itemNumber, scheme),
+            ItemType.Gear => GetGearThumbnail(itemNumber, scheme),
+            ItemType.Catalog => GetCatalogThumbnail(itemNumber, scheme),
+            ItemType.Instruction => GetInstructionThumbnail(itemNumber, scheme),
+            ItemType.OriginalBox => GetOriginalBoxThumbnail(itemNumber, scheme),
             _ => null
         };
     }
 
-    public Uri GetPartThumbnailForColor(string partNo, int colorId, string scheme = "https")
+    public Uri GetPartThumbnailForColor(string itemNumber, int colorId, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), partNo)}");
+        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), itemNumber)}");
     }
 
-    public Uri GetMinifigThumbnail(string number, string scheme = "https")
+    public Uri GetMinifigThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetSetThumbnail(string number, string scheme = "https")
+    public Uri GetSetThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetBookThumbnail(string number, string scheme = "https")
+    public Uri GetBookThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetGearThumbnail(string number, string scheme = "https")
+    public Uri GetGearThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetCatalogThumbnail(string number, string scheme = "https")
+    public Uri GetCatalogThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetInstructionThumbnail(string number, string scheme = "https")
+    public Uri GetInstructionThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, itemNumber)}");
     }
 
-    public Uri GetOriginalBoxThumbnail(string number, string scheme = "https")
+    public Uri GetOriginalBoxThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, number)}");
+        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, itemNumber)}");
     }
 
     public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")
@@ -253,21 +253,21 @@ internal sealed class BricklinkClient : IBricklinkClient
         return new Uri($"{scheme}:{imageUrl}");
     }
 
-    public Task<Superset[]> GetSupersetsAsync(ItemType type, string no,
+    public Task<Superset[]> GetSupersetsAsync(ItemType type, string itemNumber,
         int colorId = 0,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Superset[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Superset, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/supersets")
+            new BricklinkRequest(ApiResourceType.Superset, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{itemNumber}/supersets")
                 .WithQueryParameter("color_id", colorId > 0 ? colorId : null)
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Subset[]> GetSubsetsAsync(ItemType type, string no,
+    public Task<Subset[]> GetSubsetsAsync(ItemType type, string itemNumber,
         int colorId = 0, bool? includeOriginalBox = null,
         bool? includeInstruction = null, bool? breakMinifigs = null,
         bool? breakSubsets = null,
@@ -275,8 +275,8 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Subset[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Subset, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/subsets")
+            new BricklinkRequest(ApiResourceType.Subset, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{itemNumber}/subsets")
                 .WithQueryParameter("color_id", colorId)
                 .WithQueryParameter("box", includeOriginalBox)
                 .WithQueryParameter("instruction", includeInstruction)
@@ -287,18 +287,18 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
-        PriceGuideType? priceGuideType = null, Condition? condition = null,
+    public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string itemNumber, int colorId = 0,
+        PriceGuideSource? source = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
         VatOption? vat = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<PriceGuide>(
-            new BricklinkRequest(BricklinkApiResourceType.PriceGuide, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/price")
+            new BricklinkRequest(ApiResourceType.PriceGuide, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{itemNumber}/price")
                 .WithQueryParameter("color_id", colorId)
-                .WithQueryParameter("guide_type", priceGuideType?.ToDomainString())
+                .WithQueryParameter("guide_type", source?.ToDomainString())
                 .WithQueryParameter("new_or_used", condition?.ToDomainString())
                 .WithQueryParameter("country_code", countryCode)
                 .WithQueryParameter("region", region)
@@ -308,23 +308,23 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string no,
+    public Task<KnownColor[]> GetKnownColorsAsync(ItemType type, string itemNumber,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<KnownColor[]>(
-            new BricklinkRequest(BricklinkApiResourceType.KnownColor, HttpVerb.Get,
-                    $"items/{type.ToDomainString()}/{no}/colors")
+            new BricklinkRequest(ApiResourceType.KnownColor, HttpVerb.Get,
+                    $"items/{type.ToDomainString()}/{itemNumber}/colors")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Color[]> GetColorListAsync(BricklinkCredentials? credentials = null,
+    public Task<Color[]> GetColorsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Color[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ColorList, HttpVerb.Get, "colors")
+            new BricklinkRequest(ApiResourceType.ColorList, HttpVerb.Get, "colors")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -335,16 +335,16 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Color>(
-            new BricklinkRequest(BricklinkApiResourceType.Color, HttpVerb.Get, $"colors/{colorId}")
+            new BricklinkRequest(ApiResourceType.Color, HttpVerb.Get, $"colors/{colorId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
+    public Task<Category[]> GetCategoriesAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Category[]>(
-            new BricklinkRequest(BricklinkApiResourceType.CategoryList, HttpVerb.Get, "categories")
+            new BricklinkRequest(ApiResourceType.CategoryList, HttpVerb.Get, "categories")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -355,15 +355,15 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Category>(
-            new BricklinkRequest(BricklinkApiResourceType.Category, HttpVerb.Get, $"categories/{categoryId}")
+            new BricklinkRequest(ApiResourceType.Category, HttpVerb.Get, $"categories/{categoryId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
+    public Task<Inventory[]> GetInventoriesAsync(IEnumerable<ItemType>? includedItemTypes = null,
         IEnumerable<ItemType>? excludedItemTypes = null,
-        IEnumerable<InventoryStatusType>? includedStatusFlags = null,
-        IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
+        IEnumerable<InventoryStatus>? includedStatusFlags = null,
+        IEnumerable<InventoryStatus>? excludedStatusFlags = null,
         IEnumerable<int>? includedCategoryIds = null,
         IEnumerable<int>? excludedCategoryIds = null,
         IEnumerable<int>? includedColorIds = null,
@@ -372,7 +372,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Inventory[]>(
-            new BricklinkRequest(BricklinkApiResourceType.InventoryList, HttpVerb.Get, "inventories")
+            new BricklinkRequest(ApiResourceType.InventoryList, HttpVerb.Get, "inventories")
                 .WithQueryParameter("item_type", BuildIncludeExcludeParameter(includedItemTypes,
                     excludedItemTypes, t => t.ToDomainString()))
                 .WithQueryParameter("status", BuildIncludeExcludeParameter(includedStatusFlags,
@@ -390,7 +390,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Inventory>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Get, $"inventories/{inventoryId}")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Get, $"inventories/{inventoryId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -402,7 +402,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(newInventory);
 
         return await _executor.SendAsync<Inventory>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Post, "inventories")
                 .WithBody(newInventory)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -419,7 +419,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         }
 
         await _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Post, "inventories")
                 .WithBody(newInventories)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -434,7 +434,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(updateInventory);
 
         return await _executor.SendAsync<Inventory>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
                 .WithBody(updateInventory)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -446,58 +446,58 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, $"inventories/{inventoryId}")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Delete, $"inventories/{inventoryId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<ItemMapping[]> GetElementIdAsync(string partNo, int? colorId,
+    public Task<ItemMapping[]> GetItemMappingsByItemAsync(string itemNumber, int? colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ItemMapping[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{partNo}")
+            new BricklinkRequest(ApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{itemNumber}")
                 .WithQueryParameter("color_id", colorId)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<ItemMapping[]> GetItemNumberAsync(string elementId,
+    public Task<ItemMapping[]> GetItemMappingsByElementIdAsync(string elementId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ItemMapping[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ItemNumber, HttpVerb.Get, $"item_mapping/{elementId}")
+            new BricklinkRequest(ApiResourceType.ItemNumber, HttpVerb.Get, $"item_mapping/{elementId}")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null,
+    public Task<ShippingMethod[]> GetShippingMethodsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ShippingMethod[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get, "settings/shipping_methods")
+            new BricklinkRequest(ApiResourceType.ShippingMethod, HttpVerb.Get, "settings/shipping_methods")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<ShippingMethod> GetShippingMethodAsync(int methodId,
+    public Task<ShippingMethod> GetShippingMethodAsync(int shippingMethodId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ShippingMethod>(
-            new BricklinkRequest(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get,
-                    $"settings/shipping_methods/{methodId}")
+            new BricklinkRequest(ApiResourceType.ShippingMethod, HttpVerb.Get,
+                    $"settings/shipping_methods/{shippingMethodId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+    public Task<PushNotification[]> GetPushNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<Notification[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Notification, HttpVerb.Get, "notifications")
+        return _executor.SendAsync<PushNotification[]>(
+            new BricklinkRequest(ApiResourceType.Notification, HttpVerb.Get, "notifications")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -507,17 +507,17 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<MemberRating>(
-            new BricklinkRequest(BricklinkApiResourceType.MemberRating, HttpVerb.Get, $"members/{username}/ratings")
+            new BricklinkRequest(ApiResourceType.MemberRating, HttpVerb.Get, $"members/{username}/ratings")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
+    public Task<Feedback[]> GetFeedbacksAsync(Direction? direction = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Feedback[]>(
-            new BricklinkRequest(BricklinkApiResourceType.FeedbackList, HttpVerb.Get, "feedback")
+            new BricklinkRequest(ApiResourceType.FeedbackList, HttpVerb.Get, "feedback")
                 .WithQueryParameter("direction", direction?.ToString().ToLowerInvariant())
                 .WithCredentials(credentials),
             cancellationToken);
@@ -528,18 +528,18 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Feedback>(
-            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Get, $"feedback/{feedbackId}")
+            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Get, $"feedback/{feedbackId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
     public Task<Feedback> PostFeedbackAsync(int orderId,
-        RatingType rating,
+        Rating rating,
         string comment,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var body = new FeedbackBase
+        var body = new FeedbackPostBody
         {
             Comment = comment,
             OrderId = orderId,
@@ -547,25 +547,25 @@ internal sealed class BricklinkClient : IBricklinkClient
         };
 
         return _executor.SendAsync<Feedback>(
-            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Post, "feedback")
+            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Post, "feedback")
                 .WithBody(body)
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task ReplyFeedbackAsync(int feedbackId,
+    public Task ReplyToFeedbackAsync(int feedbackId,
         string reply,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Post, $"feedback/{feedbackId}/reply")
+            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Post, $"feedback/{feedbackId}/reply")
                 .WithBody(new { reply })
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+    public Task<Order[]> GetOrdersAsync(Direction direction = Direction.In,
         IEnumerable<OrderStatus>? includedStatusFlags = null,
         IEnumerable<OrderStatus>? excludedStatusFlags = null,
         bool filed = false,
@@ -573,7 +573,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Order[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Get, "orders")
+            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Get, "orders")
                 .WithQueryParameter("direction", direction.ToDomainString())
                 .WithQueryParameter("status", BuildIncludeExcludeParameter(includedStatusFlags,
                     excludedStatusFlags, f => f.ToDomainString()))
@@ -587,7 +587,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<OrderDetails>(
-            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Get, $"orders/{orderId}")
+            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Get, $"orders/{orderId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -597,7 +597,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         var itemsBatches = await _executor.SendAsync<OrderItem[][]>(
-                new BricklinkRequest(BricklinkApiResourceType.OrderItem, HttpVerb.Get, $"orders/{orderId}/items")
+                new BricklinkRequest(ApiResourceType.OrderItem, HttpVerb.Get, $"orders/{orderId}/items")
                     .WithCredentials(credentials),
                 cancellationToken)
             .ConfigureAwait(false);
@@ -610,17 +610,17 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<OrderMessage[]>(
-            new BricklinkRequest(BricklinkApiResourceType.OrderMessage, HttpVerb.Get, $"orders/{orderId}/messages")
+            new BricklinkRequest(ApiResourceType.OrderMessage, HttpVerb.Get, $"orders/{orderId}/messages")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Feedback[]> GetOrderFeedbackAsync(int orderId,
+    public Task<Feedback[]> GetOrderFeedbacksAsync(int orderId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Feedback[]>(
-            new BricklinkRequest(BricklinkApiResourceType.OrderFeedback, HttpVerb.Get, $"orders/{orderId}/feedback")
+            new BricklinkRequest(ApiResourceType.OrderFeedback, HttpVerb.Get, $"orders/{orderId}/feedback")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -631,7 +631,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.OrderStatus, HttpVerb.Put, $"orders/{orderId}/status")
+            new BricklinkRequest(ApiResourceType.OrderStatus, HttpVerb.Put, $"orders/{orderId}/status")
                 .WithBody(new { field = "status", value = status.ToDomainString() })
                 .WithCredentials(credentials),
             cancellationToken);
@@ -643,7 +643,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.PaymentStatus, HttpVerb.Put,
+            new BricklinkRequest(ApiResourceType.PaymentStatus, HttpVerb.Put,
                     $"orders/{orderId}/payment_status")
                 .WithBody(new { field = "payment_status", value = status.ToDomainString() })
                 .WithCredentials(credentials),
@@ -656,7 +656,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.DriveThru, HttpVerb.Post, $"orders/{orderId}/drive_thru")
+            new BricklinkRequest(ApiResourceType.DriveThru, HttpVerb.Post, $"orders/{orderId}/drive_thru")
                 .WithQueryParameter("mail_me", mailCcMe)
                 .WithExpectedMetaCode(204)
                 .WithCredentials(credentials),
@@ -669,7 +669,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<OrderDetails>(
-            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Put, $"orders/{orderId}")
+            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Put, $"orders/{orderId}")
                 .WithBody(updateOrder)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -688,7 +688,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Coupon[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Get, "coupons")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Get, "coupons")
                 .WithQueryParameter("direction", direction.ToDomainString())
                 .WithQueryParameter("status", BuildIncludeExcludeParameter(includedCouponStatusTypes,
                     excludedCouponStatusTypes, f => f.ToDomainString()))
@@ -701,7 +701,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Coupon>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Get, $"coupons/{couponId}")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Get, $"coupons/{couponId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -711,7 +711,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Delete, $"coupons/{couponId}")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Delete, $"coupons/{couponId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -723,7 +723,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(newCoupon);
 
         return await _executor.SendAsync<Coupon>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Post, "coupons")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Post, "coupons")
                 .WithBody(newCoupon)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -738,7 +738,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(updateCoupon);
 
         return await _executor.SendAsync<Coupon>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")
                 .WithBody(updateCoupon)
                 .WithCredentials(credentials),
             cancellationToken)

@@ -35,7 +35,7 @@ internal sealed class BricklinkRequest
 {
     private KeyValuePair<string, string>[] _queryParameters;
 
-    public BricklinkRequest(BricklinkApiResourceType resource, HttpVerb verb, string path)
+    public BricklinkRequest(ApiResourceType resource, HttpVerb verb, string path)
     {
         Resource = resource;
         Verb = verb;
@@ -55,7 +55,7 @@ internal sealed class BricklinkRequest
         Shape = other.Shape;
     }
 
-    public BricklinkApiResourceType Resource { get; }
+    public ApiResourceType Resource { get; }
 
     public HttpVerb Verb { get; }
 

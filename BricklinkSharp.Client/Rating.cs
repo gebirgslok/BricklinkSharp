@@ -23,19 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Text.Json.Serialization;
-// ReSharper disable ClassNeverInstantiated.Global
-
 namespace BricklinkSharp.Client;
 
-public class Rating
+public enum Rating
 {
-    [JsonPropertyName("PRAISE")]
-    public int NumOfPraises { get; set; }
-
-    [JsonPropertyName("NEUTRAL")]
-    public int NumOfNeutrals { get; set; }
-
-    [JsonPropertyName("COMPLAINT")]
-    public int NumOfComplaints { get; set; }
+    Praise = 0,
+    Neutral = 1,
+    Complaint = 2
 }

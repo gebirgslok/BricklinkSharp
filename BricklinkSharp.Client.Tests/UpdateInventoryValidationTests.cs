@@ -44,7 +44,7 @@ public class UpdateInventoryValidationTests
     private static BricklinkInvalidParameterException ValidateAndCatch(UpdateInventory inventory)
     {
         var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(inventory));
-        Assert.That(exception!.TypeOfDataObject, Is.EqualTo(typeof(UpdateInventory)));
+        Assert.That(exception!.DataObjectType, Is.EqualTo(typeof(UpdateInventory)));
         return exception;
     }
 
@@ -257,25 +257,25 @@ public class UpdateInventoryValidationTests
     [TestCase(-5)]
     public void Should_Throw_When_BulkIsLessThanOne(int bulk)
     {
-        var inventory = new UpdateInventory { Bulk = bulk };
+        var inventory = new UpdateInventory { BulkQuantity = bulk };
 
         var exception = ValidateAndCatch(inventory);
 
-        Assert.That(exception.InvalidParameters!.Keys, Is.EqualTo(new[] { "Bulk" }));
-        Assert.That(exception.InvalidParameters["Bulk"], Is.EqualTo(bulk));
-        Assert.That(exception.Message, Does.StartWith("Bulk must be > 0."));
+        Assert.That(exception.InvalidParameters!.Keys, Is.EqualTo(new[] { "BulkQuantity" }));
+        Assert.That(exception.InvalidParameters["BulkQuantity"], Is.EqualTo(bulk));
+        Assert.That(exception.Message, Does.StartWith("BulkQuantity must be > 0."));
     }
 
     [Test]
     public void Should_NotThrow_When_BulkIsOne()
     {
-        Assert.DoesNotThrow(() => DtoValidation.Validate(new UpdateInventory { Bulk = 1 }));
+        Assert.DoesNotThrow(() => DtoValidation.Validate(new UpdateInventory { BulkQuantity = 1 }));
     }
 
     [Test]
     public void Should_ReportOnlyStockRoomViolation_When_StockRoomTiersAndBulkAllFail()
     {
-        var inventory = new UpdateInventory { IsStockRoom = true, StockRoomId = "D", TierPrice1 = 9M, Bulk = 0 };
+        var inventory = new UpdateInventory { IsStockRoom = true, StockRoomId = "D", TierPrice1 = 9M, BulkQuantity = 0 };
 
         var exception = ValidateAndCatch(inventory);
 
@@ -285,11 +285,11 @@ public class UpdateInventoryValidationTests
     [Test]
     public void Should_ReportTierViolationOnly_When_TiersAndBulkBothFail()
     {
-        var inventory = new UpdateInventory { TierPrice1 = 9M, Bulk = 0 };
+        var inventory = new UpdateInventory { TierPrice1 = 9M, BulkQuantity = 0 };
 
         var exception = ValidateAndCatch(inventory);
 
         Assert.That(exception.InvalidParameters!.Keys, Does.Contain("TierPrice1"));
-        Assert.That(exception.InvalidParameters.Keys, Does.Not.Contain("Bulk"));
+        Assert.That(exception.InvalidParameters.Keys, Does.Not.Contain("BulkQuantity"));
     }
 }

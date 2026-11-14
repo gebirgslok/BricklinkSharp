@@ -32,65 +32,65 @@ namespace BricklinkSharp.Client;
 
 public interface IBricklinkClient : IDisposable
 {
-    Task<CatalogItem> GetItemAsync(ItemType type,
-        string no,
+    Task<CatalogItem> GetCatalogItemAsync(ItemType type,
+        string itemNumber,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<CatalogImage> GetItemImageAsync(ItemType type,
-        string no,
+    Task<CatalogImage> GetCatalogImageAsync(ItemType type,
+        string itemNumber,
         int colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Uri? GetImage(string number, ItemType type, int? colorId = null, string scheme = "https");
-    Uri GetPartImageForColor(string partNo, int colorId, string scheme = "https");
+    Uri? GetImage(string itemNumber, ItemType type, int? colorId = null, string scheme = "https");
+    Uri GetPartImageForColor(string itemNumber, int colorId, string scheme = "https");
 
-    Uri GetMinifigImage(string number, string scheme = "https");
+    Uri GetMinifigImage(string itemNumber, string scheme = "https");
 
-    Uri GetSetImage(string number, string scheme = "https");
+    Uri GetSetImage(string itemNumber, string scheme = "https");
 
-    Uri GetBookImage(string number, string scheme = "https");
+    Uri GetBookImage(string itemNumber, string scheme = "https");
 
-    Uri GetGearImage(string number, string scheme = "https");
+    Uri GetGearImage(string itemNumber, string scheme = "https");
 
-    Uri GetCatalogImage(string number, string scheme = "https");
+    Uri GetCatalogImage(string itemNumber, string scheme = "https");
 
-    Uri GetInstructionImage(string number, string scheme = "https");
+    Uri GetInstructionImage(string itemNumber, string scheme = "https");
 
-    Uri GetOriginalBoxImage(string number, string scheme = "https");
-    Uri? GetThumbnail(string number, ItemType type, int? colorId = null, string scheme = "https");
-    Uri GetPartThumbnailForColor(string partNo, int colorId, string scheme = "https");
+    Uri GetOriginalBoxImage(string itemNumber, string scheme = "https");
+    Uri? GetThumbnail(string itemNumber, ItemType type, int? colorId = null, string scheme = "https");
+    Uri GetPartThumbnailForColor(string itemNumber, int colorId, string scheme = "https");
 
-    Uri GetMinifigThumbnail(string number, string scheme = "https");
+    Uri GetMinifigThumbnail(string itemNumber, string scheme = "https");
 
-    Uri GetSetThumbnail(string number, string scheme = "https");
+    Uri GetSetThumbnail(string itemNumber, string scheme = "https");
 
-    Uri GetBookThumbnail(string number, string scheme = "https");
+    Uri GetBookThumbnail(string itemNumber, string scheme = "https");
 
-    Uri GetGearThumbnail(string number, string scheme = "https");
+    Uri GetGearThumbnail(string itemNumber, string scheme = "https");
 
-    Uri GetCatalogThumbnail(string number, string scheme = "https");
+    Uri GetCatalogThumbnail(string itemNumber, string scheme = "https");
 
-    Uri GetInstructionThumbnail(string number, string scheme = "https");
+    Uri GetInstructionThumbnail(string itemNumber, string scheme = "https");
 
-    Uri GetOriginalBoxThumbnail(string number, string scheme = "https");
+    Uri GetOriginalBoxThumbnail(string itemNumber, string scheme = "https");
 
     Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https");
 
     Task<Superset[]> GetSupersetsAsync(ItemType type,
-        string no,
+        string itemNumber,
         int colorId = 0,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Subset[]> GetSubsetsAsync(ItemType type, string no, int colorId = 0, bool? includeOriginalBox = null,
+    Task<Subset[]> GetSubsetsAsync(ItemType type, string itemNumber, int colorId = 0, bool? includeOriginalBox = null,
         bool? includeInstruction = null, bool? breakMinifigs = null, bool? breakSubsets = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no,
-        int colorId = 0, PriceGuideType? priceGuideType = null,
+    Task<PriceGuide> GetPriceGuideAsync(ItemType type, string itemNumber,
+        int colorId = 0, PriceGuideSource? source = null,
         Condition? condition = null, string? countryCode = null,
         string? region = null,
         string? currencyCode = null,
@@ -99,28 +99,28 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<KnownColor[]> GetKnownColorsAsync(ItemType type,
-        string no,
+        string itemNumber,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Color[]> GetColorListAsync(BricklinkCredentials? credentials = null,
+    Task<Color[]> GetColorsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Color> GetColorAsync(int colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Category[]> GetCategoryListAsync(BricklinkCredentials? credentials = null,
+    Task<Category[]> GetCategoriesAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<Category> GetCategoryAsync(int categoryId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
+    Task<Inventory[]> GetInventoriesAsync(IEnumerable<ItemType>? includedItemTypes = null,
         IEnumerable<ItemType>? excludedItemTypes = null,
-        IEnumerable<InventoryStatusType>? includedStatusFlags = null,
-        IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
+        IEnumerable<InventoryStatus>? includedStatusFlags = null,
+        IEnumerable<InventoryStatus>? excludedStatusFlags = null,
         IEnumerable<int>? includedCategoryIds = null,
         IEnumerable<int>? excludedCategoryIds = null,
         IEnumerable<int>? includedColorIds = null,
@@ -149,30 +149,30 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<ItemMapping[]> GetElementIdAsync(string partNo,
+    Task<ItemMapping[]> GetItemMappingsByItemAsync(string itemNumber,
         int? colorId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<ItemMapping[]> GetItemNumberAsync(string elementId,
+    Task<ItemMapping[]> GetItemMappingsByElementIdAsync(string elementId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<ShippingMethod[]> GetShippingMethodListAsync(BricklinkCredentials? credentials = null,
+    Task<ShippingMethod[]> GetShippingMethodsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<ShippingMethod> GetShippingMethodAsync(int methodId,
+    Task<ShippingMethod> GetShippingMethodAsync(int shippingMethodId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+    Task<PushNotification[]> GetPushNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<MemberRating> GetMemberRatingAsync(string username,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Feedback[]> GetFeedbackListAsync(Direction? direction = null,
+    Task<Feedback[]> GetFeedbacksAsync(Direction? direction = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
@@ -181,17 +181,17 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<Feedback> PostFeedbackAsync(int orderId,
-        RatingType rating,
+        Rating rating,
         string comment,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task ReplyFeedbackAsync(int feedbackId,
+    Task ReplyToFeedbackAsync(int feedbackId,
         string reply,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+    Task<Order[]> GetOrdersAsync(Direction direction = Direction.In,
         IEnumerable<OrderStatus>? includedStatusFlags = null,
         IEnumerable<OrderStatus>? excludedStatusFlags = null,
         bool filed = false,
@@ -210,7 +210,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Feedback[]> GetOrderFeedbackAsync(int orderId,
+    Task<Feedback[]> GetOrderFeedbacksAsync(int orderId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 

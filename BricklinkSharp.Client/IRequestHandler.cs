@@ -23,14 +23,17 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
 
-public enum InventoryStatusType
+namespace BricklinkSharp.Client
 {
-    Available = 0,
-    InStockRoomA = 1,
-    InStockRoomB = 2,
-    InStockRoomC = 3,
-    Unavailable = 4,
-    Reserved = 5
+    public interface IRequestHandler
+    {
+        Task BeforeRequestAsync(ApiResourceType resourceType, HttpVerb verb, BricklinkCredentials? credentials, CancellationToken cancellationToken);
+    }
 }

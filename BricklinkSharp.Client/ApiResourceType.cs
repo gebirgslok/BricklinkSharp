@@ -22,12 +22,42 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace BricklinkSharp.Client;
-
-public enum RatingType
+namespace BricklinkSharp.Client
 {
-    Praise = 0,
-    Neutral = 1,
-    Complaint = 2
+    public enum ApiResourceType
+    {
+        Unknown,
+        Item,
+        ItemImage,
+        ItemNumber,
+        Order,
+        OrderItem,
+        OrderDetails,
+        OrderMessage,
+        OrderFeedback,
+        OrderStatus,
+        PaymentStatus,
+        DriveThru,
+        Superset,
+        Subset,
+        PriceGuide,
+        Color,
+        KnownColor,
+        ColorList,
+        Category,
+        CategoryList,
+        Inventory,
+        InventoryList,
+        ElementId,
+        ShippingMethod,
+        Notification,
+        MemberRating,
+        Feedback,
+        FeedbackList,
+        Coupon
+    }
 }

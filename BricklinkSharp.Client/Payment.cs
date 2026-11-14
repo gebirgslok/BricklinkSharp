@@ -39,7 +39,7 @@ public class Payment
     public PaymentStatus Status { get; set; }
 
     [JsonPropertyName("date_paid")]
-    public DateTime DatePaid { get; set; }
+    public DateTime PaidOn { get; set; }
 
     [JsonPropertyName("currency_code")]
     public string CurrencyCode { get; set; } = null!;

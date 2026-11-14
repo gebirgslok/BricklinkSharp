@@ -25,26 +25,24 @@
 
 using System;
 using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class Notification
+public class PersonName
 {
-    [JsonPropertyName("event_type"), JsonConverter(typeof(EventTypeStringConverter))]
-    public EventType EventType { get; set; }
+    [JsonPropertyName("full")]
+    public string FullName { get; set; } = null!;
 
-    [JsonPropertyName("resource_id")]
-    public int ResourceId { get; set; }
+    [JsonPropertyName("first")]
+    public string? FirstName { get; set; }
 
-    [JsonPropertyName("timestamp")]
-    public DateTime Timestamp { get; set; }
+    [JsonPropertyName("last")]
+    public string? LastName { get; set; }
 
     public override string ToString()
     {
-        return $"{nameof(EventType)}: {EventType}, " +
-               $"{nameof(ResourceId)}: {ResourceId}, " +
-               $"{nameof(Timestamp)}: {Timestamp}";
+        return $"{FullName}{Environment.NewLine}" +
+               $"(First name: {FirstName ?? "Null"}, Last name: {LastName ?? "Null"})";
     }
 }

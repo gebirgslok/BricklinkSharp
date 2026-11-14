@@ -22,6 +22,15 @@ It supports all .NET platforms compatible with _.NET standard 2.0_.
 
 See [CHANGELOG.md](CHANGELOG.md) for the release history.
 
+## Migrating to 2.0.0
+
+2.0.0 is a deliberate clean break: names follow one set of rules (see [ADR 0001](docs/adr/0001-clean-break-2-0-0.md)) and there are no `[Obsolete]` forwarders. JSON wire names are unchanged. The complete old → new table is in [CHANGELOG.md](CHANGELOG.md).
+
+- `Rating` now names the verdict of a single feedback (formerly `RatingType`). The aggregated counts class is `FeedbackCounts` (formerly `Rating`).
+- `Get<Things>Async` methods are plural (`GetColorsAsync`, `GetFeedbacksAsync`, ...).
+- Parameters naming an item number are `itemNumber`; date properties end in `On` (`OrderedOn`, `PaidOn`, ...).
+- `OrderDirection` is merged into `Direction`.
+
 ## Get started
 
 ### Demo project
@@ -87,16 +96,16 @@ services.AddSingleton(typeof(IBricklinkClient), provider =>
 
 ### Item Catalog
 
-#### Get item
+#### Get catalog item
 
 ```csharp
-var catalogItem = await client.GetItemAsync(ItemType.Part, "6089");
+var catalogItem = await client.GetCatalogItemAsync(ItemType.Part, "6089");
 ```
 
-#### Get item image
+#### Get catalog image
 
 ```csharp
-var catalogImage = await client.GetItemImageAsync(ItemType.OriginalBox, "1-12", 0);
+var catalogImage = await client.GetCatalogImageAsync(ItemType.OriginalBox, "1-12", 0);
 ```
 
 #### Get part image for color ID
@@ -171,7 +180,7 @@ var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs
 #### Get price guide
 
 ```csharp
-var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1, priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
+var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1, source: PriceGuideSource.Sold, condition: Condition.Used);
 ```
 
 #### Get known colors
@@ -185,7 +194,7 @@ var knownColors = await client.GetKnownColorsAsync(ItemType.Part, "3006");
 #### Get color list
 
 ```csharp
-var colors = await client.GetColorListAsync();
+var colors = await client.GetColorsAsync();
 ```
 
 #### Get color
@@ -199,7 +208,7 @@ var color = await client.GetColorAsync(15);
 #### Get category list
 
 ```csharp
-var categories = await client.GetCategoryListAsync();
+var categories = await client.GetCategoriesAsync();
 ```
 
 #### Get category
@@ -216,8 +225,8 @@ var category = await client.GetCategoryAsync(1);
 //Include only parts and minifigs.
 var includedTypes = new List<ItemType> { ItemType.Part, ItemType.Minifig };
 //Exclude all inventories which are unavailable.
-var excludedStatusFlags = new List<InventoryStatusType> { Unavailable };
-var inventories = await client.GetInventoryListAsync(includedTypes, excludedStatusFlags: excludedStatusFlags);
+var excludedStatusFlags = new List<InventoryStatus> { Unavailable };
+var inventories = await client.GetInventoriesAsync(includedTypes, excludedStatusFlags: excludedStatusFlags);
 ```
 
 #### Create inventory
@@ -227,9 +236,9 @@ var newInventory = new NewInventory
 {
 	ColorId = 1,
 	Condition = Condition.Used,
-	Item = new ItemBase
+	Item = new Item
 	{
-		Number = "3003",
+		ItemNumber = "3003",
 		Type = ItemType.Part
 	},
 	Quantity = 5,
@@ -250,8 +259,8 @@ await client.CreateInventoriesAsync(newInventories);
 #### Update inventory
 
 ```csharp
-var inventoryList = await client.GetInventoryListAsync();
-var id = inventoryList.First().InventoryId;
+var inventoryList = await client.GetInventoriesAsync();
+var id = inventoryList.First().Id;
 var updateInventory = new UpdateInventory { ChangedQuantity = 21, Remarks = "Remarks added." };
 var inventory = await client.UpdateInventoryAsync(id, updateInventory);
 ```
@@ -259,25 +268,25 @@ var inventory = await client.UpdateInventoryAsync(id, updateInventory);
 #### Delete inventory
 
 ```csharp
-var inventoryList = await client.GetInventoryListAsync();
-var id = inventoryList.First().InventoryId;
+var inventoryList = await client.GetInventoriesAsync();
+var id = inventoryList.First().Id;
 await client.DeleteInventoryAsync(id);
 ```
 
 ### Item Mapping
 
-#### Get ElementID
+#### Get item mappings by item
 
 The method returns an array of _ItemMapping_ objects. If a color ID is specified the array will contain just one element. Otherwise the array will contain mappings for every available color.
 
 ```csharp
-var itemMappings = await client.GetElementIdAsync("3003", 1);
+var itemMappings = await client.GetItemMappingsByItemAsync("3003", 1);
 ```
 
-#### Get item number
+#### Get item mappings by element ID
 
 ```csharp
-var itemMapping = await client.GetItemNumberAsync("300301");
+var itemMapping = await client.GetItemMappingsByElementIdAsync("300301");
 ```
 
 ### Push Notification
@@ -285,7 +294,7 @@ var itemMapping = await client.GetItemNumberAsync("300301");
 #### Get notifications
 
 ```csharp
-var notifications = await client.GetNotificationsAsync();
+var notifications = await client.GetPushNotificationsAsync();
 ```
 
 ### Setting
@@ -293,7 +302,7 @@ var notifications = await client.GetNotificationsAsync();
 #### Get shipping method list
 
 ```csharp
-var shippingMethods = await client.GetShippingMethodListAsync();
+var shippingMethods = await client.GetShippingMethodsAsync();
 ```
 
 #### Get shipping method
@@ -307,24 +316,24 @@ var shippingMethod = await client.GetShippingMethodAsync(123);
 #### Get member rating
 
 ```csharp
-var rating = await client.GetMemberRatingAsync("bluser");
+var memberRating = await client.GetMemberRatingAsync("bluser");
 ```
 
 ### Feedback
 
-#### Get feedback list
+#### Get feedbacks
 
 ```csharp
-var feedbackInList = await client.GetFeedbackListAsync(FeedbackDirection.In);
-var feedbackOutList = await client.GetFeedbackListAsync(FeedbackDirection.Out);
-var feedbackListAll = await client.GetFeedbackListAsync();
+var feedbackInList = await client.GetFeedbacksAsync(Direction.In);
+var feedbackOutList = await client.GetFeedbacksAsync(Direction.Out);
+var feedbackListAll = await client.GetFeedbacksAsync();
 ```
 
 #### Get feedback
 
 ```csharp
-var feedbackListAll = await client.GetFeedbackListAsync()
-var id = feedbackListAll.First().FeedbackId;
+var feedbackListAll = await client.GetFeedbacksAsync()
+var id = feedbackListAll.First().Id;
 var feedback = await client.GetFeedbackAsync(id);
 ```
 
@@ -332,14 +341,14 @@ var feedback = await client.GetFeedbackAsync(id);
 
 ```csharp
 var orderId = 1234567; //Must be a valid order ID.
-var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Awesome transaction, praise!");
+var feedback = await client.PostFeedbackAsync(orderId, Rating.Praise, "Awesome transaction, praise!");
 ```
 
-#### Reply feedback
+#### Reply to feedback
 
 ```csharp
 var feedbackId = 1234567; //Must be a valid feedback ID.
-await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
+await client.ReplyToFeedbackAsync(feedbackId, "Thank you for your kind comment.");
 ```
 
 ### Order
@@ -348,7 +357,7 @@ await client.ReplyFeedbackAsync(feedbackId, "Thank you for your kind comment.");
 
 ```csharp
 //Exclude all purged orders.
-var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
 {
 	OrderStatus.Purged
 });
@@ -356,7 +365,7 @@ var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags
 
 ```csharp
 //Only paid orders that must be shipped.
-var orders = await client.GetOrdersAsync(OrderDirection.Out, includedStatusFlags: new List<OrderStatus>
+var orders = await client.GetOrdersAsync(Direction.Out, includedStatusFlags: new List<OrderStatus>
 {
 	OrderStatus.Paid
 });
@@ -395,7 +404,7 @@ var messages = await client.GetOrderMessagesAsync(orderId);
 
 ```csharp
 var orderId = 123456789; //Must be a valid order ID.
-var feedbacks = await client.GetOrderFeedbackAsync(orderId);
+var feedbacks = await client.GetOrderFeedbacksAsync(orderId);
 ```
 
 #### Update Order
@@ -407,9 +416,9 @@ var orderId = 123456789; //Must be a valid order ID.
 var updateOrder = new UpdateOrder();
 updateOrder.Remarks = "Add remark";
 updateOrder.IsFiled = true;
-updateOrder.Cost.Insurance = 2.5m;
+updateOrder.Cost.InsuranceCost = 2.5m;
 updateOrder.Cost.Etc1 = 1.0m;
-updateOrder.Shipping.TrackingNo = "1234567892";
+updateOrder.Shipping.TrackingNumber = "1234567892";
 updateOrder.Shipping.TrackingLink = "www.foo.bar/123456789";
 await client.UpdateOrder(orderId, updateOrder);
 ```

@@ -34,7 +34,7 @@ namespace BricklinkSharp.Client;
 public class Category
 {
     [JsonPropertyName("category_id")]
-    public int CategoryId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("category_name")]
     public string Name { get; set; } = null!;
@@ -50,9 +50,9 @@ public class Category
     {
         if (IsRoot)
         {
-            return $"{CategoryId}-{Name} (root)";
+            return $"{Id}-{Name} (root)";
         }
 
-        return $"{CategoryId}-{Name} (parent ID {ParentId})";
+        return $"{Id}-{Name} (parent ID {ParentId})";
     }
 }

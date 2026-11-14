@@ -22,42 +22,32 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BricklinkSharp.Client
+using System;
+using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
+
+// ReSharper disable ClassNeverInstantiated.Global
+
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class ContainedItemSummary
 {
-    public enum BricklinkApiResourceType
+    [JsonPropertyName("no")]
+    public string ItemNumber { get; set; } = null!;
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
+    public ItemType Type { get; set; }
+
+    [JsonPropertyName("category_id")]
+    public int CategoryId { get; set; }
+
+    public override string ToString()
     {
-        Unknown,
-        Item,
-        ItemImage,
-        ItemNumber,
-        Order,
-        OrderItem,
-        OrderDetails,
-        OrderMessage,
-        OrderFeedback,
-        OrderStatus,
-        PaymentStatus,
-        DriveThru,
-        Superset,
-        Subset,
-        PriceGuide,
-        Color,
-        KnownColor,
-        ColorList,
-        Category,
-        CategoryList,
-        Inventory,
-        InventoryList,
-        ElementId,
-        ShippingMethod,
-        Notification,
-        MemberRating,
-        Feedback,
-        FeedbackList,
-        Coupon
+        return $"{Type}, {ItemNumber}, {Name}";
     }
 }

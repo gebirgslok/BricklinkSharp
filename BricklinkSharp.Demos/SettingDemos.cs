@@ -31,20 +31,20 @@ namespace BricklinkSharp.Demos;
 
 internal static class SettingDemos
 {
-    public static async Task<ShippingMethod[]> GetShippingMethodListDemo()
+    public static async Task<ShippingMethod[]> GetShippingMethodsDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var shippingMethods = await client.GetShippingMethodListAsync();
+        var shippingMethods = await client.GetShippingMethodsAsync();
 
         PrintHelper.PrintAsJson(shippingMethods);
 
         return shippingMethods;
     }
 
-    public static async Task GetShippingMethodDemo(int id)
+    public static async Task GetShippingMethodDemo(int shippingMethodId)
     {
         using var client = BricklinkClientFactory.Build();
-        var shippingMethod = await client.GetShippingMethodAsync(id);
+        var shippingMethod = await client.GetShippingMethodAsync(shippingMethodId);
 
         PrintHelper.PrintAsJson(shippingMethod);
         Console.WriteLine(shippingMethod.ToString());

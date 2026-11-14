@@ -42,6 +42,10 @@ _Avoid_: Inventory, parts list
 Sold or current-stock price statistics for an Item in a Color and Condition.
 _Avoid_: Price history
 
+**Price Guide Source**:
+Whether a Price Guide reports sold items or current stock.
+_Avoid_: Guide type
+
 **Item Mapping**:
 The link between an item number plus Color and a BrickLink Element ID.
 _Avoid_: Element lookup
@@ -65,15 +69,23 @@ Which side the user is on. Out means the user is the seller, In means the user i
 _Avoid_: Role, side
 
 **Feedback**:
-A rating and comment a member leaves on an Order.
+A rating and comment a member leaves on an Order. Leaving one is called posting it.
 _Avoid_: Review
+
+**Rating**:
+The verdict of a single Feedback: Praise, Neutral or Complaint.
+_Avoid_: Score, vote
+
+**Feedback Target Role**:
+Whether a Feedback rates the seller or the buyer of its Order.
+_Avoid_: Recipient
 
 **Coupon**:
 A discount a seller offers to a specific buyer.
 _Avoid_: Voucher, promo code
 
 **Member Rating**:
-A member's aggregated Feedback ratings.
+A member's aggregated Feedback ratings, as counts of Praise, Neutral and Complaint.
 _Avoid_: Reputation
 
 **Shipping Method**:

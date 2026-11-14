@@ -28,7 +28,7 @@ using System;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class UpdateCoupon : CouponBase
+public class UpdateCoupon : CouponTerms
 {
     public UpdateCoupon()
     {

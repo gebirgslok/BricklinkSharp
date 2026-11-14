@@ -23,20 +23,28 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client;
 
-public abstract class SuperSubSetEntryBase
+[Serializable]
+public class PushNotification
 {
-    [JsonPropertyName("item")]
-    public SuperSubSetItem Item { get; set; } = null!;
+    [JsonPropertyName("event_type"), JsonConverter(typeof(PushNotificationEventTypeStringConverter))]
+    public PushNotificationEventType EventType { get; set; }
 
-    [JsonPropertyName("quantity")]
-    public int Quantity { get; set; }
+    [JsonPropertyName("resource_id")]
+    public int ResourceId { get; set; }
+
+    [JsonPropertyName("timestamp")]
+    public DateTime OccurredOn { get; set; }
 
     public override string ToString()
     {
-        return $"{Quantity}x({Item})";
+        return $"{nameof(EventType)}: {EventType}, " +
+               $"{nameof(ResourceId)}: {ResourceId}, " +
+               $"{nameof(OccurredOn)}: {OccurredOn}";
     }
 }

@@ -31,10 +31,19 @@ using BricklinkSharp.Client.Json;
 // ReSharper disable once ClassNeverInstantiated.Global
 namespace BricklinkSharp.Client;
 
-public class Feedback : FeedbackBase
+public class Feedback
 {
+    [JsonPropertyName("order_id")]
+    public int OrderId { get; set; }
+
+    [JsonPropertyName("rating"), JsonConverter(typeof(RatingIntConverter))]
+    public Rating Rating { get; set; }
+
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; } = null!;
+
     [JsonPropertyName("feedback_id")]
-    public int FeedbackId { get; set; }
+    public int Id { get; set; }
 
     [JsonPropertyName("from")]
     public string From { get; set; } = null!;
@@ -45,8 +54,8 @@ public class Feedback : FeedbackBase
     [JsonPropertyName("date_rated")]
     public DateTime CreatedOn { get; set; }
 
-    [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(RatingTargetRoleStringConverter))]
-    public RatingTargetRole RatingTargetRole { get; set; }
+    [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(FeedbackTargetRoleStringConverter))]
+    public FeedbackTargetRole FeedbackTargetRole { get; set; }
 
     [JsonPropertyName("reply")]
     public string? Reply { get; set; }
