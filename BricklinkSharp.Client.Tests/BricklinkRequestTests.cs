@@ -36,7 +36,7 @@ public class BricklinkRequestTests
     private static readonly Uri BaseUri = new("https://api.bricklink.com/api/store/v1/");
 
     private static BricklinkRequest NewRequest(string path = "items/part/3001") =>
-        new(BricklinkApiResourceType.Item, HttpVerb.Get, path);
+        new(ApiResourceType.Item, HttpVerb.Get, path);
 
     [Test]
     public void Should_JoinBaseAndPathWithSingleSlash_When_PathHasLeadingSlash()

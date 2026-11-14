@@ -31,7 +31,7 @@ internal sealed class BricklinkRequestExecutorOptions
 {
     public BricklinkRequestExecutorOptions(Uri baseUri,
         Func<BricklinkCredentials?> defaultCredentialsProvider,
-        IBricklinkRequestHandler? requestHandler = null,
+        IRequestHandler? requestHandler = null,
         Func<DateTimeOffset>? clock = null,
         Func<string>? nonceGenerator = null)
     {
@@ -46,7 +46,7 @@ internal sealed class BricklinkRequestExecutorOptions
 
     public Func<BricklinkCredentials?> DefaultCredentialsProvider { get; }
 
-    public IBricklinkRequestHandler? RequestHandler { get; }
+    public IRequestHandler? RequestHandler { get; }
 
     // null means the signer's real clock and nonce
     public Func<DateTimeOffset>? Clock { get; }

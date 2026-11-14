@@ -22,42 +22,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BricklinkSharp.Client
+namespace BricklinkSharp.Client;
+
+public enum PushNotificationEventType
 {
-    public enum BricklinkApiResourceType
-    {
-        Unknown,
-        Item,
-        ItemImage,
-        ItemNumber,
-        Order,
-        OrderItem,
-        OrderDetails,
-        OrderMessage,
-        OrderFeedback,
-        OrderStatus,
-        PaymentStatus,
-        DriveThru,
-        Superset,
-        Subset,
-        PriceGuide,
-        Color,
-        KnownColor,
-        ColorList,
-        Category,
-        CategoryList,
-        Inventory,
-        InventoryList,
-        ElementId,
-        ShippingMethod,
-        Notification,
-        MemberRating,
-        Feedback,
-        FeedbackList,
-        Coupon
-    }
+    Order = 0,
+    Message = 1,
+    Feedback = 2
 }

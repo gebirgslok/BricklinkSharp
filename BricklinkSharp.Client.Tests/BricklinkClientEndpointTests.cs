@@ -66,10 +66,10 @@ public class BricklinkClientEndpointTests
             HttpMethod.Get,
             $"{BaseUrl}items/{ItemType.Set.ToDomainString()}/10000-1/subsets?color_id=0&box=true&break_minifigs=false");
         yield return new("GetPriceGuide",
-            client => client.GetPriceGuideAsync(ItemType.Part, "3001", 5, PriceGuideType.Sold, Condition.Used, "DE", null, "EUR",
+            client => client.GetPriceGuideAsync(ItemType.Part, "3001", 5, PriceGuideSource.Sold, Condition.Used, "DE", null, "EUR",
                 null, credentials, cancellationToken),
             HttpMethod.Get,
-            $"{BaseUrl}items/{PartSegment}/3001/price?color_id=5&guide_type={PriceGuideType.Sold.ToDomainString()}" +
+            $"{BaseUrl}items/{PartSegment}/3001/price?color_id=5&guide_type={PriceGuideSource.Sold.ToDomainString()}" +
             $"&new_or_used={Condition.Used.ToDomainString()}&country_code=DE&currency_code=EUR");
         yield return new("GetKnownColors", client => client.GetKnownColorsAsync(ItemType.Part, "3001", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}items/{PartSegment}/3001/colors");
@@ -102,9 +102,9 @@ public class BricklinkClientEndpointTests
         yield return new("GetFeedback", client => client.GetFeedbackAsync(4, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}feedback/4");
         yield return new("ReplyFeedback", client => client.ReplyFeedbackAsync(4, "thanks", credentials, cancellationToken), HttpMethod.Post,
             $"{BaseUrl}feedback/4/reply", "{\"reply\":\"thanks\"}");
-        yield return new("PostFeedback", client => client.PostFeedbackAsync(11, RatingType.Praise, "ok", credentials, cancellationToken),
+        yield return new("PostFeedback", client => client.PostFeedbackAsync(11, Rating.Praise, "ok", credentials, cancellationToken),
             HttpMethod.Post, $"{BaseUrl}feedback",
-            "{\"order_id\":11,\"rating\":" + System.Text.Json.JsonSerializer.Serialize(RatingType.Praise) + ",\"comment\":\"ok\"}");
+            "{\"order_id\":11,\"rating\":" + System.Text.Json.JsonSerializer.Serialize(Rating.Praise) + ",\"comment\":\"ok\"}");
         yield return new("GetOrders", client => client.GetOrdersAsync(Direction.Out, null, null, true, credentials, cancellationToken),
             HttpMethod.Get, $"{BaseUrl}orders?direction={Direction.Out.ToDomainString()}&filed=true");
         yield return new("GetOrder", client => client.GetOrderAsync(11, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}orders/11");
@@ -168,7 +168,7 @@ public class BricklinkClientEndpointTests
     }
 
     [Test]
-    public async Task Should_ReturnEmptyArray_When_NotificationsAreEmpty()
+    public async Task Should_ReturnEmptyArray_When_PushNotificationsAreEmpty()
     {
         using var host = BricklinkTestHost.Create(new StubHttpMessageHandler(Fixtures.Envelope(200, "[]")));
         var client = host.Client;

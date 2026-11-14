@@ -171,7 +171,7 @@ var subsets = await client.GetSubsetsAsync(ItemType.Set, "1095-1", breakMinifigs
 #### Get price guide
 
 ```csharp
-var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1, priceGuideType: PriceGuideType.Sold, condition: Condition.Used);
+var priceGuide = await client.GetPriceGuideAsync(ItemType.Part, "3003", colorId: 1, priceGuideType: PriceGuideSource.Sold, condition: Condition.Used);
 ```
 
 #### Get known colors
@@ -216,7 +216,7 @@ var category = await client.GetCategoryAsync(1);
 //Include only parts and minifigs.
 var includedTypes = new List<ItemType> { ItemType.Part, ItemType.Minifig };
 //Exclude all inventories which are unavailable.
-var excludedStatusFlags = new List<InventoryStatusType> { Unavailable };
+var excludedStatusFlags = new List<InventoryStatus> { Unavailable };
 var inventories = await client.GetInventoryListAsync(includedTypes, excludedStatusFlags: excludedStatusFlags);
 ```
 
@@ -332,7 +332,7 @@ var feedback = await client.GetFeedbackAsync(id);
 
 ```csharp
 var orderId = 1234567; //Must be a valid order ID.
-var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Awesome transaction, praise!");
+var feedback = await client.PostFeedbackAsync(orderId, Rating.Praise, "Awesome transaction, praise!");
 ```
 
 #### Reply feedback

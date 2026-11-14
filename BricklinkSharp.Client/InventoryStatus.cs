@@ -25,8 +25,12 @@
 
 namespace BricklinkSharp.Client;
 
-public enum RatingTargetRole
+public enum InventoryStatus
 {
-    Seller = 0,
-    Buyer = 1
+    Available = 0,
+    InStockRoomA = 1,
+    InStockRoomB = 2,
+    InStockRoomC = 3,
+    Unavailable = 4,
+    Reserved = 5
 }

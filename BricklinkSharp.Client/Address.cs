@@ -32,7 +32,7 @@ namespace BricklinkSharp.Client;
 public class Address
 {
     [JsonPropertyName("name")]
-    public Name Name { get; set; } = null!;
+    public PersonName Name { get; set; } = null!;
 
     [JsonPropertyName("full")]
     public string FullAddressAsString { get; set; } = null!;

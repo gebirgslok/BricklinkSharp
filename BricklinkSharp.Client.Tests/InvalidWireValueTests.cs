@@ -78,15 +78,15 @@ public class InvalidWireValueTests
     }
 
     [Test]
-    public void Should_ThrowJsonException_When_RatingTargetRoleIsUnknown()
+    public void Should_ThrowJsonException_When_FeedbackTargetRoleIsUnknown()
     {
-        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingTargetRoleStringConverter(), UnknownWireValue));
+        Assert.Throws<JsonException>(() => ConverterHarness.Read(new FeedbackTargetRoleStringConverter(), UnknownWireValue));
     }
 
     [Test]
-    public void Should_ThrowJsonException_When_EventTypeIsUnknown()
+    public void Should_ThrowJsonException_When_PushNotificationEventTypeIsUnknown()
     {
-        Assert.Throws<JsonException>(() => ConverterHarness.Read(new EventTypeStringConverter(), UnknownWireValue));
+        Assert.Throws<JsonException>(() => ConverterHarness.Read(new PushNotificationEventTypeStringConverter(), UnknownWireValue));
     }
 
     [Test]
@@ -120,9 +120,9 @@ public class InvalidWireValueTests
     }
 
     [Test]
-    public void Should_ThrowJsonException_When_RatingTypeIsOutOfRange()
+    public void Should_ThrowJsonException_When_RatingIsOutOfRange()
     {
-        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingTypeIntConverter(), "99"));
+        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingIntConverter(), "99"));
     }
 
     [Test]
@@ -207,7 +207,7 @@ public class InvalidWireValueTests
     }
 
     [Test]
-    public void Should_ThrowInvalidResponse_When_FeedbackRatingTargetRoleIsUnknown()
+    public void Should_ThrowInvalidResponse_When_FeedbackTargetRoleIsUnknown()
     {
         var json = Fixtures.JsonWith("Feedback", "rating_of_bs", "X");
         using var host = BricklinkTestHost.Create(Fixtures.Envelope(json));
@@ -262,8 +262,8 @@ public class InvalidWireValueTests
     [Test]
     public void Should_ThrowJsonException_When_RatingTokenIsNotAnInteger()
     {
-        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingTypeIntConverter(), "\"1\""));
-        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingTypeIntConverter(), "1.5"));
+        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingIntConverter(), "\"1\""));
+        Assert.Throws<JsonException>(() => ConverterHarness.Read(new RatingIntConverter(), "1.5"));
     }
 
     [Test]

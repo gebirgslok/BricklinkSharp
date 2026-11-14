@@ -32,18 +32,18 @@ public static class BricklinkClientFactory
 {
     private static readonly Uri _baseUri = new("https://api.bricklink.com/api/store/v1/");
 
-    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IBricklinkRequestHandler? requestHandler = null)
+    private static IBricklinkClient Build(HttpClient httpClient, bool disposeHttpClient, IRequestHandler? requestHandler = null)
     {
         var options = new BricklinkRequestExecutorOptions(_baseUri, () => BricklinkClientConfiguration.Instance, requestHandler);
         return new BricklinkClient(new BricklinkRequestExecutor(httpClient, options), httpClient, disposeHttpClient);
     }
 
-    public static IBricklinkClient Build(HttpClient httpClient, IBricklinkRequestHandler? requestHandler = null)
+    public static IBricklinkClient Build(HttpClient httpClient, IRequestHandler? requestHandler = null)
     {
         return Build(httpClient, false, requestHandler);
     }
 
-    public static IBricklinkClient Build(IBricklinkRequestHandler? requestHandler = null)
+    public static IBricklinkClient Build(IRequestHandler? requestHandler = null)
     {
         return Build(new HttpClient(), true, requestHandler);
     }

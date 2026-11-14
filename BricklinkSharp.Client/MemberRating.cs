@@ -34,5 +34,5 @@ public class MemberRating
     public string Username { get; set; } = null!;
 
     [JsonPropertyName("rating")]
-    public Rating Rating { get; set; } = null!;
+    public FeedbackCounts Rating { get; set; } = null!;
 }

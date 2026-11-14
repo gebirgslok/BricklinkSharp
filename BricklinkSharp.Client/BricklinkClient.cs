@@ -118,7 +118,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<CatalogItem>(
-            new BricklinkRequest(BricklinkApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{no}")
+            new BricklinkRequest(ApiResourceType.Item, HttpVerb.Get, $"items/{type.ToDomainString()}/{no}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -130,7 +130,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<CatalogImage>(
-            new BricklinkRequest(BricklinkApiResourceType.ItemImage, HttpVerb.Get,
+            new BricklinkRequest(ApiResourceType.ItemImage, HttpVerb.Get,
                     $"items/{type.ToDomainString()}/{no}/images/{colorId}")
                 .WithCredentials(credentials),
             cancellationToken);
@@ -259,7 +259,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Superset[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Superset, HttpVerb.Get,
+            new BricklinkRequest(ApiResourceType.Superset, HttpVerb.Get,
                     $"items/{type.ToDomainString()}/{no}/supersets")
                 .WithQueryParameter("color_id", colorId > 0 ? colorId : null)
                 .WithShape(ResponseShape.ArrayNonEmpty)
@@ -275,7 +275,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Subset[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Subset, HttpVerb.Get,
+            new BricklinkRequest(ApiResourceType.Subset, HttpVerb.Get,
                     $"items/{type.ToDomainString()}/{no}/subsets")
                 .WithQueryParameter("color_id", colorId)
                 .WithQueryParameter("box", includeOriginalBox)
@@ -288,14 +288,14 @@ internal sealed class BricklinkClient : IBricklinkClient
     }
 
     public Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no, int colorId = 0,
-        PriceGuideType? priceGuideType = null, Condition? condition = null,
+        PriceGuideSource? priceGuideType = null, Condition? condition = null,
         string? countryCode = null, string? region = null, string? currencyCode = null,
         VatOption? vat = null,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<PriceGuide>(
-            new BricklinkRequest(BricklinkApiResourceType.PriceGuide, HttpVerb.Get,
+            new BricklinkRequest(ApiResourceType.PriceGuide, HttpVerb.Get,
                     $"items/{type.ToDomainString()}/{no}/price")
                 .WithQueryParameter("color_id", colorId)
                 .WithQueryParameter("guide_type", priceGuideType?.ToDomainString())
@@ -313,7 +313,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<KnownColor[]>(
-            new BricklinkRequest(BricklinkApiResourceType.KnownColor, HttpVerb.Get,
+            new BricklinkRequest(ApiResourceType.KnownColor, HttpVerb.Get,
                     $"items/{type.ToDomainString()}/{no}/colors")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
@@ -324,7 +324,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Color[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ColorList, HttpVerb.Get, "colors")
+            new BricklinkRequest(ApiResourceType.ColorList, HttpVerb.Get, "colors")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -335,7 +335,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Color>(
-            new BricklinkRequest(BricklinkApiResourceType.Color, HttpVerb.Get, $"colors/{colorId}")
+            new BricklinkRequest(ApiResourceType.Color, HttpVerb.Get, $"colors/{colorId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -344,7 +344,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Category[]>(
-            new BricklinkRequest(BricklinkApiResourceType.CategoryList, HttpVerb.Get, "categories")
+            new BricklinkRequest(ApiResourceType.CategoryList, HttpVerb.Get, "categories")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -355,15 +355,15 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Category>(
-            new BricklinkRequest(BricklinkApiResourceType.Category, HttpVerb.Get, $"categories/{categoryId}")
+            new BricklinkRequest(ApiResourceType.Category, HttpVerb.Get, $"categories/{categoryId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
     public Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
         IEnumerable<ItemType>? excludedItemTypes = null,
-        IEnumerable<InventoryStatusType>? includedStatusFlags = null,
-        IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
+        IEnumerable<InventoryStatus>? includedStatusFlags = null,
+        IEnumerable<InventoryStatus>? excludedStatusFlags = null,
         IEnumerable<int>? includedCategoryIds = null,
         IEnumerable<int>? excludedCategoryIds = null,
         IEnumerable<int>? includedColorIds = null,
@@ -372,7 +372,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Inventory[]>(
-            new BricklinkRequest(BricklinkApiResourceType.InventoryList, HttpVerb.Get, "inventories")
+            new BricklinkRequest(ApiResourceType.InventoryList, HttpVerb.Get, "inventories")
                 .WithQueryParameter("item_type", BuildIncludeExcludeParameter(includedItemTypes,
                     excludedItemTypes, t => t.ToDomainString()))
                 .WithQueryParameter("status", BuildIncludeExcludeParameter(includedStatusFlags,
@@ -390,7 +390,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Inventory>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Get, $"inventories/{inventoryId}")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Get, $"inventories/{inventoryId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -402,7 +402,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(newInventory);
 
         return await _executor.SendAsync<Inventory>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Post, "inventories")
                 .WithBody(newInventory)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -419,7 +419,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         }
 
         await _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Post, "inventories")
                 .WithBody(newInventories)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -434,7 +434,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(updateInventory);
 
         return await _executor.SendAsync<Inventory>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
                 .WithBody(updateInventory)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -446,7 +446,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Delete, $"inventories/{inventoryId}")
+            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Delete, $"inventories/{inventoryId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -456,7 +456,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ItemMapping[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{partNo}")
+            new BricklinkRequest(ApiResourceType.ElementId, HttpVerb.Get, $"item_mapping/part/{partNo}")
                 .WithQueryParameter("color_id", colorId)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -467,7 +467,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ItemMapping[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ItemNumber, HttpVerb.Get, $"item_mapping/{elementId}")
+            new BricklinkRequest(ApiResourceType.ItemNumber, HttpVerb.Get, $"item_mapping/{elementId}")
                 .WithShape(ResponseShape.ArrayNonEmpty)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -477,7 +477,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ShippingMethod[]>(
-            new BricklinkRequest(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get, "settings/shipping_methods")
+            new BricklinkRequest(ApiResourceType.ShippingMethod, HttpVerb.Get, "settings/shipping_methods")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -487,17 +487,17 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<ShippingMethod>(
-            new BricklinkRequest(BricklinkApiResourceType.ShippingMethod, HttpVerb.Get,
+            new BricklinkRequest(ApiResourceType.ShippingMethod, HttpVerb.Get,
                     $"settings/shipping_methods/{methodId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
-    public Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+    public Task<PushNotification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<Notification[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Notification, HttpVerb.Get, "notifications")
+        return _executor.SendAsync<PushNotification[]>(
+            new BricklinkRequest(ApiResourceType.Notification, HttpVerb.Get, "notifications")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -507,7 +507,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<MemberRating>(
-            new BricklinkRequest(BricklinkApiResourceType.MemberRating, HttpVerb.Get, $"members/{username}/ratings")
+            new BricklinkRequest(ApiResourceType.MemberRating, HttpVerb.Get, $"members/{username}/ratings")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -517,7 +517,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Feedback[]>(
-            new BricklinkRequest(BricklinkApiResourceType.FeedbackList, HttpVerb.Get, "feedback")
+            new BricklinkRequest(ApiResourceType.FeedbackList, HttpVerb.Get, "feedback")
                 .WithQueryParameter("direction", direction?.ToString().ToLowerInvariant())
                 .WithCredentials(credentials),
             cancellationToken);
@@ -528,13 +528,13 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Feedback>(
-            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Get, $"feedback/{feedbackId}")
+            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Get, $"feedback/{feedbackId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
 
     public Task<Feedback> PostFeedbackAsync(int orderId,
-        RatingType rating,
+        Rating rating,
         string comment,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
@@ -547,7 +547,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         };
 
         return _executor.SendAsync<Feedback>(
-            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Post, "feedback")
+            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Post, "feedback")
                 .WithBody(body)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -559,7 +559,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Feedback, HttpVerb.Post, $"feedback/{feedbackId}/reply")
+            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Post, $"feedback/{feedbackId}/reply")
                 .WithBody(new { reply })
                 .WithCredentials(credentials),
             cancellationToken);
@@ -573,7 +573,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Order[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Get, "orders")
+            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Get, "orders")
                 .WithQueryParameter("direction", direction.ToDomainString())
                 .WithQueryParameter("status", BuildIncludeExcludeParameter(includedStatusFlags,
                     excludedStatusFlags, f => f.ToDomainString()))
@@ -587,7 +587,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<OrderDetails>(
-            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Get, $"orders/{orderId}")
+            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Get, $"orders/{orderId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -597,7 +597,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         var itemsBatches = await _executor.SendAsync<OrderItem[][]>(
-                new BricklinkRequest(BricklinkApiResourceType.OrderItem, HttpVerb.Get, $"orders/{orderId}/items")
+                new BricklinkRequest(ApiResourceType.OrderItem, HttpVerb.Get, $"orders/{orderId}/items")
                     .WithCredentials(credentials),
                 cancellationToken)
             .ConfigureAwait(false);
@@ -610,7 +610,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<OrderMessage[]>(
-            new BricklinkRequest(BricklinkApiResourceType.OrderMessage, HttpVerb.Get, $"orders/{orderId}/messages")
+            new BricklinkRequest(ApiResourceType.OrderMessage, HttpVerb.Get, $"orders/{orderId}/messages")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -620,7 +620,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Feedback[]>(
-            new BricklinkRequest(BricklinkApiResourceType.OrderFeedback, HttpVerb.Get, $"orders/{orderId}/feedback")
+            new BricklinkRequest(ApiResourceType.OrderFeedback, HttpVerb.Get, $"orders/{orderId}/feedback")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -631,7 +631,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.OrderStatus, HttpVerb.Put, $"orders/{orderId}/status")
+            new BricklinkRequest(ApiResourceType.OrderStatus, HttpVerb.Put, $"orders/{orderId}/status")
                 .WithBody(new { field = "status", value = status.ToDomainString() })
                 .WithCredentials(credentials),
             cancellationToken);
@@ -643,7 +643,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.PaymentStatus, HttpVerb.Put,
+            new BricklinkRequest(ApiResourceType.PaymentStatus, HttpVerb.Put,
                     $"orders/{orderId}/payment_status")
                 .WithBody(new { field = "payment_status", value = status.ToDomainString() })
                 .WithCredentials(credentials),
@@ -656,7 +656,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.DriveThru, HttpVerb.Post, $"orders/{orderId}/drive_thru")
+            new BricklinkRequest(ApiResourceType.DriveThru, HttpVerb.Post, $"orders/{orderId}/drive_thru")
                 .WithQueryParameter("mail_me", mailCcMe)
                 .WithExpectedMetaCode(204)
                 .WithCredentials(credentials),
@@ -669,7 +669,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<OrderDetails>(
-            new BricklinkRequest(BricklinkApiResourceType.Order, HttpVerb.Put, $"orders/{orderId}")
+            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Put, $"orders/{orderId}")
                 .WithBody(updateOrder)
                 .WithCredentials(credentials),
             cancellationToken);
@@ -688,7 +688,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Coupon[]>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Get, "coupons")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Get, "coupons")
                 .WithQueryParameter("direction", direction.ToDomainString())
                 .WithQueryParameter("status", BuildIncludeExcludeParameter(includedCouponStatusTypes,
                     excludedCouponStatusTypes, f => f.ToDomainString()))
@@ -701,7 +701,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<Coupon>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Get, $"coupons/{couponId}")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Get, $"coupons/{couponId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -711,7 +711,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         CancellationToken cancellationToken = default)
     {
         return _executor.SendAsync<NoData>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Delete, $"coupons/{couponId}")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Delete, $"coupons/{couponId}")
                 .WithCredentials(credentials),
             cancellationToken);
     }
@@ -723,7 +723,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(newCoupon);
 
         return await _executor.SendAsync<Coupon>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Post, "coupons")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Post, "coupons")
                 .WithBody(newCoupon)
                 .WithCredentials(credentials),
             cancellationToken)
@@ -738,7 +738,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         DtoValidation.Validate(updateCoupon);
 
         return await _executor.SendAsync<Coupon>(
-            new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")
+            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")
                 .WithBody(updateCoupon)
                 .WithCredentials(credentials),
             cancellationToken)

@@ -228,8 +228,8 @@ public class FixtureDeserializationTests
         ClassicAssert.AreEqual("buyer1", feedback.From);
         ClassicAssert.AreEqual("seller1", feedback.To);
         ClassicAssert.AreEqual(Utc(2023, 5, 10, 11, 0, 0), feedback.CreatedOn);
-        ClassicAssert.AreEqual(RatingTargetRole.Seller, feedback.RatingTargetRole);
-        ClassicAssert.AreEqual(RatingType.Complaint, feedback.Rating);
+        ClassicAssert.AreEqual(FeedbackTargetRole.Seller, feedback.FeedbackTargetRole);
+        ClassicAssert.AreEqual(Rating.Complaint, feedback.Rating);
         ClassicAssert.AreEqual("as described", feedback.Comment);
         ClassicAssert.AreEqual("thanks", feedback.Reply);
     }

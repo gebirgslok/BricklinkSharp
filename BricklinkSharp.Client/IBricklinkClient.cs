@@ -90,7 +90,7 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<PriceGuide> GetPriceGuideAsync(ItemType type, string no,
-        int colorId = 0, PriceGuideType? priceGuideType = null,
+        int colorId = 0, PriceGuideSource? priceGuideType = null,
         Condition? condition = null, string? countryCode = null,
         string? region = null,
         string? currencyCode = null,
@@ -119,8 +119,8 @@ public interface IBricklinkClient : IDisposable
 
     Task<Inventory[]> GetInventoryListAsync(IEnumerable<ItemType>? includedItemTypes = null,
         IEnumerable<ItemType>? excludedItemTypes = null,
-        IEnumerable<InventoryStatusType>? includedStatusFlags = null,
-        IEnumerable<InventoryStatusType>? excludedStatusFlags = null,
+        IEnumerable<InventoryStatus>? includedStatusFlags = null,
+        IEnumerable<InventoryStatus>? excludedStatusFlags = null,
         IEnumerable<int>? includedCategoryIds = null,
         IEnumerable<int>? excludedCategoryIds = null,
         IEnumerable<int>? includedColorIds = null,
@@ -165,7 +165,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Notification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
+    Task<PushNotification[]> GetNotificationsAsync(BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
     Task<MemberRating> GetMemberRatingAsync(string username,
@@ -181,7 +181,7 @@ public interface IBricklinkClient : IDisposable
         CancellationToken cancellationToken = default);
 
     Task<Feedback> PostFeedbackAsync(int orderId,
-        RatingType rating,
+        Rating rating,
         string comment,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);

@@ -23,11 +23,10 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Json;
+namespace BricklinkSharp.Client;
 
-internal class EventTypeStringConverter : WireStringConverter<EventType>
+public enum PriceGuideSource
 {
-    public EventTypeStringConverter() : base(WireMaps.EventType)
-    {
-    }
+    Sold = 0,
+    Stock = 1
 }

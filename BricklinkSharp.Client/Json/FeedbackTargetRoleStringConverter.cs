@@ -23,10 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client;
+namespace BricklinkSharp.Client.Json;
 
-public enum PriceGuideType
+internal class FeedbackTargetRoleStringConverter : WireStringConverter<FeedbackTargetRole>
 {
-    Sold = 0,
-    Stock = 1
+    public FeedbackTargetRoleStringConverter() : base(WireMaps.FeedbackTargetRole)
+    {
+    }
 }

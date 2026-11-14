@@ -33,8 +33,8 @@ internal class FeedbackPostBody
     [JsonPropertyName("order_id")]
     public int OrderId { get; set; }
 
-    [JsonPropertyName("rating"), JsonConverter(typeof(RatingTypeIntConverter))]
-    public RatingType Rating { get; set; }
+    [JsonPropertyName("rating"), JsonConverter(typeof(RatingIntConverter))]
+    public Rating Rating { get; set; }
 
     [JsonPropertyName("comment")]
     public string Comment { get; set; } = null!;

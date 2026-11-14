@@ -23,11 +23,28 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
+
 namespace BricklinkSharp.Client;
 
-public enum RatingType
+[Serializable]
+public class PushNotification
 {
-    Praise = 0,
-    Neutral = 1,
-    Complaint = 2
+    [JsonPropertyName("event_type"), JsonConverter(typeof(PushNotificationEventTypeStringConverter))]
+    public PushNotificationEventType EventType { get; set; }
+
+    [JsonPropertyName("resource_id")]
+    public int ResourceId { get; set; }
+
+    [JsonPropertyName("timestamp")]
+    public DateTime Timestamp { get; set; }
+
+    public override string ToString()
+    {
+        return $"{nameof(EventType)}: {EventType}, " +
+               $"{nameof(ResourceId)}: {ResourceId}, " +
+               $"{nameof(Timestamp)}: {Timestamp}";
+    }
 }

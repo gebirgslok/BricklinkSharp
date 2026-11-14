@@ -22,29 +22,42 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
-
 using System;
-using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Json;
+using System.Collections.Generic;
+using System.Text;
 
-namespace BricklinkSharp.Client;
-
-[Serializable]
-public class Notification
+namespace BricklinkSharp.Client
 {
-    [JsonPropertyName("event_type"), JsonConverter(typeof(EventTypeStringConverter))]
-    public EventType EventType { get; set; }
-
-    [JsonPropertyName("resource_id")]
-    public int ResourceId { get; set; }
-
-    [JsonPropertyName("timestamp")]
-    public DateTime Timestamp { get; set; }
-
-    public override string ToString()
+    public enum ApiResourceType
     {
-        return $"{nameof(EventType)}: {EventType}, " +
-               $"{nameof(ResourceId)}: {ResourceId}, " +
-               $"{nameof(Timestamp)}: {Timestamp}";
+        Unknown,
+        Item,
+        ItemImage,
+        ItemNumber,
+        Order,
+        OrderItem,
+        OrderDetails,
+        OrderMessage,
+        OrderFeedback,
+        OrderStatus,
+        PaymentStatus,
+        DriveThru,
+        Superset,
+        Subset,
+        PriceGuide,
+        Color,
+        KnownColor,
+        ColorList,
+        Category,
+        CategoryList,
+        Inventory,
+        InventoryList,
+        ElementId,
+        ShippingMethod,
+        Notification,
+        MemberRating,
+        Feedback,
+        FeedbackList,
+        Coupon
     }
 }

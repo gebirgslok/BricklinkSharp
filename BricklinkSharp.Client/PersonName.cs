@@ -23,11 +23,26 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace BricklinkSharp.Client.Json;
+using System;
+using System.Text.Json.Serialization;
 
-internal class RatingTargetRoleStringConverter : WireStringConverter<RatingTargetRole>
+namespace BricklinkSharp.Client;
+
+[Serializable]
+public class PersonName
 {
-    public RatingTargetRoleStringConverter() : base(WireMaps.RatingTargetRole)
+    [JsonPropertyName("full")]
+    public string FullName { get; set; } = null!;
+
+    [JsonPropertyName("first")]
+    public string? FirstName { get; set; }
+
+    [JsonPropertyName("last")]
+    public string? LastName { get; set; }
+
+    public override string ToString()
     {
+        return $"{FullName}{Environment.NewLine}" +
+               $"(First name: {FirstName ?? "Null"}, Last name: {LastName ?? "Null"})";
     }
 }

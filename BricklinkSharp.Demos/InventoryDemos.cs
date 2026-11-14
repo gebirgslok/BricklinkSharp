@@ -118,7 +118,7 @@ internal static class InventoryDemos
     {
         using var client = BricklinkClientFactory.Build();
         var inventories = await client.GetInventoryListAsync(new List<ItemType> { ItemType.Part, ItemType.Minifig },
-            excludedStatusFlags: new List<InventoryStatusType> { InventoryStatusType.Reserved });
+            excludedStatusFlags: new List<InventoryStatus> { InventoryStatus.Reserved });
 
         PrintHelper.PrintAsJson(inventories);
     }

@@ -36,8 +36,8 @@ public class Feedback
     [JsonPropertyName("order_id")]
     public int OrderId { get; set; }
 
-    [JsonPropertyName("rating"), JsonConverter(typeof(RatingTypeIntConverter))]
-    public RatingType Rating { get; set; }
+    [JsonPropertyName("rating"), JsonConverter(typeof(RatingIntConverter))]
+    public Rating Rating { get; set; }
 
     [JsonPropertyName("comment")]
     public string Comment { get; set; } = null!;
@@ -54,8 +54,8 @@ public class Feedback
     [JsonPropertyName("date_rated")]
     public DateTime CreatedOn { get; set; }
 
-    [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(RatingTargetRoleStringConverter))]
-    public RatingTargetRole RatingTargetRole { get; set; }
+    [JsonPropertyName("rating_of_bs"), JsonConverter(typeof(FeedbackTargetRoleStringConverter))]
+    public FeedbackTargetRole FeedbackTargetRole { get; set; }
 
     [JsonPropertyName("reply")]
     public string? Reply { get; set; }

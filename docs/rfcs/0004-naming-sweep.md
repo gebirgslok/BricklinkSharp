@@ -86,11 +86,11 @@ Goal: policy documented; base classes and `Direction` consolidated; everything e
 
 ### Phase 2 — Type and enum renames
 Goal: all remaining public type names match the glossary.
-- [ ] Task 2.1: `Rating` → `FeedbackCounts`, then `RatingType` → `Rating`, `RatingTargetRole` → `FeedbackTargetRole`
-- [ ] Task 2.2: `Notification` → `PushNotification`, `EventType` → `PushNotificationEventType`
-- [ ] Task 2.3: `InventoryStatusType` → `InventoryStatus`, `PriceGuideType` → `PriceGuideSource`, `Name` → `PersonName`
-- [ ] Task 2.4: `IBricklinkRequestHandler` → `IRequestHandler`, `BricklinkApiResourceType` → `ApiResourceType`; `OnRequestAsync` → `BeforeRequestAsync`, `ct` → `cancellationToken`
-- [ ] Task 2.5: Review, format, build, test
+- [x] Task 2.1: `Rating` → `FeedbackCounts`, then `RatingType` → `Rating`, `RatingTargetRole` → `FeedbackTargetRole`
+- [x] Task 2.2: `Notification` → `PushNotification`, `EventType` → `PushNotificationEventType`
+- [x] Task 2.3: `InventoryStatusType` → `InventoryStatus`, `PriceGuideType` → `PriceGuideSource`, `Name` → `PersonName`
+- [x] Task 2.4: `IBricklinkRequestHandler` → `IRequestHandler`, `BricklinkApiResourceType` → `ApiResourceType`; `OnRequestAsync` → `BeforeRequestAsync`, `ct` → `cancellationToken`
+- [x] Task 2.5: Review, format, build, test
 
 ### Phase 3 — Property renames
 Goal: all public properties follow the Naming rules; wire names unchanged.

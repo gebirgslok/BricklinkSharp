@@ -23,17 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
+namespace BricklinkSharp.Client.Json;
 
-namespace BricklinkSharp.Client
+internal class PushNotificationEventTypeStringConverter : WireStringConverter<PushNotificationEventType>
 {
-    public interface IBricklinkRequestHandler
+    public PushNotificationEventTypeStringConverter() : base(WireMaps.PushNotificationEventType)
     {
-        Task OnRequestAsync(BricklinkApiResourceType resourceType, HttpVerb verb, BricklinkCredentials? credentials, CancellationToken ct);
     }
 }

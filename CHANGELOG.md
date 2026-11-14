@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 - A non-JSON response body (e.g. an HTML error page) or a JSON converter error no longer leaks a raw `JsonException`; it surfaces as a `BricklinkException`
-- `IBricklinkRequestHandler` now receives the resolved credentials (per-call, else `BricklinkClientConfiguration.Instance`) instead of `null`
+- `IRequestHandler` now receives the resolved credentials (per-call, else `BricklinkClientConfiguration.Instance`) instead of `null`
 - `HttpResponseMessage` is now disposed after every request
 - Trailing separator in the `BricklinkInvalidParameterException` message listed `,` after the last parameter
 - `NewInventory` and `UpdateInventory` validation rejected ascending tier quantities (`TierQuantity1 < TierQuantity2 < TierQuantity3`), the order its own error message demands, and accepted descending ones

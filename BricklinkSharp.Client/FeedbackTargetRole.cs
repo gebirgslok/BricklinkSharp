@@ -25,9 +25,8 @@
 
 namespace BricklinkSharp.Client;
 
-public enum EventType
+public enum FeedbackTargetRole
 {
-    Order = 0,
-    Message = 1,
-    Feedback = 2
+    Seller = 0,
+    Buyer = 1
 }

@@ -24,25 +24,21 @@
 #endregion
 
 using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+// ReSharper disable UnusedType.Global
 
-namespace BricklinkSharp.Client;
+namespace BricklinkSharp.Client.Json;
 
-[Serializable]
-public class Name
+internal class RatingIntConverter : JsonConverter<Rating>
 {
-    [JsonPropertyName("full")]
-    public string FullName { get; set; } = null!;
-
-    [JsonPropertyName("first")]
-    public string? FirstName { get; set; }
-
-    [JsonPropertyName("last")]
-    public string? LastName { get; set; }
-
-    public override string ToString()
+    public override Rating Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return $"{FullName}{Environment.NewLine}" +
-               $"(First name: {FirstName ?? "Null"}, Last name: {LastName ?? "Null"})";
+        return Scalars.ParseRating(reader.GetInt32());
+    }
+
+    public override void Write(Utf8JsonWriter writer, Rating value, JsonSerializerOptions options)
+    {
+        writer.WriteNumberValue((int)value);
     }
 }

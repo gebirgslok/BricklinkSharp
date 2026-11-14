@@ -59,7 +59,7 @@ internal static class FeedbackDemos
     public static async Task PostFeedbackDemo(int orderId)
     {
         using var client = BricklinkClientFactory.Build();
-        var feedback = await client.PostFeedbackAsync(orderId, RatingType.Praise, "Awesome transaction, praise!");
+        var feedback = await client.PostFeedbackAsync(orderId, Rating.Praise, "Awesome transaction, praise!");
 
         Console.WriteLine("Posted feedback:");
         PrintHelper.PrintAsJson(feedback);

@@ -54,14 +54,14 @@ internal static class Scalars
         throw Malformed(wire, nameof(Double));
     }
 
-    internal static RatingType ParseRatingType(int wire)
+    internal static Rating ParseRating(int wire)
     {
-        if (Enum.IsDefined(typeof(RatingType), wire))
+        if (Enum.IsDefined(typeof(Rating), wire))
         {
-            return (RatingType)wire;
+            return (Rating)wire;
         }
 
-        throw Malformed(wire.ToString(CultureInfo.InvariantCulture), nameof(RatingType));
+        throw Malformed(wire.ToString(CultureInfo.InvariantCulture), nameof(Rating));
     }
 
     private static JsonException Malformed(string? wire, string target) =>
