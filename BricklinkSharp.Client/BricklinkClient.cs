@@ -399,7 +399,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        newInventory.ValidateThrowException();
+        DtoValidation.Validate(newInventory);
 
         return await _executor.SendAsync<Inventory>(
             new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Post, "inventories")
@@ -415,7 +415,7 @@ internal sealed class BricklinkClient : IBricklinkClient
     {
         foreach (var newInventory in newInventories)
         {
-            newInventory.ValidateThrowException();
+            DtoValidation.Validate(newInventory);
         }
 
         await _executor.SendAsync<NoData>(
@@ -431,7 +431,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        updateInventory.ValidateThrowException();
+        DtoValidation.Validate(updateInventory);
 
         return await _executor.SendAsync<Inventory>(
             new BricklinkRequest(BricklinkApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
@@ -720,7 +720,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        newCoupon.ValidateThrowException();
+        DtoValidation.Validate(newCoupon);
 
         return await _executor.SendAsync<Coupon>(
             new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Post, "coupons")
@@ -735,7 +735,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        updateCoupon.ValidateThrowException();
+        DtoValidation.Validate(updateCoupon);
 
         return await _executor.SendAsync<Coupon>(
             new BricklinkRequest(BricklinkApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")

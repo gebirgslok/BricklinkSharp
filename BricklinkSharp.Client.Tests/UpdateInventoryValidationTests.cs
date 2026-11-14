@@ -43,7 +43,7 @@ public class UpdateInventoryValidationTests
 
     private static BricklinkInvalidParameterException ValidateAndCatch(UpdateInventory inventory)
     {
-        var exception = Assert.Throws<BricklinkInvalidParameterException>(() => inventory.ValidateThrowException());
+        var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(inventory));
         Assert.That(exception!.TypeOfDataObject, Is.EqualTo(typeof(UpdateInventory)));
         return exception;
     }
@@ -56,13 +56,13 @@ public class UpdateInventoryValidationTests
     [Test]
     public void Should_NotThrow_When_NothingIsSet()
     {
-        Assert.DoesNotThrow(() => new UpdateInventory().ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(new UpdateInventory()));
     }
 
     [Test]
     public void Should_NotThrow_When_TiersAreValid()
     {
-        Assert.DoesNotThrow(() => CreateValidWithTiers().ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(CreateValidWithTiers()));
     }
 
     [Test]
@@ -96,7 +96,7 @@ public class UpdateInventoryValidationTests
     {
         var inventory = new UpdateInventory { IsStockRoom = true, StockRoomId = stockRoomId };
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [TestCase(false)]
@@ -105,7 +105,7 @@ public class UpdateInventoryValidationTests
     {
         var inventory = new UpdateInventory { IsStockRoom = isStockRoom, StockRoomId = "D" };
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [Test]
@@ -219,7 +219,7 @@ public class UpdateInventoryValidationTests
         inventory.UnitPrice = null;
         inventory.TierPrice1 = 1000M;
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [Test]
@@ -269,7 +269,7 @@ public class UpdateInventoryValidationTests
     [Test]
     public void Should_NotThrow_When_BulkIsOne()
     {
-        Assert.DoesNotThrow(() => new UpdateInventory { Bulk = 1 }.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(new UpdateInventory { Bulk = 1 }));
     }
 
     [Test]

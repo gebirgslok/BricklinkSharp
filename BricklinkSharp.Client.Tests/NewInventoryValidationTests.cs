@@ -50,7 +50,7 @@ public class NewInventoryValidationTests
 
     private static BricklinkInvalidParameterException ValidateAndCatch(NewInventory inventory)
     {
-        var exception = Assert.Throws<BricklinkInvalidParameterException>(() => inventory.ValidateThrowException());
+        var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(inventory));
         Assert.That(exception!.TypeOfDataObject, Is.EqualTo(typeof(NewInventory)));
         return exception;
     }
@@ -63,13 +63,13 @@ public class NewInventoryValidationTests
     [Test]
     public void Should_NotThrow_When_InventoryIsValid()
     {
-        Assert.DoesNotThrow(() => CreateValid().ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(CreateValid()));
     }
 
     [Test]
     public void Should_NotThrow_When_TiersAreValid()
     {
-        Assert.DoesNotThrow(() => CreateValidWithTiers().ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(CreateValidWithTiers()));
     }
 
     [TestCase(ItemType.Part, Completeness.Incomplete)]
@@ -97,7 +97,7 @@ public class NewInventoryValidationTests
         inventory.Item.Type = ItemType.Set;
         inventory.Completeness = completeness;
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [TestCase(null)]
@@ -138,7 +138,7 @@ public class NewInventoryValidationTests
         inventory.IsStockRoom = true;
         inventory.StockRoomId = stockRoomId;
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [Test]
@@ -148,7 +148,7 @@ public class NewInventoryValidationTests
         inventory.IsStockRoom = false;
         inventory.StockRoomId = "D";
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [Test]
@@ -286,7 +286,7 @@ public class NewInventoryValidationTests
         var inventory = CreateValid();
         inventory.Bulk = 1;
 
-        Assert.DoesNotThrow(() => inventory.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(inventory));
     }
 
     [Test]

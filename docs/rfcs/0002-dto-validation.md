@@ -59,11 +59,11 @@ Goal: current validation behaviour is pinned through the existing internal `Vali
 
 ### Phase 2 — Introduce `DtoValidation` and migrate (pure refactor)
 Goal: all validation lives in `DtoValidation`; all phase 1 tests pass unchanged apart from their entry point.
-- [ ] 2.1 Add `DtoValidation` with the private tier engine, stock-room and bulk checks
-- [ ] 2.2 Implement the three `Validate` overloads reproducing current behaviour exactly
-- [ ] 2.3 Switch the five `BricklinkClient` call sites and delete `ValidateThrowException()` from the DTOs
-- [ ] 2.4 Re-point the phase 1 tests at `DtoValidation.Validate`; keep `Should_ReturnFaultedTask_When_ValidationFails` green
-- [ ] 2.5 Run `dotnet build` and `dotnet test`
+- [x] 2.1 Add `DtoValidation` with the private tier engine, stock-room and bulk checks
+- [x] 2.2 Implement the three `Validate` overloads reproducing current behaviour exactly
+- [x] 2.3 Switch the five `BricklinkClient` call sites and delete `ValidateThrowException()` from the DTOs
+- [x] 2.4 Re-point the phase 1 tests at `DtoValidation.Validate`; keep `Should_ReturnFaultedTask_When_ValidationFails` green
+- [x] 2.5 Run `dotnet build` and `dotnet test`
 
 ### Phase 3 — Intentional behaviour changes and changelog
 Goal: the two deliberate changes are made, tested and documented.

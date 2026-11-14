@@ -43,7 +43,7 @@ public class CouponValidationTests
 
     private static BricklinkInvalidParameterException ValidateAndCatch(CouponBase coupon)
     {
-        var exception = Assert.Throws<BricklinkInvalidParameterException>(() => coupon.ValidateThrowException());
+        var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(coupon));
         Assert.That(exception!.TypeOfDataObject, Is.EqualTo(coupon.GetType()));
         return exception;
     }
@@ -58,13 +58,13 @@ public class CouponValidationTests
     {
         var coupon = new UpdateCoupon { DiscountType = DiscountType.Percentage };
 
-        Assert.DoesNotThrow(() => coupon.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(coupon));
     }
 
     [Test]
     public void Should_NotThrow_When_TiersAreValid()
     {
-        Assert.DoesNotThrow(() => CreateValidPercentageCoupon().ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(CreateValidPercentageCoupon()));
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class CouponValidationTests
         coupon.TierPrice2 = 5M;
         coupon.TierDiscountRate3 = 0;
 
-        Assert.DoesNotThrow(() => coupon.ValidateThrowException());
+        Assert.DoesNotThrow(() => DtoValidation.Validate(coupon));
     }
 
     [Test]
