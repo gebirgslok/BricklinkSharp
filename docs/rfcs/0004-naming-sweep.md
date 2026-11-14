@@ -111,6 +111,7 @@ Goal: `IBricklinkClient` surface is final; demos and tests use the new names.
 
 ### Phase 5 — Docs and migration guide
 Goal: documentation is complete for release.
+- [ ] Task 5.0: Final client renames (rule-driven leftovers from the Phase 4 review): `GetOrderFeedbackAsync` → `GetOrderFeedbacksAsync`, `GetNotificationsAsync` → `GetPushNotificationsAsync` (and its demo), parameter `priceGuideType` → `source`; build, test
 - [ ] Task 5.1: `CHANGELOG.md` `## Unreleased`: old → new table under Changed/Removed
 - [ ] Task 5.2: README: update all examples and add a migration section
 - [ ] Task 5.3: `CONTEXT.md` check against final names
@@ -127,4 +128,5 @@ Goal: documentation is complete for release.
 - Replacing `Tier*1..3` with a collection.
 - Reshaping `GetOrderItemsAsync` (`List<OrderItem[]>`).
 - Decoupling `BricklinkClientConfiguration` from `BricklinkCredentials`.
+- Deferred to a follow-up RFC: image helper reshuffle (`GetPartImageForColor` → `GetPartImage`, sync `GetCatalogImage` vs `GetCatalogImageAsync`), one status-parameter scheme (`…StatusTypes` vs `…StatusFlags`), `filed`, `mailCcMe`, `vat`.
 - The release itself (version bump in `Directory.Build.props`, renaming `Unreleased`, tag).
