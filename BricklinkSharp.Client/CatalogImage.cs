@@ -32,7 +32,7 @@ using System.Text.Json.Serialization;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class CatalogImage : ItemBase
+public class CatalogImage : Item
 {
     [JsonPropertyName("thumbnail_url")]
     public string? ThumbnailUrl { get; set; }

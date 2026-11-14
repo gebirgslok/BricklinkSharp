@@ -539,7 +539,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var body = new FeedbackBase
+        var body = new FeedbackPostBody
         {
             Comment = comment,
             OrderId = orderId,
@@ -565,7 +565,7 @@ internal sealed class BricklinkClient : IBricklinkClient
             cancellationToken);
     }
 
-    public Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+    public Task<Order[]> GetOrdersAsync(Direction direction = Direction.In,
         IEnumerable<OrderStatus>? includedStatusFlags = null,
         IEnumerable<OrderStatus>? excludedStatusFlags = null,
         bool filed = false,

@@ -105,8 +105,8 @@ public class BricklinkClientEndpointTests
         yield return new("PostFeedback", client => client.PostFeedbackAsync(11, RatingType.Praise, "ok", credentials, cancellationToken),
             HttpMethod.Post, $"{BaseUrl}feedback",
             "{\"order_id\":11,\"rating\":" + System.Text.Json.JsonSerializer.Serialize(RatingType.Praise) + ",\"comment\":\"ok\"}");
-        yield return new("GetOrders", client => client.GetOrdersAsync(OrderDirection.Out, null, null, true, credentials, cancellationToken),
-            HttpMethod.Get, $"{BaseUrl}orders?direction={OrderDirection.Out.ToDomainString()}&filed=true");
+        yield return new("GetOrders", client => client.GetOrdersAsync(Direction.Out, null, null, true, credentials, cancellationToken),
+            HttpMethod.Get, $"{BaseUrl}orders?direction={Direction.Out.ToDomainString()}&filed=true");
         yield return new("GetOrder", client => client.GetOrderAsync(11, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}orders/11");
         yield return new("GetOrderItems", client => client.GetOrderItemsAsync(11, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}orders/11/items");

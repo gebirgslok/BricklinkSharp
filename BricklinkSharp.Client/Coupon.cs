@@ -30,7 +30,7 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class Coupon : CouponBase
+public class Coupon : CouponTerms
 {
     [JsonPropertyName("coupon_id")]
     public int Id { get; set; }

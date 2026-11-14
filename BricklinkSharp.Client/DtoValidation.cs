@@ -95,7 +95,7 @@ internal static class DtoValidation
         ValidateBulk(dto.Bulk, dtoType);
     }
 
-    internal static void Validate(CouponBase dto)
+    internal static void Validate(CouponTerms dto)
     {
         if (dto.DiscountType != DiscountType.Percentage)
         {

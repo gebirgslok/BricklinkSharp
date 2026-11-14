@@ -29,7 +29,7 @@ using System.Text.Json.Serialization;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class NewCoupon : CouponBase
+public class NewCoupon : CouponTerms
 {
     [JsonPropertyName("buyer_name")]
     public string BuyerName { get; set; }

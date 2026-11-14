@@ -48,7 +48,6 @@ public class WireMapTests
         yield return Case(WireMaps.ItemType);
         yield return Case(WireMaps.Condition);
         yield return Case(WireMaps.PriceGuideType);
-        yield return Case(WireMaps.OrderDirection);
         yield return Case(WireMaps.Direction);
         yield return Case(WireMaps.InventoryStatusType);
         yield return Case(WireMaps.CouponStatus);

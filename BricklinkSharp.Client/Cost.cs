@@ -23,13 +23,24 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
 using BricklinkSharp.Client.Json;
 
 namespace BricklinkSharp.Client;
 
-public class Cost : CostBase
+[Serializable]
+public class Cost
 {
+    [JsonPropertyName("currency_code")]
+    public string CurrencyCode { get; set; } = null!;
+
+    [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal Subtotal { get; set; }
+
+    [JsonPropertyName("grand_total"), JsonConverter(typeof(DecimalStringConverter))]
+    public decimal GrandTotal { get; set; }
+
     [JsonPropertyName("salesTax_collected_by_BL"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal SalesTaxCollectedByBricklink { get; set; }
 
@@ -59,4 +70,9 @@ public class Cost : CostBase
 
     [JsonPropertyName("vat_amount"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal VatAmount { get; set; }
+
+    public override string ToString()
+    {
+        return $"{GrandTotal:F2} (subtotal {Subtotal:F2}) - {CurrencyCode}";
+    }
 }

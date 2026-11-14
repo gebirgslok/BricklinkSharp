@@ -23,10 +23,23 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
+
 namespace BricklinkSharp.Client;
 
-public enum OrderDirection
+[Serializable]
+public class Item
 {
-    In = 0,
-    Out = 1
+    [JsonPropertyName("no")]
+    public string Number { get; set; } = null!;
+
+    [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
+    public ItemType Type { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Type} - {Number}";
+    }
 }

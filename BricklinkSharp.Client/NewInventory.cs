@@ -29,8 +29,8 @@ using System.Text.Json.Serialization;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class NewInventory : InventoryBase
+public class NewInventory : InventoryFields
 {
     [JsonPropertyName("item")]
-    public ItemBase Item { get; set; } = null!;
+    public Item Item { get; set; } = null!;
 }

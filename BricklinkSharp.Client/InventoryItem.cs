@@ -30,7 +30,7 @@ using System.Text.Json.Serialization;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class InventoryItem : ItemBase
+public class InventoryItem : Item
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = null!;

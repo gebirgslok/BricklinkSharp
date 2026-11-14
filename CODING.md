@@ -7,6 +7,7 @@ Authoritative rules for `BricklinkSharp.Client`. Existing code that predates a r
 - Library targets netstandard2.0 and up, `LangVersion` 10. No newer BCL APIs without `#if` guards per target.
 - Nullable reference types are enabled; annotate honestly.
 - Public API is never broken silently. If a breaking change is unavoidable, flag it with a warning in the README changelog (see 1.3.1).
+- Exception: a deliberately breaking release (such as 2.0.0, ADR 0001) may rename public API without `[Obsolete]` forwarders, provided `CHANGELOG.md` lists every old → new name.
 
 ## Style
 
@@ -20,6 +21,16 @@ Authoritative rules for `BricklinkSharp.Client`. Existing code that predates a r
 - Every method that needs authentication takes an optional `BricklinkCredentials? credentials = null`, which takes precedence over `BricklinkClientConfiguration.Instance`.
 - Library code uses `ConfigureAwait(false)` in new and touched code. Retrofitting existing code is a separate task.
 - Failures surface as exceptions deriving from `BricklinkException`. No new exception base types.
+
+## Naming
+
+- Use the terms in `CONTEXT.md`.
+- Dates are `<Verb>On` (`IssuedOn`, `ShippedOn`), not `Date<Verb>` or `<Noun>Date`.
+- Collection methods are plural: `Get<Things>Async`, not `Get<Thing>ListAsync`.
+- An item number parameter or property is `itemNumber` / `ItemNumber`, not `no`, `number` or `partNo`.
+- No `Type` or `Base` suffix unless it carries meaning (`ItemType` does; `ItemBase` did not).
+- Writable bases shared by a read model and its create/update models are named `*Fields` or `*Terms`.
+- A type's own id property is `Id`.
 
 ## JSON
 

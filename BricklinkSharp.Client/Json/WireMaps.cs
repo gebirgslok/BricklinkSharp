@@ -50,8 +50,6 @@ internal static class WireMaps
 
     internal static readonly WireMap<PriceGuideType> PriceGuideType = WireMap<PriceGuideType>.ByNameLower();
 
-    internal static readonly WireMap<OrderDirection> OrderDirection = WireMap<OrderDirection>.ByNameLower();
-
     internal static readonly WireMap<Direction> Direction = WireMap<Direction>.ByNameLower();
 
     internal static readonly WireMap<InventoryStatusType> InventoryStatusType = WireMap<InventoryStatusType>.Of(

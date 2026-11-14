@@ -116,7 +116,7 @@ public class FixtureDeserializationTests
     {
         using var host = BricklinkTestHost.Create(Fixtures.Envelope("[" + Fixtures.Json("Order") + "]"));
 
-        var orders = await host.Client.GetOrdersAsync(OrderDirection.In, null, null, false, Credentials);
+        var orders = await host.Client.GetOrdersAsync(Direction.In, null, null, false, Credentials);
 
         var order = orders[0];
         ClassicAssert.AreEqual(1234567, order.OrderId);

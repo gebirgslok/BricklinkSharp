@@ -37,8 +37,6 @@ internal static class EnumExtensions
 
     internal static string ToDomainString(this PriceGuideType e) => WireMaps.PriceGuideType.ToWire(e);
 
-    internal static string ToDomainString(this OrderDirection e) => WireMaps.OrderDirection.ToWire(e);
-
     internal static string ToDomainString(this Direction e) => WireMaps.Direction.ToWire(e);
 
     internal static string ToDomainString(this InventoryStatusType e) => WireMaps.InventoryStatusType.ToWire(e);

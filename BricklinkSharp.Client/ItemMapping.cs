@@ -31,7 +31,7 @@ namespace BricklinkSharp.Client;
 public class ItemMapping
 {
     [JsonPropertyName("item")]
-    public ItemBase Item { get; set; } = null!;
+    public Item Item { get; set; } = null!;
 
     [JsonPropertyName("color_id")]
     public int ColorId { get; set; }

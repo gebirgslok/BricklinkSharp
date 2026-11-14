@@ -32,7 +32,7 @@ public class NewInventoryValidationTests
 {
     private static NewInventory CreateValid() => new()
     {
-        Item = new ItemBase { Type = ItemType.Part },
+        Item = new Item { Type = ItemType.Part },
         UnitPrice = 10M
     };
 

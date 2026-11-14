@@ -1,6 +1,6 @@
 ---
 github_issue: 39
-status: draft
+status: in-progress
 created: 2026-11-14
 ---
 
@@ -74,13 +74,13 @@ Roslyn-based rename where tooling allows, otherwise a scripted pass in strict or
 
 ### Phase 1 — Policy and structural type changes
 Goal: policy documented; base classes and `Direction` consolidated; everything else untouched.
-- [ ] Task 1.1: Write `docs/adr/0001-clean-break-2-0-0.md` (clean break, no `[Obsolete]` forwarders)
-- [ ] Task 1.2: Update `CODING.md`: deliberate-break exception and Naming section
-- [ ] Task 1.3: Remove the `Direction`/`OrderDirection` gotcha from `CLAUDE.md`; merge `OrderDirection` into `Direction`
-- [ ] Task 1.4: `ItemBase` → `Item`; `SuperSubSetItem` → `ContainedItemSummary`
-- [ ] Task 1.5: Remove `OrderBase` (`OrderDetails : Order`), `FeedbackBase` (internal post body), `CostBase` and `SuperSubSetEntryBase`
-- [ ] Task 1.6: `CouponBase` → `CouponTerms`, `InventoryBase` → `InventoryFields`
-- [ ] Task 1.7: Review (`code-reviewer`, `naming-specialist`), format, build, test
+- [x] Task 1.1: Write `docs/adr/0001-clean-break-2-0-0.md` (clean break, no `[Obsolete]` forwarders)
+- [x] Task 1.2: Update `CODING.md`: deliberate-break exception and Naming section
+- [x] Task 1.3: Remove the `Direction`/`OrderDirection` gotcha from `CLAUDE.md`; merge `OrderDirection` into `Direction`
+- [x] Task 1.4: `ItemBase` → `Item`; `SuperSubSetItem` → `ContainedItemSummary`
+- [x] Task 1.5: Remove `OrderBase` (`OrderDetails : Order`), `FeedbackBase` (internal post body), `CostBase` and `SuperSubSetEntryBase`
+- [x] Task 1.6: `CouponBase` → `CouponTerms`, `InventoryBase` → `InventoryFields`
+- [x] Task 1.7: Review (`code-reviewer`, `naming-specialist`), format, build, test
 
 ### Phase 2 — Type and enum renames
 Goal: all remaining public type names match the glossary.

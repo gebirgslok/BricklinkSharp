@@ -91,16 +91,6 @@ public class EnumExtensionsTests
     }
 
     [Test]
-    public void ToDomainString_OrderDirection()
-    {
-        ClassicAssert.AreEqual("in", OrderDirection.In.ToDomainString());
-        ClassicAssert.AreEqual("out", OrderDirection.Out.ToDomainString());
-
-        OrderDirection? nullHolder = null;
-        ClassicAssert.IsNull(nullHolder?.ToDomainString());
-    }
-
-    [Test]
     public void ToDomainString_Direction()
     {
         ClassicAssert.AreEqual("in", Direction.In.ToDomainString());

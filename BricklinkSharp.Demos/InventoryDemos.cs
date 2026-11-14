@@ -56,7 +56,7 @@ internal static class InventoryDemos
             {
                 ColorId = 2,
                 Condition = Condition.Used,
-                Item = new ItemBase
+                Item = new Item
                 {
                     Number = "3003",
                     Type = ItemType.Part
@@ -70,7 +70,7 @@ internal static class InventoryDemos
             {
                 ColorId = 3,
                 Condition = Condition.Used,
-                Item = new ItemBase
+                Item = new Item
                 {
                     Number = "3003",
                     Type = ItemType.Part
@@ -91,7 +91,7 @@ internal static class InventoryDemos
         {
             ColorId = 1,
             Condition = Condition.Used,
-            Item = new ItemBase
+            Item = new Item
             {
                 Number = "3003",
                 Type = ItemType.Part

@@ -31,7 +31,7 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class CatalogItem : ItemBase
+public class CatalogItem : Item
 {
     [JsonPropertyName("name")]
     public string Name { get; set; } = null!;

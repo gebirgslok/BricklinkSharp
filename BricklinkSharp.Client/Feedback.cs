@@ -31,8 +31,17 @@ using BricklinkSharp.Client.Json;
 // ReSharper disable once ClassNeverInstantiated.Global
 namespace BricklinkSharp.Client;
 
-public class Feedback : FeedbackBase
+public class Feedback
 {
+    [JsonPropertyName("order_id")]
+    public int OrderId { get; set; }
+
+    [JsonPropertyName("rating"), JsonConverter(typeof(RatingTypeIntConverter))]
+    public RatingType Rating { get; set; }
+
+    [JsonPropertyName("comment")]
+    public string Comment { get; set; } = null!;
+
     [JsonPropertyName("feedback_id")]
     public int FeedbackId { get; set; }
 

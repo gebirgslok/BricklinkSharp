@@ -33,7 +33,7 @@ namespace BricklinkSharp.Client;
 public class PriceGuide
 {
     [JsonPropertyName("item")]
-    public ItemBase Item { get; set; } = null!;
+    public Item Item { get; set; } = null!;
 
     [JsonPropertyName("new_or_used"), JsonConverter(typeof(ConditionStringConverter))]
     public Condition Condition { get; set; }

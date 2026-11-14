@@ -30,13 +30,19 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class SupersetEntry : SuperSubSetEntryBase
+public class SupersetEntry
 {
+    [JsonPropertyName("item")]
+    public ContainedItemSummary Item { get; set; } = null!;
+
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+
     [JsonPropertyName("appears_as"), JsonConverter(typeof(AppearsAsStringConverter))]
     public AppearsAs AppearsAs { get; set; }
 
     public override string ToString()
     {
-        return $"{base.ToString()}, appears as: {AppearsAs}";
+        return $"{Quantity}x({Item}), appears as: {AppearsAs}";
     }
 }

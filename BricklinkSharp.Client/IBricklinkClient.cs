@@ -191,7 +191,7 @@ public interface IBricklinkClient : IDisposable
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default);
 
-    Task<Order[]> GetOrdersAsync(OrderDirection direction = OrderDirection.In,
+    Task<Order[]> GetOrdersAsync(Direction direction = Direction.In,
         IEnumerable<OrderStatus>? includedStatusFlags = null,
         IEnumerable<OrderStatus>? excludedStatusFlags = null,
         bool filed = false,

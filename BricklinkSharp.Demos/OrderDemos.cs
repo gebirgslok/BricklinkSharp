@@ -35,7 +35,7 @@ internal static class OrderDemos
     public static async Task GetOrderDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -48,7 +48,7 @@ internal static class OrderDemos
     public static async Task GetOrderItemsDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -61,7 +61,7 @@ internal static class OrderDemos
     public static async Task GetOrderMessagesDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -74,7 +74,7 @@ internal static class OrderDemos
     public static async Task GetOrderFeedbackDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -87,7 +87,7 @@ internal static class OrderDemos
     public static async Task UpdateOrderStatusDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -101,7 +101,7 @@ internal static class OrderDemos
     public static async Task UpdatePaymentStatusDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -115,7 +115,7 @@ internal static class OrderDemos
     public static async Task SendDriveThruDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -128,7 +128,7 @@ internal static class OrderDemos
     public static async Task UpdateOrderDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });
@@ -146,7 +146,7 @@ internal static class OrderDemos
     public static async Task GetOrdersDemo()
     {
         using var client = BricklinkClientFactory.Build();
-        var orders = await client.GetOrdersAsync(OrderDirection.Out, excludedStatusFlags: new List<OrderStatus>
+        var orders = await client.GetOrdersAsync(Direction.Out, excludedStatusFlags: new List<OrderStatus>
         {
             OrderStatus.Paid
         });

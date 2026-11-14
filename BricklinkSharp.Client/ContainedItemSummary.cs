@@ -23,20 +23,31 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Text.Json.Serialization;
+using BricklinkSharp.Client.Json;
+
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace BricklinkSharp.Client;
 
-public abstract class SuperSubSetEntryBase
+[Serializable]
+public class ContainedItemSummary
 {
-    [JsonPropertyName("item")]
-    public SuperSubSetItem Item { get; set; } = null!;
+    [JsonPropertyName("no")]
+    public string Number { get; set; } = null!;
 
-    [JsonPropertyName("quantity")]
-    public int Quantity { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = null!;
+
+    [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
+    public ItemType Type { get; set; }
+
+    [JsonPropertyName("category_id")]
+    public int CategoryId { get; set; }
 
     public override string ToString()
     {
-        return $"{Quantity}x({Item})";
+        return $"{Type}, {Number}, {Name}";
     }
 }

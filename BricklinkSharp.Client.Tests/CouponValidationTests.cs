@@ -41,7 +41,7 @@ public class CouponValidationTests
         TierDiscountRate3 = 30
     };
 
-    private static BricklinkInvalidParameterException ValidateAndCatch(CouponBase coupon)
+    private static BricklinkInvalidParameterException ValidateAndCatch(CouponTerms coupon)
     {
         var exception = Assert.Throws<BricklinkInvalidParameterException>(() => DtoValidation.Validate(coupon));
         Assert.That(exception!.TypeOfDataObject, Is.EqualTo(coupon.GetType()));

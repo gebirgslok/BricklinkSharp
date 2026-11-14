@@ -102,8 +102,6 @@ public class WireFormatCharacterizationTests
     [Test]
     public void Should_MapToWire_When_DirectionsToDomainString()
     {
-        AssertDomainStrings<OrderDirection>(e => e.ToDomainString(),
-            (OrderDirection.In, "in"), (OrderDirection.Out, "out"));
         AssertDomainStrings<Direction>(e => e.ToDomainString(), (Direction.In, "in"), (Direction.Out, "out"));
     }
 
