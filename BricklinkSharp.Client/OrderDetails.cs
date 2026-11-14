@@ -64,4 +64,10 @@ public class OrderDetails : Order
 
     [JsonPropertyName("shipping")]
     public Shipping Shipping { get; set; } = null!;
+
+    [JsonPropertyName("cost")]
+    public new Cost Cost { get; set; } = null!;
+
+    [JsonPropertyName("disp_cost")]
+    public new Cost DisplayCost { get; set; } = null!;
 }

@@ -30,17 +30,8 @@ using BricklinkSharp.Client.Json;
 namespace BricklinkSharp.Client;
 
 [Serializable]
-public class Cost
+public class Cost : CostSummary
 {
-    [JsonPropertyName("currency_code")]
-    public string CurrencyCode { get; set; } = null!;
-
-    [JsonPropertyName("subtotal"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal Subtotal { get; set; }
-
-    [JsonPropertyName("grand_total"), JsonConverter(typeof(DecimalStringConverter))]
-    public decimal GrandTotal { get; set; }
-
     [JsonPropertyName("salesTax_collected_by_BL"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal SalesTaxCollectedByBricklink { get; set; }
 
@@ -70,9 +61,4 @@ public class Cost
 
     [JsonPropertyName("vat_amount"), JsonConverter(typeof(DecimalStringConverter))]
     public decimal VatAmount { get; set; }
-
-    public override string ToString()
-    {
-        return $"{GrandTotal:F2} (subtotal {Subtotal:F2}) - {CurrencyCode}";
-    }
 }

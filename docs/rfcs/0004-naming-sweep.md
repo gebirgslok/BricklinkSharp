@@ -29,7 +29,7 @@ Constraints:
 |---|---|
 | `OrderDirection` | `Direction` (merged, old one deleted) |
 | `ItemBase` | `Item` |
-| `CostBase` | removed (`Order.Cost`/`DisplayCost` use `Cost`, or a standalone `CostSummary`) |
+| `CostBase` | `CostSummary` (standalone; `Cost : CostSummary`). The orders list returns only currency, subtotal and grand total, so `Order.Cost`/`DisplayCost` are `CostSummary`; `OrderDetails` redeclares them as `Cost` |
 | `OrderBase` | removed (`OrderDetails : Order`) |
 | `FeedbackBase` | removed (internal post body) |
 | `SuperSubSetEntryBase` | removed (`Item`, `Quantity` declared on `SupersetEntry` and `SubsetEntry`) |
@@ -61,6 +61,7 @@ Constraints:
 - Rating counts: `NumOfPraises` → `PraiseCount`, `NumOfNeutrals` → `NeutralCount`, `NumOfComplaints` → `ComplaintCount`.
 - Cost: `Cost.Coupon` → `CouponDiscount`, `Cost.Shipping` → `ShippingCost`, `Cost.Insurance` → `InsuranceCost`; same for `UpdateCost.Shipping`/`Insurance`.
 - Inventory: `IsRetain` → `RetainsWhenSoldOut`, `Bulk` → `BulkQuantity`, `MyCost` → `OwnCost`, `MyWeight` → `OwnWeight`, `SaleRate` → `SaleRatePercent`.
+- Item number: `Item.Number` and `ContainedItemSummary.Number` → `ItemNumber` (wire name `no` unchanged).
 - Catalog: `DimX`/`DimY`/`DimZ` → `DimensionX`/`DimensionY`/`DimensionZ`, `AlternateNo` → `AlternateNumber`.
 - Exceptions: `ExpectedCode` → `ExpectedStatusCode`, `ReceivedCode` → `ReceivedStatusCode`, `TypeOfDataObject` → `DataObjectType`.
 
@@ -78,7 +79,7 @@ Goal: policy documented; base classes and `Direction` consolidated; everything e
 - [x] Task 1.2: Update `CODING.md`: deliberate-break exception and Naming section
 - [x] Task 1.3: Remove the `Direction`/`OrderDirection` gotcha from `CLAUDE.md`; merge `OrderDirection` into `Direction`
 - [x] Task 1.4: `ItemBase` → `Item`; `SuperSubSetItem` → `ContainedItemSummary`
-- [x] Task 1.5: Remove `OrderBase` (`OrderDetails : Order`), `FeedbackBase` (internal post body), `CostBase` and `SuperSubSetEntryBase`
+- [x] Task 1.5: Remove `OrderBase` (`OrderDetails : Order`), `FeedbackBase` (internal post body), `SuperSubSetEntryBase`; `CostBase` → `CostSummary`
 - [x] Task 1.6: `CouponBase` → `CouponTerms`, `InventoryBase` → `InventoryFields`
 - [x] Task 1.7: Review (`code-reviewer`, `naming-specialist`), format, build, test
 
@@ -95,7 +96,7 @@ Goal: all public properties follow the Naming rules; wire names unchanged.
 - [ ] Task 3.1: Id properties → `Id`; `UpdateShipping.MethodId` → `ShippingMethodId`
 - [ ] Task 3.2: Date properties → `…On`
 - [ ] Task 3.3: Rating count and Cost properties
-- [ ] Task 3.4: Inventory and catalog properties
+- [ ] Task 3.4: Inventory and catalog properties, including `Item.Number`/`ContainedItemSummary.Number` → `ItemNumber`
 - [ ] Task 3.5: Exception members
 - [ ] Task 3.6: Verify `WireMap` characterization tests and JSON property names are unchanged
 - [ ] Task 3.7: Review, format, build, test

@@ -81,8 +81,8 @@ public class Order
     public Payment Payment { get; set; } = null!;
 
     [JsonPropertyName("cost")]
-    public Cost Cost { get; set; } = null!;
+    public CostSummary Cost { get; set; } = null!;
 
     [JsonPropertyName("disp_cost")]
-    public Cost DisplayCost { get; set; } = null!;
+    public CostSummary DisplayCost { get; set; } = null!;
 }
