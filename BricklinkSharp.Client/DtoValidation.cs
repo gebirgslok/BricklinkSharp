@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -175,7 +175,7 @@ internal static class DtoValidation
                 {
                     {"StockRoomId", stockRoomId!}
                 },
-                $"StockRoomId must be either A, B or C (set to: {stockRoomId}.",
+                $"StockRoomId must be either A, B or C (set to: {stockRoomId}).",
                 dtoType);
         }
     }

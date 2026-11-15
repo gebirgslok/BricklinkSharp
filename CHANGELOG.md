@@ -87,6 +87,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Trailing separator in the `BricklinkInvalidParameterException` message listed `,` after the last parameter
 - `NewInventory` and `UpdateInventory` validation rejected ascending tier quantities (`TierQuantity1 < TierQuantity2 < TierQuantity3`), the order its own error message demands, and accepted descending ones
 - OAuth signatures for query values containing `%`, control characters below `0x10` or characters outside the Basic Multilingual Plane (such as emoji) are now computed from correctly percent-encoded values; the old encoder emitted malformed escapes. Plain ASCII values, including include/exclude filters such as `a,b,-c`, sign exactly as before
+- Item numbers, usernames and element IDs are now percent-encoded when placed in a request path (and item numbers in image/thumbnail URLs), so a `/`, `?` or `#` in an argument can no longer change the URL or the signature
+- `BricklinkClientConfiguration.Instance` is now created thread-safely; credentials set from concurrent threads could previously be lost
+- The `BricklinkInvalidParameterException` message for an invalid `StockRoomId` had an unbalanced parenthesis (`(set to: D.` is now `(set to: D).`)
 
 ### Removed
 - **Breaking:** `OrderBase` (`OrderDetails` now derives from `Order`), `FeedbackBase` (now an internal post body) and `SuperSubSetEntryBase` (`Item` and `Quantity` are declared on `SupersetEntry` and `SubsetEntry`)

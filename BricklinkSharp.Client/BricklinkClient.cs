@@ -35,24 +35,6 @@ namespace BricklinkSharp.Client;
 
 internal sealed class BricklinkClient : IBricklinkClient
 {
-    private const string _partImageUrlTemplate = "//img.bricklink.com/ItemImage/PN/{0}/{1}.png";
-    private const string _minifigImageUrlTemplate = "//img.bricklink.com/ItemImage/MN/0/{0}.png";
-    private const string _setImageUrlTemplate = "//img.bricklink.com/ItemImage/SN/0/{0}.png";
-    private const string _bookImageUrlTemplate = "//img.bricklink.com/ItemImage/BN/0/{0}.png";
-    private const string _gearImageUrlTemplate = "//img.bricklink.com/ItemImage/GN/0/{0}.png";
-    private const string _catalogImageUrlTemplate = "//img.bricklink.com/ItemImage/CN/0/{0}.png";
-    private const string _instructionImageUrlTemplate = "//img.bricklink.com/ItemImage/IN/0/{0}.png";
-    private const string _originalBoxImageUrlTemplate = "//img.bricklink.com/ItemImage/ON/0/{0}.png";
-
-    private const string _partThumbnailUrlTemplate = "//img.bricklink.com/P/{0}/{1}.jpg";
-    private const string _minifigThumbnailUrlTemplate = "//img.bricklink.com/M/{0}.jpg";
-    private const string _setThumbnailUrlTemplate = "//img.bricklink.com/S/{0}.jpg";
-    private const string _bookThumbnailUrlTemplate = "//img.bricklink.com/B/{0}.jpg";
-    private const string _gearThumbnailUrlTemplate = "//img.bricklink.com/G/{0}.jpg";
-    private const string _catalogThumbnaileUrlTemplate = "//img.bricklink.com/C/{0}.jpg";
-    private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
-    private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
-
     private readonly IEndpointSender _sender;
     private readonly HttpClient _httpClient;
     private readonly bool _disposeHttpClient;
@@ -108,119 +90,97 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     public Uri? GetImage(string itemNumber, ItemType type, int? colorId = null, string scheme = "https")
     {
-        return type switch
-        {
-            ItemType.Minifig => GetMinifigImage(itemNumber, scheme),
-            ItemType.Part => colorId.HasValue ? GetPartImageForColor(itemNumber, colorId.Value, scheme) : null,
-            ItemType.Set => GetSetImage(itemNumber, scheme),
-            ItemType.Book => GetBookImage(itemNumber, scheme),
-            ItemType.Gear => GetGearImage(itemNumber, scheme),
-            ItemType.Catalog => GetCatalogImage(itemNumber, scheme),
-            ItemType.Instruction => GetInstructionImage(itemNumber, scheme),
-            ItemType.OriginalBox => GetOriginalBoxImage(itemNumber, scheme),
-            _ => null
-        };
+        return ImageUrls.Image(type, itemNumber, colorId, scheme);
     }
 
     public Uri GetPartImageForColor(string itemNumber, int colorId, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_partImageUrlTemplate, colorId.ToString(), itemNumber)}");
+        return ImageUrls.Image(ItemType.Part, itemNumber, colorId, scheme)!;
     }
 
     public Uri GetMinifigImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_minifigImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.Minifig, itemNumber, null, scheme)!;
     }
 
     public Uri GetSetImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_setImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.Set, itemNumber, null, scheme)!;
     }
 
     public Uri GetBookImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_bookImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.Book, itemNumber, null, scheme)!;
     }
 
     public Uri GetGearImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_gearImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.Gear, itemNumber, null, scheme)!;
     }
 
     public Uri GetCatalogImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_catalogImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.Catalog, itemNumber, null, scheme)!;
     }
 
     public Uri GetInstructionImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_instructionImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.Instruction, itemNumber, null, scheme)!;
     }
 
     public Uri GetOriginalBoxImage(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_originalBoxImageUrlTemplate, itemNumber)}");
+        return ImageUrls.Image(ItemType.OriginalBox, itemNumber, null, scheme)!;
     }
 
     public Uri? GetThumbnail(string itemNumber, ItemType type, int? colorId = null, string scheme = "https")
     {
-        return type switch
-        {
-            ItemType.Minifig => GetMinifigThumbnail(itemNumber, scheme),
-            ItemType.Part => colorId.HasValue ? GetPartThumbnailForColor(itemNumber, colorId.Value, scheme) : null,
-            ItemType.Set => GetSetThumbnail(itemNumber, scheme),
-            ItemType.Book => GetBookThumbnail(itemNumber, scheme),
-            ItemType.Gear => GetGearThumbnail(itemNumber, scheme),
-            ItemType.Catalog => GetCatalogThumbnail(itemNumber, scheme),
-            ItemType.Instruction => GetInstructionThumbnail(itemNumber, scheme),
-            ItemType.OriginalBox => GetOriginalBoxThumbnail(itemNumber, scheme),
-            _ => null
-        };
+        return ImageUrls.Thumbnail(type, itemNumber, colorId, scheme);
     }
 
     public Uri GetPartThumbnailForColor(string itemNumber, int colorId, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_partThumbnailUrlTemplate, colorId.ToString(), itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Part, itemNumber, colorId, scheme)!;
     }
 
     public Uri GetMinifigThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_minifigThumbnailUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Minifig, itemNumber, null, scheme)!;
     }
 
     public Uri GetSetThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_setThumbnailUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Set, itemNumber, null, scheme)!;
     }
 
     public Uri GetBookThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_bookThumbnailUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Book, itemNumber, null, scheme)!;
     }
 
     public Uri GetGearThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_gearThumbnailUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Gear, itemNumber, null, scheme)!;
     }
 
     public Uri GetCatalogThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_catalogThumbnaileUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Catalog, itemNumber, null, scheme)!;
     }
 
     public Uri GetInstructionThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_instructionThumbnailUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.Instruction, itemNumber, null, scheme)!;
     }
 
     public Uri GetOriginalBoxThumbnail(string itemNumber, string scheme = "https")
     {
-        return new Uri($"{scheme}:{string.Format(_originalBoxThumbnailUrlTemplate, itemNumber)}");
+        return ImageUrls.Thumbnail(ItemType.OriginalBox, itemNumber, null, scheme)!;
     }
 
     public Uri EnsureImageUrlScheme(string imageUrl, string scheme = "https")
     {
-        return new Uri($"{scheme}:{imageUrl}");
+        return ImageUrls.WithScheme(imageUrl, scheme);
     }
 
     public Task<Superset[]> GetSupersetsAsync(ItemType type, string itemNumber,
