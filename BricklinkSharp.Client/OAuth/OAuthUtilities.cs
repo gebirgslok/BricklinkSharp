@@ -118,7 +118,7 @@ internal static class OAuthUtilities
         return builder.ToString();
     }
 
-    private static string UrlEncodeStrict(string value)
+    internal static string UrlEncodeStrict(string value)
     {
         const string unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-._~";
         var original = value;

@@ -1,6 +1,6 @@
 ---
 github_issue: 43
-status: draft
+status: in-progress
 created: 2026-11-15
 ---
 
@@ -84,10 +84,10 @@ Each phase leaves the repo building with tests green. New code is added before o
 
 ### Phase 1 — Encoding and signing
 Goal: `Rfc3986`, `QueryString` and `OAuth1Signer` exist and are tested, including a whole-path regression vector; the executor still uses the old path.
-- [ ] Task 1.1 Add `Rfc3986.Encode` and `QueryString` (`With`, `Pairs`, `Encode`) with tests for unreserved characters, `,` `-` `+` space `~` `&` `=` `%`, non-ASCII and a surrogate pair
-- [ ] Task 1.2 Add `OAuth1Signer.Sign` returning `AuthenticationHeaderValue`, built on `QueryString`; keep the fixed-clock/nonce header and base-string vectors from `OAuthRequestTests` passing against it
-- [ ] Task 1.3 Characterization test comparing old `UrlEncodeStrict` and `Rfc3986.Encode` on ASCII vectors (equal) and on the edge cases (document where they differ and why the new result is correct)
-- [ ] Task 1.4 Record the signature-vector tests for `a,b,-c`, `+`, space, `~` and non-ASCII values
+- [x] Task 1.1 Add `Rfc3986.Encode` and `QueryString` (`With`, `Pairs`, `Encode`) with tests for unreserved characters, `,` `-` `+` space `~` `&` `=` `%`, non-ASCII and a surrogate pair
+- [x] Task 1.2 Add `OAuth1Signer.Sign` returning `AuthenticationHeaderValue`, built on `QueryString`; keep the fixed-clock/nonce header and base-string vectors from `OAuthRequestTests` passing against it
+- [x] Task 1.3 Characterization test comparing old `UrlEncodeStrict` and `Rfc3986.Encode` on ASCII vectors (equal) and on the edge cases (document where they differ and why the new result is correct)
+- [x] Task 1.4 Record the signature-vector tests for `a,b,-c`, `+`, space, `~` and non-ASCII values
 
 ### Phase 2 — `EndpointWire.ToRequest` and `Map`
 Goal: `Endpoint<T>` holds a `QueryString`, has `WithQuery` (comma list) and `Map`, and the executor builds requests with `ToRequest`; `Project` and the executor reference are gone.
