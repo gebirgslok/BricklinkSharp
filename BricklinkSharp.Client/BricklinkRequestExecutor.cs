@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BricklinkSharp.Client.OAuth;
@@ -45,22 +43,14 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
         _options = options;
     }
 
-    public Task<T> SendAsync<T>(Endpoint<T> endpoint, BricklinkCredentials? credentials,
+    public async Task<T> SendAsync<T>(Endpoint<T> endpoint, BricklinkCredentials? callCredentials,
         CancellationToken cancellationToken)
     {
         if (endpoint.Rejection != null)
         {
-            return Task.FromException<T>(endpoint.Rejection);
+            throw endpoint.Rejection;
         }
 
-        return endpoint.Project != null
-            ? endpoint.Project(this, endpoint, credentials, cancellationToken)
-            : SendWithoutProjectionAsync(endpoint, credentials, cancellationToken);
-    }
-
-    internal async Task<T> SendWithoutProjectionAsync<T>(Endpoint<T> endpoint, BricklinkCredentials? callCredentials,
-        CancellationToken cancellationToken)
-    {
         var credentials = ResolveCredentials(callCredentials);
 
         if (_options.RequestHandler != null)
@@ -70,10 +60,10 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
                 .ConfigureAwait(false);
         }
 
-        var httpMethod = ToHttpMethod(endpoint.Verb);
-        var url = endpoint.BuildUrl(_options.BaseUri);
+        var signing = new EndpointWire.Signing(credentials, _options.Clock ?? (() => DateTimeOffset.UtcNow),
+            _options.NonceGenerator ?? OAuthNonce.Generate);
 
-        using var message = BuildMessage(endpoint.Body, httpMethod, url, credentials);
+        using var message = EndpointWire.ToRequest(endpoint, _options.BaseUri, signing);
         using var response = await _httpClient.SendAsync(message, cancellationToken).ConfigureAwait(false);
 
 #if HAVE_HTTP_CONTENT_READ_CANCELLATION_TOKEN
@@ -82,8 +72,8 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
         var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 #endif
 
-        return BricklinkResponseParser.Parse<T>(responseBody, (int)response.StatusCode, endpoint.ExpectedMetaCode,
-            endpoint.Shape, url, httpMethod);
+        return EndpointWire.ReadResponse(endpoint, message.RequestUri!, message.Method, (int)response.StatusCode,
+            responseBody);
     }
 
     private BricklinkCredentials ResolveCredentials(BricklinkCredentials? callCredentials)
@@ -103,42 +93,5 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
 
         credentials.ValidateThrowException();
         return credentials;
-    }
-
-    private HttpRequestMessage BuildMessage(object? body, HttpMethod httpMethod, string url,
-        BricklinkCredentials credentials)
-    {
-        // everything that can throw runs before the message exists, so there is nothing to dispose on failure
-        var signer = new OAuthRequest(credentials.ConsumerKey!, credentials.ConsumerSecret!,
-            credentials.TokenValue!, credentials.TokenSecret!, url, httpMethod.Method,
-            _options.Clock, _options.NonceGenerator);
-        var header = signer.GetAuthorizationHeader().Split(' ');
-        var authorization = new AuthenticationHeaderValue(header[0], header[1]);
-        var json = body == null ? null : WireJson.Serialize(body);
-
-        var message = new HttpRequestMessage(httpMethod, url);
-        message.Headers.Authorization = authorization;
-
-        if (json != null)
-        {
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            content.Headers.ContentType!.CharSet = string.Empty;
-            message.Content = content;
-        }
-
-        return message;
-    }
-
-    private static HttpMethod ToHttpMethod(HttpVerb verb)
-    {
-        return verb switch
-        {
-            HttpVerb.Get => HttpMethod.Get,
-            HttpVerb.Post => HttpMethod.Post,
-            HttpVerb.Put => HttpMethod.Put,
-            HttpVerb.Delete => HttpMethod.Delete,
-            HttpVerb.Patch => new HttpMethod("PATCH"),
-            _ => throw new ArgumentOutOfRangeException(nameof(verb), verb, null)
-        };
     }
 }

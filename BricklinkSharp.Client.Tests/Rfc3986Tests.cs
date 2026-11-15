@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -23,57 +23,39 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
+using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
-namespace BricklinkSharp.Client.OAuth;
+namespace BricklinkSharp.Client.Tests;
 
-internal class WebParameter : IComparable<WebParameter>, IComparable
+public class Rfc3986Tests
 {
-    public string Name { get; }
-
-    public string Value { get; }
-
-    public WebParameter(string name, string value)
+    [TestCase("AZaz09-._~", "AZaz09-._~")]
+    [TestCase("a,b,-c", "a%2Cb%2C-c")]
+    [TestCase("a+b", "a%2Bb")]
+    [TestCase("a b", "a%20b")]
+    [TestCase("&=%", "%26%3D%25")]
+    [TestCase("", "")]
+    public void Should_EncodeAsciiStrictly_When_ValueHasReservedCharacters(string value, string expected)
     {
-        Name = name;
-        Value = value;
+        ClassicAssert.AreEqual(expected, Rfc3986.Encode(value));
     }
 
-    public override string ToString()
+    [Test]
+    public void Should_EncodeAsUtf8_When_ValueIsNonAscii()
     {
-        return $"{Name}={Value}";
+        ClassicAssert.AreEqual("%C3%A9%E2%82%AC", Rfc3986.Encode("é€"));
     }
 
-    public int CompareTo(WebParameter? other)
+    [Test]
+    public void Should_EncodeSurrogatePairAsOneSequence_When_ValueIsOutsideBmp()
     {
-        if (ReferenceEquals(this, other))
-        {
-            return 0;
-        }
-
-        if (other is null)
-        {
-            return 1;
-        }
-
-        var nameComparison = string.Compare(Name, other.Name, StringComparison.Ordinal);
-
-        if (nameComparison != 0)
-        {
-            return nameComparison;
-        }
-
-        return string.Compare(Value, other.Value, StringComparison.Ordinal);
+        ClassicAssert.AreEqual("%F0%9F%A7%B1", Rfc3986.Encode("\U0001F9F1"));
     }
 
-    public int CompareTo(object? obj)
+    [Test]
+    public void Should_PadHexToTwoDigits_When_ByteIsBelow0x10()
     {
-        if (obj is WebParameter webParameter)
-        {
-            return CompareTo(webParameter);
-        }
-
-        throw new ArgumentException($"{nameof(obj)} must be of type {typeof(WebParameter)}," +
-                                    $"received {obj?.GetType().ToString() ?? "Null"}.");
+        ClassicAssert.AreEqual("%0B%0C%00", Rfc3986.Encode("\u000b\u000c\u0000"));
     }
 }

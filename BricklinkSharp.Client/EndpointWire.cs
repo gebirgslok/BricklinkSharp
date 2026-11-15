@@ -25,13 +25,71 @@
 
 using System;
 using System.Collections;
-using System.Net.Http;
 using System.Text.Json;
+using System.Net.Http;
+using System.Text;
+using BricklinkSharp.Client.OAuth;
 
 namespace BricklinkSharp.Client;
 
-internal static class BricklinkResponseParser
+/// <summary>
+/// Turns an <see cref="Endpoint{T}"/> into a signed request and a response into its result. Pure: no I/O,
+/// time and nonce come from <see cref="Signing"/>.
+/// </summary>
+internal static class EndpointWire
 {
+    internal sealed class Signing
+    {
+        public Signing(BricklinkCredentials credentials, Func<DateTimeOffset> clock, Func<string> nonce)
+        {
+            Credentials = credentials;
+            Clock = clock;
+            Nonce = nonce;
+        }
+
+        public BricklinkCredentials Credentials { get; }
+
+        public Func<DateTimeOffset> Clock { get; }
+
+        public Func<string> Nonce { get; }
+    }
+
+    internal static HttpRequestMessage ToRequest<T>(Endpoint<T> endpoint, Uri baseUri, Signing signing)
+    {
+        var method = ToHttpMethod(endpoint.Verb);
+        var resource = new Uri($"{baseUri.AbsoluteUri.TrimEnd('/')}/{endpoint.Path.TrimStart('/')}");
+        var query = endpoint.Query.Encode();
+        var url = query.Length == 0 ? resource.AbsoluteUri : $"{resource.AbsoluteUri}?{query}";
+
+        // everything that can throw runs before the message exists, so there is nothing to dispose on failure
+        var authorization = OAuth1Signer.Sign(method, resource, endpoint.Query, signing.Credentials,
+            signing.Clock(), signing.Nonce());
+        var json = endpoint.Body == null ? null : WireJson.Serialize(endpoint.Body);
+
+        var message = new HttpRequestMessage(method, url);
+        message.Headers.Authorization = authorization;
+
+        if (json != null)
+        {
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            content.Headers.ContentType!.CharSet = string.Empty;
+            message.Content = content;
+        }
+
+        return message;
+    }
+
+    /// <summary>
+    /// Turns a response into <typeparamref name="T"/>: meta check, shape check and deserialization. Pure: every
+    /// failure is a <see cref="BricklinkException"/> carrying the request's URL and method, except misuse of <see cref="ResponseShape.NoData"/> with another result type.
+    /// </summary>
+    internal static T ReadResponse<T>(Endpoint<T> endpoint, Uri url, HttpMethod httpMethod, int httpStatusCode, string responseBody)
+    {
+        return endpoint.ResponseReader != null
+            ? endpoint.ResponseReader(url, httpMethod, httpStatusCode, responseBody)
+            : Parse<T>(responseBody, httpStatusCode, endpoint.ExpectedMetaCode, endpoint.Shape, url.AbsoluteUri, httpMethod);
+    }
+
     internal static ResponseShape ResolveShape<T>(ResponseShape? requested)
     {
         if (requested.HasValue)
@@ -59,7 +117,7 @@ internal static class BricklinkResponseParser
         };
     }
 
-    internal static T Parse<T>(string responseBody, int httpStatusCode, int expectedMetaCode, ResponseShape shape,
+    private static T Parse<T>(string responseBody, int httpStatusCode, int expectedMetaCode, ResponseShape shape,
         string url, HttpMethod httpMethod)
     {
         JsonDocument document;
@@ -95,9 +153,10 @@ internal static class BricklinkResponseParser
     {
         if (root.ValueKind != JsonValueKind.Object
             || !root.TryGetProperty("meta", out var metaElement)
-            || metaElement.ValueKind != JsonValueKind.Object)
+            || metaElement.ValueKind != JsonValueKind.Object
+            || !metaElement.TryGetProperty("code", out _))
         {
-            throw new BricklinkInvalidResponseException("the 'meta' object is missing", httpStatusCode,
+            throw new BricklinkInvalidResponseException("the 'meta' object or its 'code' is missing", httpStatusCode,
                 responseBody, url, httpMethod);
         }
 
@@ -197,5 +256,18 @@ internal static class BricklinkResponseParser
         }
 
         return result ?? throw new BricklinkNoDataReceivedException(url, httpMethod);
+    }
+
+    private static HttpMethod ToHttpMethod(HttpVerb verb)
+    {
+        return verb switch
+        {
+            HttpVerb.Get => HttpMethod.Get,
+            HttpVerb.Post => HttpMethod.Post,
+            HttpVerb.Put => HttpMethod.Put,
+            HttpVerb.Delete => HttpMethod.Delete,
+            HttpVerb.Patch => new HttpMethod("PATCH"),
+            _ => throw new ArgumentOutOfRangeException(nameof(verb), verb, null)
+        };
     }
 }

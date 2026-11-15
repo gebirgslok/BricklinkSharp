@@ -24,22 +24,26 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BricklinkSharp.Client.OAuth;
 
-internal static class WebUtils
+internal static class OAuthNonce
 {
-    public static IEnumerable<WebParameter> ParseQueryString(Uri uri)
+    private const string Chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+
+    private static readonly object _randomLock = new object();
+    private static readonly Random _random = new Random();
+
+    internal static string Generate()
     {
-        var parsedQuery = HttpUtility.ParseQueryString(uri.Query);
-
-        var queryStringParameters = parsedQuery
-            .AllKeys
-            .SelectMany(parsedQuery.GetValues!, (key, value) => new { key, value });
-
-        return queryStringParameters.Select(p => new WebParameter(p.key!, p.value!));
+        var nonce = new char[16];
+        lock (_randomLock)
+        {
+            for (var i = 0; i < nonce.Length; i++)
+            {
+                nonce[i] = Chars[_random.Next(0, Chars.Length)];
+            }
+        }
+        return new string(nonce);
     }
 }

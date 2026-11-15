@@ -86,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `HttpResponseMessage` is now disposed after every request
 - Trailing separator in the `BricklinkInvalidParameterException` message listed `,` after the last parameter
 - `NewInventory` and `UpdateInventory` validation rejected ascending tier quantities (`TierQuantity1 < TierQuantity2 < TierQuantity3`), the order its own error message demands, and accepted descending ones
+- OAuth signatures for query values containing `%`, control characters below `0x10` or characters outside the Basic Multilingual Plane (such as emoji) are now computed from correctly percent-encoded values; the old encoder emitted malformed escapes. Plain ASCII values, including include/exclude filters such as `a,b,-c`, sign exactly as before
 
 ### Removed
 - **Breaking:** `OrderBase` (`OrderDetails` now derives from `Order`), `FeedbackBase` (now an internal post body) and `SuperSubSetEntryBase` (`Item` and `Quantity` are declared on `SupersetEntry` and `SubsetEntry`)

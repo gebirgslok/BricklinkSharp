@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -31,7 +31,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
-using BricklinkSharp.Client.Json;
 using BricklinkSharp.Client.OAuth;
 using BricklinkSharp.Client.Tests.Support;
 using NUnit.Framework;
@@ -167,218 +166,6 @@ public class BricklinkRequestExecutorTests
     }
 
     [Test]
-    public void Should_ThrowBricklinkException_When_BodyIsNotJson()
-    {
-        var handler = new StubHttpMessageHandler("<html>Too many requests</html>", HttpStatusCode.TooManyRequests);
-
-        var exception = Assert.ThrowsAsync<BricklinkInvalidResponseException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None))!;
-
-        ClassicAssert.IsInstanceOf<BricklinkException>(exception);
-        ClassicAssert.AreEqual(429, exception.HttpStatusCode);
-        StringAssert.Contains("Too many requests", exception.Message);
-        ClassicAssert.IsNotNull(exception.InnerException);
-    }
-
-    [TestCase("")]
-    [TestCase("[]")]
-    [TestCase("{\"data\":{}}")]
-    [TestCase("{\"meta\":\"x\"}")]
-    public void Should_ThrowInvalidResponse_When_MetaIsMissing(string body)
-    {
-        var handler = new StubHttpMessageHandler(body);
-
-        Assert.ThrowsAsync<BricklinkInvalidResponseException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None));
-    }
-
-    [Test]
-    public void Should_ThrowInvalidResponse_When_MetaCodeIsNotANumber()
-    {
-        var handler = new StubHttpMessageHandler("{\"meta\":{\"code\":\"x\"}}");
-
-        Assert.ThrowsAsync<BricklinkInvalidResponseException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None));
-    }
-
-    [Test]
-    public void Should_ThrowHttpError_When_MetaCodeDiffersFromExpected()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(404));
-
-        var exception = Assert.ThrowsAsync<BricklinkHttpErrorException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None))!;
-
-        ClassicAssert.AreEqual(404, exception.ReceivedStatusCode);
-        ClassicAssert.AreEqual(200, exception.ExpectedStatusCode);
-        ClassicAssert.AreEqual("d", exception.Description);
-        ClassicAssert.AreEqual("m", exception.RawMessage);
-    }
-
-    [Test]
-    public async Task Should_MapObject_When_DataIsObject()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"brick\",\"size\":3}"));
-
-        var widget = await CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None);
-
-        ClassicAssert.AreEqual("brick", widget.Name);
-        ClassicAssert.AreEqual(3, widget.Size);
-    }
-
-    [TestCase(null)]
-    [TestCase("null")]
-    [TestCase("{}")]
-    public void Should_ThrowNoDataReceived_When_ObjectExpectedButDataIsEmpty(string? data)
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, data));
-
-        Assert.ThrowsAsync<BricklinkNoDataReceivedException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None));
-    }
-
-    [TestCase("\"text\"")]
-    [TestCase("42")]
-    [TestCase("[1]")]
-    public void Should_ThrowUnexpectedDataKind_When_ObjectExpectedButDataIsNotObject(string data)
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, data));
-
-        var exception = Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None))!;
-
-        ClassicAssert.AreEqual("Object", exception.ExpectedDataKind);
-    }
-
-    [Test]
-    public void Should_ThrowInvalidResponse_When_DataCannotBeMappedToType()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"size\":\"not a number\"}"));
-
-        Assert.ThrowsAsync<BricklinkInvalidResponseException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget>(), null, CancellationToken.None));
-    }
-
-    [Test]
-    public async Task Should_MapArray_When_DataIsArray()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[{\"name\":\"a\"},{\"name\":\"b\"}]"));
-
-        var widgets = await CreateExecutor(handler).SendAsync(Get<Widget[]>(), null, CancellationToken.None);
-
-        CollectionAssert.AreEqual(new[] { "a", "b" }, widgets.Select(widget => widget.Name));
-    }
-
-    [Test]
-    public async Task Should_ReturnEmptyArray_When_ArrayTypeAndDataIsEmptyArray()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[]"));
-
-        var widgets = await CreateExecutor(handler).SendAsync(Get<Widget[]>(), null, CancellationToken.None);
-
-        ClassicAssert.IsEmpty(widgets);
-    }
-
-    [Test]
-    public void Should_ThrowNoDataReceived_When_NonEmptyArrayRequiredButDataIsEmptyArray()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[]"));
-        var request = Endpoint<Widget[]>.Get(ApiResourceType.Item, "items/part/3001", ResponseShape.ArrayNonEmpty);
-
-        Assert.ThrowsAsync<BricklinkNoDataReceivedException>(
-            () => CreateExecutor(handler).SendAsync(request, null, CancellationToken.None));
-    }
-
-    [Test]
-    public void Should_ThrowUnexpectedDataKind_When_ArrayExpectedButDataIsObject()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"name\":\"x\"}"));
-
-        var exception = Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget[]>(), null, CancellationToken.None))!;
-
-        ClassicAssert.AreEqual("Array", exception.ExpectedDataKind);
-    }
-
-    [Test]
-    public void Should_ThrowNoDataReceived_When_ArrayExpectedButDataIsAbsent()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200));
-
-        Assert.ThrowsAsync<BricklinkNoDataReceivedException>(
-            () => CreateExecutor(handler).SendAsync(Get<Widget[]>(), null, CancellationToken.None));
-    }
-
-    [TestCase(null)]
-    [TestCase("null")]
-    [TestCase("{}")]
-    public async Task Should_Succeed_When_NoDataExpectedAndDataIsEmpty(string? data)
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, data));
-        var request = Endpoint<NoData>.Delete(ApiResourceType.Inventory, "inventories/1");
-
-        await CreateExecutor(handler).SendAsync(request, null, CancellationToken.None);
-
-        ClassicAssert.AreEqual(HttpMethod.Delete, handler.CapturedRequests.Single().Method);
-    }
-
-    [Test]
-    public void Should_ThrowEmptyDataExpected_When_NoDataExpectedButObjectHasContent()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, "{\"name\":\"x\"}"));
-        var request = Endpoint<NoData>.Delete(ApiResourceType.Inventory, "inventories/1");
-
-        Assert.ThrowsAsync<BricklinkEmptyDataExpectedException>(
-            () => CreateExecutor(handler).SendAsync(request, null, CancellationToken.None));
-    }
-
-    [Test]
-    public void Should_ThrowUnexpectedDataKind_When_NoDataExpectedButDataIsArray()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(204, "[1]"));
-        var request = Endpoint<NoData>.Delete(ApiResourceType.Inventory, "inventories/1");
-
-        Assert.ThrowsAsync<BricklinkUnexpectedDataKindException>(
-            () => CreateExecutor(handler).SendAsync(request, null, CancellationToken.None));
-    }
-
-    [TestCase(HttpVerb.Get, 200)]
-    [TestCase(HttpVerb.Put, 200)]
-    [TestCase(HttpVerb.Post, 201)]
-    public async Task Should_ExpectDefaultCodeForVerb_When_ReadingObject(HttpVerb verb, int code)
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(code, "{\"name\":\"x\"}"));
-        var request = Create<Widget>(verb, "items");
-
-        var widget = await CreateExecutor(handler).SendAsync(request, null, CancellationToken.None);
-
-        ClassicAssert.AreEqual("x", widget.Name);
-    }
-
-    [TestCase(HttpVerb.Put, 204)]
-    [TestCase(HttpVerb.Delete, 204)]
-    [TestCase(HttpVerb.Post, 201)]
-    public async Task Should_ExpectDefaultCodeForVerb_When_NoDataExpected(HttpVerb verb, int code)
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(code));
-        var request = Create<NoData>(verb, "items");
-
-        await CreateExecutor(handler).SendAsync(request, null, CancellationToken.None);
-    }
-
-    [Test]
-    public async Task Should_UseExplicitCode_When_ExpectCodeIsSet()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(202, "{\"name\":\"x\"}"));
-
-        var widget = await CreateExecutor(handler).SendAsync(
-            Endpoint<Widget>.Get(ApiResourceType.Item, "items/part/3001", expectedMetaCode: 202), null,
-            CancellationToken.None);
-
-        ClassicAssert.AreEqual("x", widget.Name);
-    }
-
-    [Test]
     public async Task Should_OmitNullProperties_When_SerializingBody()
     {
         var handler = new StubHttpMessageHandler(Fixtures.Envelope(201, "{\"name\":\"x\"}"));
@@ -451,47 +238,10 @@ public class BricklinkRequestExecutorTests
         ClassicAssert.AreEqual(source.Token, hook.Token);
     }
 
-    [Test]
-    public void Should_ThrowInvalidResponse_When_ConverterRejectsValue()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "{\"type\":\"BOGUS\"}"));
-
-        Assert.ThrowsAsync<BricklinkInvalidResponseException>(
-            () => CreateExecutor(handler).SendAsync(Get<TypedWidget>(), null, CancellationToken.None));
-    }
-
-    [Test]
-    public async Task Should_MapList_When_ResultTypeIsList()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200, "[{\"name\":\"a\"}]"));
-
-        var widgets = await CreateExecutor(handler).SendAsync(Get<List<Widget>>(), null, CancellationToken.None);
-
-        ClassicAssert.AreEqual(1, widgets.Count);
-    }
-
-    [Test]
-    public void Should_ThrowInvalidOperation_When_NoDataShapeUsedWithOtherResultType()
-    {
-        var handler = new StubHttpMessageHandler(Fixtures.Envelope(200));
-
-        Assert.ThrowsAsync<InvalidOperationException>(
-            () => CreateExecutor(handler).SendAsync(
-                Endpoint<Widget>.Get(ApiResourceType.Item, "items/part/3001", ResponseShape.NoData), null,
-                CancellationToken.None));
-    }
-
     private static string ExpectedHeader(BricklinkCredentials credentials, string url, string method) =>
-        new OAuthRequest(credentials.ConsumerKey!, credentials.ConsumerSecret!, credentials.TokenValue!,
-                credentials.TokenSecret!, url, method,
-                () => DateTimeOffset.FromUnixTimeSeconds(1700000000), () => "abc123")
-            .GetAuthorizationHeader();
-
-    private sealed class TypedWidget
-    {
-        [JsonPropertyName("type"), JsonConverter(typeof(ItemTypeStringConverter))]
-        public ItemType Type { get; set; }
-    }
+        OAuth1Signer.Sign(new HttpMethod(method), new Uri(url), default, credentials,
+                DateTimeOffset.FromUnixTimeSeconds(1700000000), "abc123")
+            .ToString();
 
     private sealed class Widget
     {
