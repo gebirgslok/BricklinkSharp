@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using BricklinkSharp.Client.Extensions;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
@@ -38,7 +39,7 @@ public class EndpointsTests
 
     private static string Describe<T>(Endpoint<T> endpoint)
     {
-        var query = string.Join("&", endpoint.Query.Select(parameter => $"{parameter.Key}={parameter.Value}"));
+        var query = string.Join("&", endpoint.Query.Pairs.Select(parameter => $"{parameter.Key}={parameter.Value}"));
         return query.Length == 0 ? endpoint.Path : $"{endpoint.Path}?{query}";
     }
 
@@ -147,11 +148,14 @@ public class EndpointsTests
     }
 
     [Test]
-    public void Should_ProjectBatchesToList_When_OrderItemsAreRead()
+    public void Should_MapBatchesToList_When_OrderItemsAreRead()
     {
         var endpoint = Endpoints.OrderItems(11);
+        const string body = "{\"meta\":{\"code\":200},\"data\":[[{\"inventory_id\":1},{\"inventory_id\":2}],[{\"inventory_id\":3}]]}";
 
-        ClassicAssert.IsNotNull(endpoint.Project);
+        var batches = endpoint.Read(body, 200, "https://example.test/orders/11/items", HttpMethod.Get);
+
         ClassicAssert.AreEqual(ResponseShape.ArrayOrEmpty, endpoint.Shape);
+        CollectionAssert.AreEqual(new[] { 2, 1 }, batches.Select(batch => batch.Length));
     }
 }

@@ -91,11 +91,11 @@ Goal: `Rfc3986`, `QueryString` and `OAuth1Signer` exist and are tested, includin
 
 ### Phase 2 — `EndpointWire.ToRequest` and `Map`
 Goal: `Endpoint<T>` holds a `QueryString`, has `WithQuery` (comma list) and `Map`, and the executor builds requests with `ToRequest`; `Project` and the executor reference are gone.
-- [ ] Task 2.1 Switch `Endpoint<T>.Query` to `QueryString`; add the comma-list `WithQuery` overload and use it where `Endpoints.*` build include/exclude filters (`IncludeExclude`)
-- [ ] Task 2.2 Add `EndpointWire.ToRequest` (URL, signing, JSON body) and use it from `SendAsync`
-- [ ] Task 2.3 Add `Endpoint<T>.Map<TResult>`; convert `Endpoints.OrderItems`; remove `Project`, `Retarget`, `GetProjected` and `SendWithoutProjectionAsync`
-- [ ] Task 2.4 Move `EndpointUrlTests` and the `OAuthRequestTests` header cases to `ToRequest` tests (URL, query and `Authorization` header from a fixed clock and nonce); add the test that the URL query equals the signed query for `a,b,-c`
-- [ ] Task 2.5 Update `EndpointsTests` (`Project` assertion becomes an `OrderItems` mapping test)
+- [x] Task 2.1 Switch `Endpoint<T>.Query` to `QueryString`; add the comma-list `WithQuery` overload and use it where `Endpoints.*` build include/exclude filters (`IncludeExclude`)
+- [x] Task 2.2 Add `EndpointWire.ToRequest` (URL, signing, JSON body) and use it from `SendAsync`
+- [x] Task 2.3 Add `Endpoint<T>.Map<TResult>`; convert `Endpoints.OrderItems`; remove `Project`, `Retarget`, `GetProjected` and `SendWithoutProjectionAsync`
+- [x] Task 2.4 Move `EndpointUrlTests` and the `OAuthRequestTests` header cases to `ToRequest` tests (URL, query and `Authorization` header from a fixed clock and nonce); add the test that the URL query equals the signed query for `a,b,-c`
+- [x] Task 2.5 Update `EndpointsTests` (`Project` assertion becomes an `OrderItems` mapping test)
 
 ### Phase 3 — `EndpointWire.ReadResponse`
 Goal: all response policy lives in `EndpointWire`; `BricklinkResponseParser` is gone; the body is parsed once.

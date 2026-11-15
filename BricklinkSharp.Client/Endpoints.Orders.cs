@@ -42,8 +42,8 @@ internal static partial class Endpoints
         Endpoint<OrderDetails>.Get(ApiResourceType.Order, $"orders/{orderId}");
 
     public static Endpoint<List<OrderItem[]>> OrderItems(int orderId) =>
-        Endpoint<List<OrderItem[]>>.GetProjected<OrderItem[][]>(ApiResourceType.OrderItem,
-            $"orders/{orderId}/items", batches => batches.ToList());
+        Endpoint<OrderItem[][]>.Get(ApiResourceType.OrderItem, $"orders/{orderId}/items")
+            .Map(batches => batches.ToList());
 
     public static Endpoint<OrderMessage[]> OrderMessages(int orderId) =>
         Endpoint<OrderMessage[]>.Get(ApiResourceType.OrderMessage, $"orders/{orderId}/messages");

@@ -26,23 +26,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BricklinkSharp.Client.Extensions;
 
 namespace BricklinkSharp.Client;
 
 /// <summary>One pure factory per API operation. Policy for an endpoint (path, query, response shape) lives here.</summary>
 internal static partial class Endpoints
 {
-    /// <summary>Query value for filters with included and excluded values, e.g. <c>a,b,-c</c>; null when both are empty.</summary>
-    private static string? IncludeExclude<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
-        Func<T, string> toWire)
-    {
-        var parameters = (includes ?? Enumerable.Empty<T>()).Select(toWire)
-            .Concat((excludes ?? Enumerable.Empty<T>()).Select(value => $"-{toWire(value)}"))
-            .ToList();
-
-        return parameters.Any() ? parameters.ToConcatenatedString() : null;
-    }
+    /// <summary>Values for filters with included and excluded values, e.g. <c>a,b,-c</c>; empty when both are empty.</summary>
+    private static IEnumerable<string> IncludeExclude<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
+        Func<T, string> toWire) =>
+        (includes ?? Enumerable.Empty<T>()).Select(toWire)
+            .Concat((excludes ?? Enumerable.Empty<T>()).Select(value => $"-{toWire(value)}"));
 
     /// <summary>A zero or negative color id means "any color" and is not sent.</summary>
     private static int? ColorIdOrNull(int colorId) => colorId > 0 ? colorId : null;
