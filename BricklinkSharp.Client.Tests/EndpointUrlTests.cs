@@ -31,17 +31,17 @@ using NUnit.Framework.Legacy;
 
 namespace BricklinkSharp.Client.Tests;
 
-public class BricklinkRequestTests
+public class EndpointUrlTests
 {
     private static readonly Uri BaseUri = new("https://api.bricklink.com/api/store/v1/");
 
-    private static BricklinkRequest NewRequest(string path = "items/part/3001") =>
-        new(ApiResourceType.Item, HttpVerb.Get, path);
+    private static Endpoint<NoData> NewEndpoint(string path = "items/part/3001") =>
+        Endpoint<NoData>.Get(ApiResourceType.Item, path);
 
     [Test]
     public void Should_JoinBaseAndPathWithSingleSlash_When_PathHasLeadingSlash()
     {
-        var url = NewRequest("/items/part/3001").BuildUrl(BaseUri);
+        var url = NewEndpoint("/items/part/3001").BuildUrl(BaseUri);
 
         ClassicAssert.AreEqual("https://api.bricklink.com/api/store/v1/items/part/3001", url);
     }
@@ -49,7 +49,7 @@ public class BricklinkRequestTests
     [Test]
     public void Should_SkipQueryParameter_When_ValueIsNull()
     {
-        var url = NewRequest().WithQueryParameter("color_id", null).WithQueryParameter("guide_type", "sold").BuildUrl(BaseUri);
+        var url = NewEndpoint().WithQuery("color_id", null).WithQuery("guide_type", "sold").BuildUrl(BaseUri);
 
         ClassicAssert.AreEqual("https://api.bricklink.com/api/store/v1/items/part/3001?guide_type=sold", url);
     }
@@ -57,7 +57,7 @@ public class BricklinkRequestTests
     [Test]
     public void Should_EscapeQueryNameAndValue_When_TheyContainReservedCharacters()
     {
-        var url = NewRequest().WithQueryParameter("status", "pending,paid").WithQueryParameter("a b", "x&y").BuildUrl(BaseUri);
+        var url = NewEndpoint().WithQuery("status", "pending,paid").WithQuery("a b", "x&y").BuildUrl(BaseUri);
 
         StringAssert.EndsWith("?status=pending%2Cpaid&a%20b=x%26y", url);
     }
@@ -70,7 +70,7 @@ public class BricklinkRequestTests
 
         try
         {
-            var url = NewRequest().WithQueryParameter("price", 1.5m).WithQueryParameter("flag", true).BuildUrl(BaseUri);
+            var url = NewEndpoint().WithQuery("price", 1.5m).WithQuery("flag", true).BuildUrl(BaseUri);
 
             StringAssert.EndsWith("?price=1.5&flag=true", url);
         }
@@ -83,32 +83,15 @@ public class BricklinkRequestTests
     [Test]
     public void Should_Throw_When_QueryValueIsEnum()
     {
-        Assert.Throws<ArgumentException>(() => NewRequest().WithQueryParameter("type", HttpVerb.Get));
+        Assert.Throws<ArgumentException>(() => NewEndpoint().WithQuery("type", HttpVerb.Get));
     }
 
     [Test]
     public void Should_FormatDatesAsIso8601_When_QueryValueIsDate()
     {
-        var url = NewRequest().WithQueryParameter("since", new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc))
+        var url = NewEndpoint().WithQuery("since", new DateTime(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc))
             .BuildUrl(BaseUri);
 
         StringAssert.Contains("since=2026-01-02T03%3A04%3A05.0000000Z", url);
-    }
-
-    [Test]
-    public void Should_LeaveOriginalUnchanged_When_BuilderMethodIsCalled()
-    {
-        var original = NewRequest();
-
-        var changed = original.WithQueryParameter("a", 1).WithBody(new object()).WithExpectedMetaCode(204)
-            .WithShape(ResponseShape.ArrayNonEmpty);
-
-        ClassicAssert.IsEmpty(original.QueryParameters);
-        ClassicAssert.IsNull(original.Body);
-        ClassicAssert.IsNull(original.ExpectedMetaCode);
-        ClassicAssert.IsNull(original.Shape);
-        ClassicAssert.AreEqual(1, changed.QueryParameters.Count);
-        ClassicAssert.AreEqual(204, changed.ExpectedMetaCode);
-        ClassicAssert.AreEqual(ResponseShape.ArrayNonEmpty, changed.Shape);
     }
 }

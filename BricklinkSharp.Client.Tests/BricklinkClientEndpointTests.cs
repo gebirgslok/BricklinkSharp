@@ -56,50 +56,12 @@ public class BricklinkClientEndpointTests
 
         yield return new("GetCatalogItem", client => client.GetCatalogItemAsync(ItemType.Part, "3001", credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}items/{PartSegment}/3001");
-        yield return new("GetCatalogImage", client => client.GetCatalogImageAsync(ItemType.Part, "3001", 5, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}items/{PartSegment}/3001/images/5");
-        yield return new("GetSupersets", client => client.GetSupersetsAsync(ItemType.Part, "3001", 0, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}items/{PartSegment}/3001/supersets");
         yield return new("GetSupersetsWithColor", client => client.GetSupersetsAsync(ItemType.Part, "3001", 5, credentials, cancellationToken),
             HttpMethod.Get, $"{BaseUrl}items/{PartSegment}/3001/supersets?color_id=5");
-        yield return new("GetSubsets", client => client.GetSubsetsAsync(ItemType.Set, "10000-1", 0, true, null, false, null, credentials, cancellationToken),
-            HttpMethod.Get,
-            $"{BaseUrl}items/{ItemType.Set.ToDomainString()}/10000-1/subsets?color_id=0&box=true&break_minifigs=false");
-        yield return new("GetPriceGuide",
-            client => client.GetPriceGuideAsync(ItemType.Part, "3001", 5, PriceGuideSource.Sold, Condition.Used, "DE", null, "EUR",
-                null, credentials, cancellationToken),
-            HttpMethod.Get,
-            $"{BaseUrl}items/{PartSegment}/3001/price?color_id=5&guide_type={PriceGuideSource.Sold.ToDomainString()}" +
-            $"&new_or_used={Condition.Used.ToDomainString()}&country_code=DE&currency_code=EUR");
-        yield return new("GetKnownColors", client => client.GetKnownColorsAsync(ItemType.Part, "3001", credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}items/{PartSegment}/3001/colors");
-        yield return new("GetColors", client => client.GetColorsAsync(credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}colors");
-        yield return new("GetColor", client => client.GetColorAsync(5, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}colors/5");
-        yield return new("GetCategories", client => client.GetCategoriesAsync(credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}categories");
-        yield return new("GetCategory", client => client.GetCategoryAsync(7, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}categories/7");
-        yield return new("GetInventories",
-            client => client.GetInventoriesAsync(new[] { ItemType.Part }, new[] { ItemType.Set }, null, null,
-                new[] { 1, 2 }, new[] { 3 }, null, null, credentials, cancellationToken),
-            HttpMethod.Get,
-            $"{BaseUrl}inventories?item_type={PartSegment}%2C-{ItemType.Set.ToDomainString()}&category_id=1%2C2%2C-3");
-        yield return new("GetInventory", client => client.GetInventoryAsync(9, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}inventories/9");
         yield return new("DeleteInventory", client => client.DeleteInventoryAsync(9, credentials, cancellationToken), HttpMethod.Delete,
             $"{BaseUrl}inventories/9");
-        yield return new("GetItemMappingsByItem", client => client.GetItemMappingsByItemAsync("3001", 5, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}item_mapping/part/3001?color_id=5");
-        yield return new("GetItemMappingsByElementId", client => client.GetItemMappingsByElementIdAsync("300101", credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}item_mapping/300101");
-        yield return new("GetShippingMethods", client => client.GetShippingMethodsAsync(credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}settings/shipping_methods");
-        yield return new("GetShippingMethod", client => client.GetShippingMethodAsync(3, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}settings/shipping_methods/3");
-        yield return new("GetNotifications", client => client.GetPushNotificationsAsync(credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}notifications");
-        yield return new("GetMemberRating", client => client.GetMemberRatingAsync("bob", credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}members/bob/ratings");
         yield return new("GetFeedbacks", client => client.GetFeedbacksAsync(Direction.In, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}feedback?direction=in");
-        yield return new("GetFeedback", client => client.GetFeedbackAsync(4, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}feedback/4");
         yield return new("ReplyToFeedback", client => client.ReplyToFeedbackAsync(4, "thanks", credentials, cancellationToken), HttpMethod.Post,
             $"{BaseUrl}feedback/4/reply", "{\"reply\":\"thanks\"}");
         yield return new("PostFeedback", client => client.PostFeedbackAsync(11, Rating.Praise, "ok", credentials, cancellationToken),
@@ -107,13 +69,8 @@ public class BricklinkClientEndpointTests
             "{\"order_id\":11,\"rating\":" + System.Text.Json.JsonSerializer.Serialize(Rating.Praise) + ",\"comment\":\"ok\"}");
         yield return new("GetOrders", client => client.GetOrdersAsync(Direction.Out, null, null, true, credentials, cancellationToken),
             HttpMethod.Get, $"{BaseUrl}orders?direction={Direction.Out.ToDomainString()}&filed=true");
-        yield return new("GetOrder", client => client.GetOrderAsync(11, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}orders/11");
         yield return new("GetOrderItems", client => client.GetOrderItemsAsync(11, credentials, cancellationToken), HttpMethod.Get,
             $"{BaseUrl}orders/11/items");
-        yield return new("GetOrderMessages", client => client.GetOrderMessagesAsync(11, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}orders/11/messages");
-        yield return new("GetOrderFeedback", client => client.GetOrderFeedbacksAsync(11, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}orders/11/feedback");
         yield return new("UpdateOrderStatus", client => client.UpdateOrderStatusAsync(11, OrderStatus.Shipped, credentials, cancellationToken),
             HttpMethod.Put, $"{BaseUrl}orders/11/status",
             $"{{\"field\":\"status\",\"value\":\"{OrderStatus.Shipped.ToDomainString()}\"}}");
@@ -122,9 +79,6 @@ public class BricklinkClientEndpointTests
             $"{{\"field\":\"payment_status\",\"value\":\"{PaymentStatus.Received.ToDomainString()}\"}}");
         yield return new("SendDriveThru", client => client.SendDriveThruAsync(11, true, credentials, cancellationToken), HttpMethod.Post,
             $"{BaseUrl}orders/11/drive_thru?mail_me=true");
-        yield return new("GetCoupons", client => client.GetCouponsAsync(Direction.Out, null, null, credentials, cancellationToken), HttpMethod.Get,
-            $"{BaseUrl}coupons?direction={Direction.Out.ToDomainString()}");
-        yield return new("GetCoupon", client => client.GetCouponAsync(2, credentials, cancellationToken), HttpMethod.Get, $"{BaseUrl}coupons/2");
         yield return new("DeleteCoupon", client => client.DeleteCouponAsync(2, credentials, cancellationToken), HttpMethod.Delete, $"{BaseUrl}coupons/2");
     }
 

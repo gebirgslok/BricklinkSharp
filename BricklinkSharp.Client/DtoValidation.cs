@@ -120,6 +120,43 @@ internal static class DtoValidation
             maxFirstTierPrice: null);
     }
 
+    internal static void Validate(UpdateOrder? dto)
+    {
+        if (dto is null)
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object> { { "UpdateOrder", "Null" } },
+                "UpdateOrder cannot be Null.",
+                typeof(UpdateOrder));
+        }
+    }
+
+    internal static void ValidateFeedback(Rating rating, string? comment)
+    {
+        if (!Enum.IsDefined(typeof(Rating), rating))
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object> { { nameof(Rating), rating } },
+                $"{nameof(Rating)} must be a defined value.",
+                typeof(FeedbackPostBody));
+        }
+
+        if (string.IsNullOrWhiteSpace(comment))
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object> { { "Comment", comment ?? "Null" } },
+                "Comment cannot be empty.",
+                typeof(FeedbackPostBody));
+        }
+    }
+
+    internal static void ValidateReply(string? reply)
+    {
+        if (string.IsNullOrWhiteSpace(reply))
+        {
+            throw new BricklinkInvalidParameterException(new Dictionary<string, object> { { "Reply", reply ?? "Null" } },
+                "Reply cannot be empty.",
+                typeof(ReplyBody));
+        }
+    }
+
     private static void ValidateStockRoomId(bool isStockRoom, string? stockRoomId, Type dtoType)
     {
         if (isStockRoom && string.IsNullOrEmpty(stockRoomId))

@@ -40,11 +40,12 @@ Authoritative rules for `BricklinkSharp.Client`. Existing code that predates a r
 
 ## Adding an endpoint
 
-1. Member on `IBricklinkClient`, implementation in `BricklinkClient`.
-2. Models and enums as needed.
-3. Demo in `BricklinkSharp.Demos/`.
-4. README section and changelog entry.
-5. Test in `BricklinkSharp.Client.Tests/`.
+1. Member on `IBricklinkClient`, implementation in `BricklinkClient` as a one-line `IEndpointSender` call.
+2. Pure factory in `Endpoints.<Area>.cs` that returns `Endpoint<T>`: path, query, named wire body, and validation (a failure becomes `Endpoint<T>.Rejected`). No anonymous bodies.
+3. Models and enums as needed.
+4. Demo in `BricklinkSharp.Demos/`.
+5. README section and changelog entry.
+6. Test the wire contract in `EndpointsTests` (no `HttpClient`); a body-carrying factory either validates or is on the exempt list in the validation table test.
 
 ## Tests
 

@@ -1,0 +1,69 @@
+﻿#region License
+// Copyright (c) 2020 Jens Eisenbach
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+#endregion
+
+using System.Collections.Generic;
+using System.Linq;
+using BricklinkSharp.Client.Extensions;
+
+namespace BricklinkSharp.Client;
+
+internal static partial class Endpoints
+{
+    public static Endpoint<Order[]> Orders(Direction direction, IEnumerable<OrderStatus>? includedStatusFlags,
+        IEnumerable<OrderStatus>? excludedStatusFlags, bool filed) =>
+        Endpoint<Order[]>.Get(ApiResourceType.Order, "orders")
+            .WithQuery("direction", direction.ToDomainString())
+            .WithQuery("status", IncludeExclude(includedStatusFlags, excludedStatusFlags, f => f.ToDomainString()))
+            .WithQuery("filed", filed);
+
+    public static Endpoint<OrderDetails> Order(int orderId) =>
+        Endpoint<OrderDetails>.Get(ApiResourceType.Order, $"orders/{orderId}");
+
+    public static Endpoint<List<OrderItem[]>> OrderItems(int orderId) =>
+        Endpoint<List<OrderItem[]>>.GetProjected<OrderItem[][]>(ApiResourceType.OrderItem,
+            $"orders/{orderId}/items", batches => batches.ToList());
+
+    public static Endpoint<OrderMessage[]> OrderMessages(int orderId) =>
+        Endpoint<OrderMessage[]>.Get(ApiResourceType.OrderMessage, $"orders/{orderId}/messages");
+
+    public static Endpoint<Feedback[]> OrderFeedbacks(int orderId) =>
+        Endpoint<Feedback[]>.Get(ApiResourceType.OrderFeedback, $"orders/{orderId}/feedback");
+
+    public static Endpoint<OrderDetails> UpdateOrder(int orderId, UpdateOrder updateOrder) =>
+        RejectingInvalid(() => DtoValidation.Validate(updateOrder),
+            () => Endpoint<OrderDetails>.Put(ApiResourceType.Order, $"orders/{orderId}").WithBody(updateOrder));
+
+    public static Endpoint<NoData> UpdateOrderStatus(int orderId, OrderStatus status) =>
+        Endpoint<NoData>.Put(ApiResourceType.OrderStatus, $"orders/{orderId}/status")
+            .WithBody(new FieldChange { Field = "status", Value = status.ToDomainString() });
+
+    public static Endpoint<NoData> UpdatePaymentStatus(int orderId, PaymentStatus status) =>
+        Endpoint<NoData>.Put(ApiResourceType.PaymentStatus, $"orders/{orderId}/payment_status")
+            .WithBody(new FieldChange { Field = "payment_status", Value = status.ToDomainString() });
+
+    public static Endpoint<NoData> SendDriveThru(int orderId, bool mailCcMe) =>
+        Endpoint<NoData>.Post(ApiResourceType.DriveThru, $"orders/{orderId}/drive_thru", expectedMetaCode: 204)
+            .WithQuery("mail_me", mailCcMe);
+}

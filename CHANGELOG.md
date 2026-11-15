@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `BricklinkInvalidParameterException` and `BricklinkMissingCredentialsException` now derive from `BricklinkException` (`RequestUrl` and `HttpMethod` are `null` for them) instead of `Exception`
 - **Behaviour change:** unknown enum wire values (`new_or_used`, `completeness`, `status`, `payment.status`, `rating_of_bs`, coupon `discount_type`/`applies_to.type`, event type, item type and others) no longer silently map to a default member (for example `Condition.New`); they raise `BricklinkInvalidResponseException`. The same applies to malformed decimal/double strings (previously `0`) and out-of-range feedback `rating` values
 - Enum wire formats now come from one table per enum (`WireMap`), shared by request building and response parsing
+- `UpdateOrderAsync`, `PostFeedbackAsync` and `ReplyToFeedbackAsync` now validate their arguments before sending: a `null` `UpdateOrder`, an undefined `Rating` or an empty comment/reply fault the returned task with `BricklinkInvalidParameterException`
+- **Behaviour change:** `GetSubsetsAsync` and `GetPriceGuideAsync` no longer send `color_id=0` when `colorId` is `0` (the default); like `GetSupersetsAsync`, they omit `color_id` for any `colorId <= 0`
 
 - **Breaking (naming sweep, [ADR 0001](docs/adr/0001-clean-break-2-0-0.md)):** public names follow one set of rules, with no `[Obsolete]` forwarders. JSON wire names are unchanged. **`Rating` now means the verdict of one feedback (formerly `RatingType`); the counts class formerly named `Rating` is `FeedbackCounts`.** Old → new:
 

@@ -101,3 +101,13 @@ _Avoid_: Webhook
 **Credentials**:
 The OAuth1 consumer key and secret plus token value and secret that authorize API calls, set globally or passed per call.
 _Avoid_: API key, login
+
+### Requests
+
+**Endpoint**:
+The complete description of one API operation: path, query, body, expected response and, if the arguments were invalid, a Rejection. Built by a pure factory, sent by the Endpoint Sender.
+_Avoid_: Route, call
+
+**Rejection**:
+The exception an Endpoint carries when its arguments fail validation. Sending a rejected Endpoint faults the task without any I/O.
+_Avoid_: Validation error, precheck
