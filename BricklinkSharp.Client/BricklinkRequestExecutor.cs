@@ -72,7 +72,8 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
         var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 #endif
 
-        return endpoint.Read(responseBody, (int)response.StatusCode, message.RequestUri!.AbsoluteUri, message.Method);
+        return EndpointWire.ReadResponse(endpoint, message.RequestUri!, message.Method, (int)response.StatusCode,
+            responseBody);
     }
 
     private BricklinkCredentials ResolveCredentials(BricklinkCredentials? callCredentials)

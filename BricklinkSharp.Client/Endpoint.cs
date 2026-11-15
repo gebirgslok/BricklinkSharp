@@ -37,10 +37,10 @@ namespace BricklinkSharp.Client;
 /// </summary>
 internal sealed class Endpoint<T>
 {
-    private readonly Func<string, int, string, HttpMethod, T>? _readWire;
+    private readonly Func<Uri, HttpMethod, int, string, T>? _responseReader;
 
     internal Endpoint(ApiResourceType resource, HttpVerb verb, string path, QueryString query, object? body,
-        int expectedMetaCode, ResponseShape shape, Func<string, int, string, HttpMethod, T>? readWire,
+        int expectedMetaCode, ResponseShape shape, Func<Uri, HttpMethod, int, string, T>? responseReader,
         Exception? rejection)
     {
         Resource = resource;
@@ -50,7 +50,7 @@ internal sealed class Endpoint<T>
         Body = body;
         ExpectedMetaCode = expectedMetaCode;
         Shape = shape;
-        _readWire = readWire;
+        _responseReader = responseReader;
         Rejection = rejection;
     }
 
@@ -70,6 +70,9 @@ internal sealed class Endpoint<T>
 
     public Exception? Rejection { get; }
 
+    /// <summary>Set only by <see cref="Map{TResult}"/>; null means the default response policy reads <typeparamref name="T"/> directly.</summary>
+    internal Func<Uri, HttpMethod, int, string, T>? ResponseReader => _responseReader;
+
     public static Endpoint<T> Get(ApiResourceType resource, string path, ResponseShape? shape = null,
         int? expectedMetaCode = null) => Create(resource, HttpVerb.Get, path, shape, expectedMetaCode);
 
@@ -82,6 +85,7 @@ internal sealed class Endpoint<T>
     public static Endpoint<T> Delete(ApiResourceType resource, string path, ResponseShape? shape = null,
         int? expectedMetaCode = null) => Create(resource, HttpVerb.Delete, path, shape, expectedMetaCode);
 
+    /// <summary>An endpoint that faults the call before anything is sent; its other fields are never read.</summary>
     public static Endpoint<T> Rejected(Exception rejection) =>
         new(default, default, string.Empty, default, null, 0, default, null, rejection);
 
@@ -99,18 +103,13 @@ internal sealed class Endpoint<T>
     }
 
     public Endpoint<T> WithBody(object body) =>
-        new(Resource, Verb, Path, Query, body, ExpectedMetaCode, Shape, _readWire, Rejection);
+        new(Resource, Verb, Path, Query, body, ExpectedMetaCode, Shape, _responseReader, Rejection);
 
     /// <summary>The same request whose response is read as <typeparamref name="T"/> and then converted by <paramref name="map"/>.</summary>
     public Endpoint<TResult> Map<TResult>(Func<T, TResult> map) =>
         new(Resource, Verb, Path, Query, Body, ExpectedMetaCode, Shape,
-            (responseBody, httpStatusCode, url, httpMethod) =>
-                map(Read(responseBody, httpStatusCode, url, httpMethod)), Rejection);
-
-    internal T Read(string responseBody, int httpStatusCode, string url, HttpMethod httpMethod) =>
-        _readWire != null
-            ? _readWire(responseBody, httpStatusCode, url, httpMethod)
-            : BricklinkResponseParser.Parse<T>(responseBody, httpStatusCode, ExpectedMetaCode, Shape, url, httpMethod);
+            (url, httpMethod, httpStatusCode, responseBody) =>
+                map(EndpointWire.ReadResponse(this, url, httpMethod, httpStatusCode, responseBody)), Rejection);
 
     internal static string FormatQueryValue(object value)
     {
@@ -130,13 +129,13 @@ internal sealed class Endpoint<T>
     }
 
     private Endpoint<T> WithQueryValue(string name, string value) =>
-        new(Resource, Verb, Path, Query.With(name, value), Body, ExpectedMetaCode, Shape, _readWire, Rejection);
+        new(Resource, Verb, Path, Query.With(name, value), Body, ExpectedMetaCode, Shape, _responseReader, Rejection);
 
     private static Endpoint<T> Create(ApiResourceType resource, HttpVerb verb, string path,
         ResponseShape? requestedShape, int? expectedMetaCode)
     {
-        var shape = BricklinkResponseParser.ResolveShape<T>(requestedShape);
+        var shape = EndpointWire.ResolveShape<T>(requestedShape);
         return new Endpoint<T>(resource, verb, path, default, null,
-            expectedMetaCode ?? BricklinkResponseParser.DefaultExpectedMetaCode(verb, shape), shape, null, null);
+            expectedMetaCode ?? EndpointWire.DefaultExpectedMetaCode(verb, shape), shape, null, null);
     }
 }

@@ -153,7 +153,7 @@ public class EndpointsTests
         var endpoint = Endpoints.OrderItems(11);
         const string body = "{\"meta\":{\"code\":200},\"data\":[[{\"inventory_id\":1},{\"inventory_id\":2}],[{\"inventory_id\":3}]]}";
 
-        var batches = endpoint.Read(body, 200, "https://example.test/orders/11/items", HttpMethod.Get);
+        var batches = EndpointWire.ReadResponse(endpoint, new Uri("https://example.test/orders/11/items"), HttpMethod.Get, 200, body);
 
         ClassicAssert.AreEqual(ResponseShape.ArrayOrEmpty, endpoint.Shape);
         CollectionAssert.AreEqual(new[] { 2, 1 }, batches.Select(batch => batch.Length));

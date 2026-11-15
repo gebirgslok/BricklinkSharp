@@ -99,10 +99,10 @@ Goal: `Endpoint<T>` holds a `QueryString`, has `WithQuery` (comma list) and `Map
 
 ### Phase 3 — `EndpointWire.ReadResponse`
 Goal: all response policy lives in `EndpointWire`; `BricklinkResponseParser` is gone; the body is parsed once.
-- [ ] Task 3.1 Move shape resolution, default expected meta code and the parse/meta/shape/error mapping into `EndpointWire.ReadResponse(endpoint, url, method, status, body)`; parse once from the `JsonElement`
-- [ ] Task 3.2 `Endpoint.Create` and `Rejected` use the moved policy functions; `Rejected` no longer needs `default` fields to be meaningful (keep behaviour, document or tighten)
-- [ ] Task 3.3 Move the roughly 30 parsing and error-mapping cases from `BricklinkRequestExecutorTests` to `ReadResponse` tests; keep executor tests for credentials, hook order, rejection short-circuit, cancellation and body content type; keep `EndpointSenderTests`
-- [ ] Task 3.4 Confirm the fixture deserialization and wire-format characterization tests still pass unchanged
+- [x] Task 3.1 Move shape resolution, default expected meta code and the parse/meta/shape/error mapping into `EndpointWire.ReadResponse(endpoint, url, method, status, body)`; parse once into one `JsonDocument` (`GetRawText()` stays for the typed deserialize, as netstandard2.0 has no element overload)
+- [x] Task 3.2 `Endpoint.Create` and `Rejected` use the moved policy functions; `Rejected` no longer needs `default` fields to be meaningful (keep behaviour, document or tighten)
+- [x] Task 3.3 Move the roughly 30 parsing and error-mapping cases from `BricklinkRequestExecutorTests` to `ReadResponse` tests; keep executor tests for credentials, hook order, rejection short-circuit, cancellation and body content type; keep `EndpointSenderTests`
+- [x] Task 3.4 Confirm the fixture deserialization and wire-format characterization tests still pass unchanged
 
 ### Phase 4 — Cleanup and docs
 Goal: no leftover scaffolding; docs reflect the new structure.

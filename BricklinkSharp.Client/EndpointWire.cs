@@ -24,13 +24,18 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Text.Json;
 using System.Net.Http;
 using System.Text;
 using BricklinkSharp.Client.OAuth;
 
 namespace BricklinkSharp.Client;
 
-/// <summary>Turns an <see cref="Endpoint{T}"/> into a signed request. Pure: no I/O, time and nonce come from <see cref="Signing"/>.</summary>
+/// <summary>
+/// Turns an <see cref="Endpoint{T}"/> into a signed request and a response into its result. Pure: no I/O,
+/// time and nonce come from <see cref="Signing"/>.
+/// </summary>
 internal static class EndpointWire
 {
     internal sealed class Signing
@@ -72,6 +77,185 @@ internal static class EndpointWire
         }
 
         return message;
+    }
+
+    /// <summary>
+    /// Turns a response into <typeparamref name="T"/>: meta check, shape check and deserialization. Pure: every
+    /// failure is a <see cref="BricklinkException"/> carrying the request's URL and method, except misuse of <see cref="ResponseShape.NoData"/> with another result type.
+    /// </summary>
+    internal static T ReadResponse<T>(Endpoint<T> endpoint, Uri url, HttpMethod httpMethod, int httpStatusCode, string responseBody)
+    {
+        return endpoint.ResponseReader != null
+            ? endpoint.ResponseReader(url, httpMethod, httpStatusCode, responseBody)
+            : Parse<T>(responseBody, httpStatusCode, endpoint.ExpectedMetaCode, endpoint.Shape, url.AbsoluteUri, httpMethod);
+    }
+
+    internal static ResponseShape ResolveShape<T>(ResponseShape? requested)
+    {
+        if (requested.HasValue)
+        {
+            return requested.Value;
+        }
+
+        if (typeof(T) == typeof(NoData))
+        {
+            return ResponseShape.NoData;
+        }
+
+        var isCollection = typeof(T) != typeof(string) && typeof(IEnumerable).IsAssignableFrom(typeof(T));
+        return isCollection ? ResponseShape.ArrayOrEmpty : ResponseShape.Object;
+    }
+
+    internal static int DefaultExpectedMetaCode(HttpVerb verb, ResponseShape shape)
+    {
+        return verb switch
+        {
+            HttpVerb.Post => 201,
+            HttpVerb.Put => shape == ResponseShape.NoData ? 204 : 200,
+            HttpVerb.Delete => 204,
+            _ => 200
+        };
+    }
+
+    private static T Parse<T>(string responseBody, int httpStatusCode, int expectedMetaCode, ResponseShape shape,
+        string url, HttpMethod httpMethod)
+    {
+        JsonDocument document;
+
+        try
+        {
+            document = JsonDocument.Parse(responseBody);
+        }
+        catch (JsonException exception)
+        {
+            throw new BricklinkInvalidResponseException("the body is not valid JSON", httpStatusCode,
+                responseBody, url, httpMethod, exception);
+        }
+
+        using (document)
+        {
+            var root = document.RootElement;
+            var meta = ReadMeta(root, httpStatusCode, responseBody, url, httpMethod);
+
+            if (meta.Code != expectedMetaCode)
+            {
+                throw new BricklinkHttpErrorException(meta.Code, expectedMetaCode, meta.Description, meta.Message,
+                    url, httpMethod);
+            }
+
+            root.TryGetProperty("data", out var data);
+            return ReadData<T>(data, shape, httpStatusCode, responseBody, url, httpMethod);
+        }
+    }
+
+    private static ResponseMeta ReadMeta(JsonElement root, int httpStatusCode, string responseBody,
+        string url, HttpMethod httpMethod)
+    {
+        if (root.ValueKind != JsonValueKind.Object
+            || !root.TryGetProperty("meta", out var metaElement)
+            || metaElement.ValueKind != JsonValueKind.Object
+            || !metaElement.TryGetProperty("code", out _))
+        {
+            throw new BricklinkInvalidResponseException("the 'meta' object or its 'code' is missing", httpStatusCode,
+                responseBody, url, httpMethod);
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<ResponseMeta>(metaElement.GetRawText())!;
+        }
+        catch (JsonException exception)
+        {
+            throw new BricklinkInvalidResponseException("the 'meta' object is malformed", httpStatusCode,
+                responseBody, url, httpMethod, exception);
+        }
+    }
+
+    private static T ReadData<T>(JsonElement data, ResponseShape shape, int httpStatusCode, string responseBody,
+        string url, HttpMethod httpMethod)
+    {
+        var isAbsent = data.ValueKind == JsonValueKind.Undefined || data.ValueKind == JsonValueKind.Null;
+
+        switch (shape)
+        {
+            case ResponseShape.NoData:
+                if (typeof(T) != typeof(NoData))
+                {
+                    throw new InvalidOperationException(
+                        $"{nameof(ResponseShape.NoData)} requires {nameof(NoData)} as the result type, not {typeof(T)}.");
+                }
+
+                EnsureNoData(data, isAbsent, url, httpMethod);
+                return default!;
+            case ResponseShape.Object:
+                if (isAbsent || IsEmptyObject(data))
+                {
+                    throw new BricklinkNoDataReceivedException(url, httpMethod);
+                }
+
+                EnsureKind(data, JsonValueKind.Object, url, httpMethod);
+                break;
+            default:
+                if (isAbsent)
+                {
+                    throw new BricklinkNoDataReceivedException(url, httpMethod);
+                }
+
+                EnsureKind(data, JsonValueKind.Array, url, httpMethod);
+
+                if (shape == ResponseShape.ArrayNonEmpty && data.GetArrayLength() == 0)
+                {
+                    throw new BricklinkNoDataReceivedException(url, httpMethod);
+                }
+
+                break;
+        }
+
+        return Deserialize<T>(data, httpStatusCode, responseBody, url, httpMethod);
+    }
+
+    private static void EnsureNoData(JsonElement data, bool isAbsent, string url, HttpMethod httpMethod)
+    {
+        if (isAbsent || IsEmptyObject(data))
+        {
+            return;
+        }
+
+        EnsureKind(data, JsonValueKind.Object, url, httpMethod);
+        throw new BricklinkEmptyDataExpectedException(data, url, httpMethod);
+    }
+
+    private static void EnsureKind(JsonElement data, JsonValueKind expected, string url, HttpMethod httpMethod)
+    {
+        if (data.ValueKind != expected)
+        {
+            throw new BricklinkUnexpectedDataKindException(expected.ToString(), data.ValueKind.ToString(),
+                url, httpMethod);
+        }
+    }
+
+    private static bool IsEmptyObject(JsonElement data)
+    {
+        return data.ValueKind == JsonValueKind.Object && !data.EnumerateObject().MoveNext();
+    }
+
+    private static T Deserialize<T>(JsonElement data, int httpStatusCode, string responseBody, string url,
+        HttpMethod httpMethod)
+    {
+        T? result;
+
+        try
+        {
+            result = JsonSerializer.Deserialize<T>(data.GetRawText());
+        }
+        catch (JsonException exception)
+        {
+            // converters throw JsonException for unknown or malformed values
+            throw new BricklinkInvalidResponseException("the 'data' element could not be mapped", httpStatusCode,
+                responseBody, url, httpMethod, exception);
+        }
+
+        return result ?? throw new BricklinkNoDataReceivedException(url, httpMethod);
     }
 
     private static HttpMethod ToHttpMethod(HttpVerb verb)
