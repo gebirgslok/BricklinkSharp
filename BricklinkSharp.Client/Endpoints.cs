@@ -32,6 +32,9 @@ namespace BricklinkSharp.Client;
 /// <summary>One pure factory per API operation. Policy for an endpoint (path, query, response shape) lives here.</summary>
 internal static partial class Endpoints
 {
+    // A raw argument must not be able to add path separators, a query or a fragment to the URL.
+    private static string Segment(string? value) => Uri.EscapeDataString(value ?? string.Empty);
+
     /// <summary>Values for filters with included and excluded values, e.g. <c>a,b,-c</c>; empty when both are empty.</summary>
     private static IEnumerable<string> IncludeExclude<T>(IEnumerable<T>? includes, IEnumerable<T>? excludes,
         Func<T, string> toWire) =>

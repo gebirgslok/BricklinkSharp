@@ -37,7 +37,7 @@ internal static partial class Endpoints
         Endpoint<Feedback>.Get(ApiResourceType.Feedback, $"feedback/{feedbackId}");
 
     public static Endpoint<MemberRating> MemberRating(string username) =>
-        Endpoint<MemberRating>.Get(ApiResourceType.MemberRating, $"members/{username}/ratings");
+        Endpoint<MemberRating>.Get(ApiResourceType.MemberRating, $"members/{Segment(username)}/ratings");
 
     public static Endpoint<Feedback> PostFeedback(int orderId, Rating rating, string comment) =>
         RejectingInvalid(() => DtoValidation.ValidateFeedback(rating, comment),

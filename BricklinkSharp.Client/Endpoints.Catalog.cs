@@ -30,20 +30,20 @@ namespace BricklinkSharp.Client;
 internal static partial class Endpoints
 {
     public static Endpoint<CatalogItem> CatalogItem(ItemType itemType, string itemNumber) =>
-        Endpoint<CatalogItem>.Get(ApiResourceType.Item, $"items/{itemType.ToDomainString()}/{itemNumber}");
+        Endpoint<CatalogItem>.Get(ApiResourceType.Item, $"items/{itemType.ToDomainString()}/{Segment(itemNumber)}");
 
     public static Endpoint<CatalogImage> CatalogImage(ItemType itemType, string itemNumber, int colorId) =>
         Endpoint<CatalogImage>.Get(ApiResourceType.ItemImage,
-            $"items/{itemType.ToDomainString()}/{itemNumber}/images/{colorId}");
+            $"items/{itemType.ToDomainString()}/{Segment(itemNumber)}/images/{colorId}");
 
     public static Endpoint<Superset[]> Supersets(ItemType itemType, string itemNumber, int colorId) =>
-        Endpoint<Superset[]>.Get(ApiResourceType.Superset, $"items/{itemType.ToDomainString()}/{itemNumber}/supersets",
+        Endpoint<Superset[]>.Get(ApiResourceType.Superset, $"items/{itemType.ToDomainString()}/{Segment(itemNumber)}/supersets",
                 ResponseShape.ArrayNonEmpty)
             .WithQuery("color_id", ColorIdOrNull(colorId));
 
     public static Endpoint<Subset[]> Subsets(ItemType itemType, string itemNumber, int colorId,
         bool? includeOriginalBox, bool? includeInstruction, bool? breakMinifigs, bool? breakSubsets) =>
-        Endpoint<Subset[]>.Get(ApiResourceType.Subset, $"items/{itemType.ToDomainString()}/{itemNumber}/subsets",
+        Endpoint<Subset[]>.Get(ApiResourceType.Subset, $"items/{itemType.ToDomainString()}/{Segment(itemNumber)}/subsets",
                 ResponseShape.ArrayNonEmpty)
             .WithQuery("color_id", ColorIdOrNull(colorId))
             .WithQuery("box", includeOriginalBox)
@@ -54,7 +54,7 @@ internal static partial class Endpoints
     public static Endpoint<PriceGuide> PriceGuide(ItemType itemType, string itemNumber, int colorId,
         PriceGuideSource? source, Condition? condition, string? countryCode, string? region,
         string? currencyCode, VatOption? vat) =>
-        Endpoint<PriceGuide>.Get(ApiResourceType.PriceGuide, $"items/{itemType.ToDomainString()}/{itemNumber}/price")
+        Endpoint<PriceGuide>.Get(ApiResourceType.PriceGuide, $"items/{itemType.ToDomainString()}/{Segment(itemNumber)}/price")
             .WithQuery("color_id", ColorIdOrNull(colorId))
             .WithQuery("guide_type", source?.ToDomainString())
             .WithQuery("new_or_used", condition?.ToDomainString())
@@ -64,7 +64,7 @@ internal static partial class Endpoints
             .WithQuery("vat", vat?.ToDomainString());
 
     public static Endpoint<KnownColor[]> KnownColors(ItemType itemType, string itemNumber) =>
-        Endpoint<KnownColor[]>.Get(ApiResourceType.KnownColor, $"items/{itemType.ToDomainString()}/{itemNumber}/colors",
+        Endpoint<KnownColor[]>.Get(ApiResourceType.KnownColor, $"items/{itemType.ToDomainString()}/{Segment(itemNumber)}/colors",
             ResponseShape.ArrayNonEmpty);
 
     public static Endpoint<Color[]> Colors() =>
@@ -80,10 +80,10 @@ internal static partial class Endpoints
         Endpoint<Category>.Get(ApiResourceType.Category, $"categories/{categoryId}");
 
     public static Endpoint<ItemMapping[]> ItemMappingsByItemNumber(string itemNumber, int? colorId) =>
-        Endpoint<ItemMapping[]>.Get(ApiResourceType.ElementId, $"item_mapping/part/{itemNumber}")
+        Endpoint<ItemMapping[]>.Get(ApiResourceType.ElementId, $"item_mapping/part/{Segment(itemNumber)}")
             .WithQuery("color_id", colorId);
 
     public static Endpoint<ItemMapping[]> ItemMappingsByElementId(string elementId) =>
-        Endpoint<ItemMapping[]>.Get(ApiResourceType.ItemNumber, $"item_mapping/{elementId}",
+        Endpoint<ItemMapping[]>.Get(ApiResourceType.ItemNumber, $"item_mapping/{Segment(elementId)}",
             ResponseShape.ArrayNonEmpty);
 }

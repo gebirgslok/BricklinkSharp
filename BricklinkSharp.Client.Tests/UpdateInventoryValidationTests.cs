@@ -86,7 +86,7 @@ public class UpdateInventoryValidationTests
 
         Assert.That(exception.InvalidParameters!.Keys, Is.EqualTo(new[] { "StockRoomId" }));
         Assert.That(exception.InvalidParameters["StockRoomId"], Is.EqualTo("D"));
-        Assert.That(exception.Message, Does.StartWith("StockRoomId must be either A, B or C (set to: D."));
+        Assert.That(exception.Message, Does.StartWith("StockRoomId must be either A, B or C (set to: D)."));
     }
 
     [TestCase("A")]

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 // Copyright (c) 2020 Jens Eisenbach
 //
 // Permission is hereby granted, free of charge, to any person
@@ -157,5 +157,13 @@ public class EndpointsTests
 
         ClassicAssert.AreEqual(ResponseShape.ArrayOrEmpty, endpoint.Shape);
         CollectionAssert.AreEqual(new[] { 2, 1 }, batches.Select(batch => batch.Length));
+    }
+
+    [Test]
+    public void Should_EscapePathSegments_When_ArgumentsContainSeparators()
+    {
+        ClassicAssert.AreEqual("items/part/a%2Fb%3Fc%23d", Endpoints.CatalogItem(ItemType.Part, "a/b?c#d").Path);
+        ClassicAssert.AreEqual("members/a%2Fb/ratings", Endpoints.MemberRating("a/b").Path);
+        ClassicAssert.AreEqual("item_mapping/a%2Fb", Endpoints.ItemMappingsByElementId("a/b").Path);
     }
 }

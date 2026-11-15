@@ -23,12 +23,16 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+
 namespace BricklinkSharp.Client;
 
 public class BricklinkClientConfiguration : BricklinkCredentials
 {
-    private static BricklinkClientConfiguration? _instance;
-    public static BricklinkClientConfiguration Instance => _instance ??= new BricklinkClientConfiguration();
+    private static readonly Lazy<BricklinkClientConfiguration> _instance =
+        new Lazy<BricklinkClientConfiguration>(() => new BricklinkClientConfiguration());
+
+    public static BricklinkClientConfiguration Instance => _instance.Value;
 
     private BricklinkClientConfiguration()
     {
