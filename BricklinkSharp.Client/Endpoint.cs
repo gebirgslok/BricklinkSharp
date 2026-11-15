@@ -24,7 +24,9 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,9 +41,9 @@ internal sealed class Endpoint<T>
     private static readonly IReadOnlyList<KeyValuePair<string, string>> NoQuery =
         Array.Empty<KeyValuePair<string, string>>();
 
-    private Endpoint(ApiResourceType resource, HttpVerb verb, string path,
+    internal Endpoint(ApiResourceType resource, HttpVerb verb, string path,
         IReadOnlyList<KeyValuePair<string, string>> query, object? body, int expectedMetaCode,
-        ResponseShape shape, Func<BricklinkRequestExecutor, BricklinkRequest, CancellationToken, Task<T>>? project,
+        ResponseShape shape, Func<BricklinkRequestExecutor, Endpoint<T>, BricklinkCredentials?, CancellationToken, Task<T>>? project,
         Exception? rejection)
     {
         Resource = resource;
@@ -70,7 +72,7 @@ internal sealed class Endpoint<T>
     public ResponseShape Shape { get; }
 
     /// <summary>Reads the response as its wire type and converts it; null when the response is read as <typeparamref name="T"/>.</summary>
-    internal Func<BricklinkRequestExecutor, BricklinkRequest, CancellationToken, Task<T>>? Project { get; }
+    internal Func<BricklinkRequestExecutor, Endpoint<T>, BricklinkCredentials?, CancellationToken, Task<T>>? Project { get; }
 
     public Exception? Rejection { get; }
 
@@ -92,8 +94,9 @@ internal sealed class Endpoint<T>
         var shape = BricklinkResponseParser.ResolveShape<TWire>(null);
         return new Endpoint<T>(resource, HttpVerb.Get, path, NoQuery, null,
             BricklinkResponseParser.DefaultExpectedMetaCode(HttpVerb.Get, shape), shape,
-            async (runner, request, cancellationToken) =>
-                project(await runner.SendAsync<TWire>(request, cancellationToken).ConfigureAwait(false)), null);
+            async (runner, self, credentials, cancellationToken) =>
+                project(await runner.SendWithoutProjectionAsync(self.Retarget<TWire>(), credentials, cancellationToken)
+                    .ConfigureAwait(false)), null);
     }
 
     public static Endpoint<T> Rejected(Exception rejection) =>
@@ -107,7 +110,7 @@ internal sealed class Endpoint<T>
             return this;
         }
 
-        var parameter = new KeyValuePair<string, string>(name, BricklinkRequest.FormatQueryValue(value));
+        var parameter = new KeyValuePair<string, string>(name, FormatQueryValue(value));
         return new Endpoint<T>(Resource, Verb, Path, Query.Append(parameter).ToArray(), Body, ExpectedMetaCode,
             Shape, Project, Rejection);
     }
@@ -115,20 +118,41 @@ internal sealed class Endpoint<T>
     public Endpoint<T> WithBody(object body) =>
         new(Resource, Verb, Path, Query, body, ExpectedMetaCode, Shape, Project, Rejection);
 
-    internal BricklinkRequest ToRequest(BricklinkCredentials? credentials)
-    {
-        var request = new BricklinkRequest(Resource, Verb, Path);
+    /// <summary>The same request, read as <typeparamref name="TOther"/> without projection.</summary>
+    internal Endpoint<TOther> Retarget<TOther>() =>
+        new Endpoint<TOther>(Resource, Verb, Path, Query, Body, ExpectedMetaCode, Shape, null, null);
 
-        foreach (var parameter in Query)
+    internal string BuildUrl(Uri baseUri)
+    {
+        var builder = new StringBuilder();
+        builder.Append(baseUri.AbsoluteUri.TrimEnd('/'));
+        builder.Append('/');
+        builder.Append(Path.TrimStart('/'));
+
+        for (var i = 0; i < Query.Count; i++)
         {
-            request = request.WithQueryParameter(parameter.Key, parameter.Value);
+            builder.Append(i == 0 ? '?' : '&');
+            builder.Append(Uri.EscapeDataString(Query[i].Key));
+            builder.Append('=');
+            builder.Append(Uri.EscapeDataString(Query[i].Value));
         }
 
-        return request
-            .WithBody(Body)
-            .WithCredentials(credentials)
-            .WithExpectedMetaCode(ExpectedMetaCode)
-            .WithShape(Shape);
+        return builder.ToString();
+    }
+
+    internal static string FormatQueryValue(object value)
+    {
+        return value switch
+        {
+            string text => text,
+            bool flag => flag ? "true" : "false",
+            Enum => throw new ArgumentException(
+                "Enum query values must be passed as their BrickLink domain string.", nameof(value)),
+            DateTime date => date.ToString("o", CultureInfo.InvariantCulture),
+            DateTimeOffset date => date.ToString("o", CultureInfo.InvariantCulture),
+            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+            _ => value.ToString() ?? string.Empty
+        };
     }
 
     private static Endpoint<T> Create(ApiResourceType resource, HttpVerb verb, string path,

@@ -1,6 +1,6 @@
 ---
 github_issue: 41
-status: in-progress
+status: done
 created: 2026-11-14
 ---
 
@@ -87,9 +87,9 @@ Goal: all POST/PUT/DELETE endpoints are built by factories with validation insid
 
 ### Phase 4 — Cleanup and docs
 Goal: no leftover scaffolding; docs reflect the new structure.
-- [ ] Task 4.1 Remove now-unused builder paths and executor default logic; decide whether `BricklinkRequest` is folded into `Endpoint<T>` or stays internal to the executor
-- [ ] Task 4.2 Update `CONTEXT.md` (Endpoint, Rejection), `CODING.md` if rules change, and add an ADR if the `IEndpointSender` seam warrants one
-- [ ] Task 4.3 Final `dotnet format`, build, test; mention issue #3 can be closed
+- [x] Task 4.1 Remove now-unused builder paths and executor default logic; decide whether `BricklinkRequest` is folded into `Endpoint<T>` or stays internal to the executor (decision: folded; `BricklinkRequest` deleted, `Endpoint<T>` owns URL building and query formatting)
+- [x] Task 4.2 Update `CONTEXT.md` (Endpoint, Rejection), `CODING.md` if rules change, and add an ADR if the `IEndpointSender` seam warrants one
+- [x] Task 4.3 Final `dotnet format`, build, test; mention issue #3 can be closed
 
 ## Risks & alternatives
 
