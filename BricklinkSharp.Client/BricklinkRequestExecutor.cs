@@ -48,9 +48,15 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
     public Task<T> SendAsync<T>(Endpoint<T> endpoint, BricklinkCredentials? credentials,
         CancellationToken cancellationToken)
     {
-        return endpoint.Rejection != null
-            ? Task.FromException<T>(endpoint.Rejection)
-            : SendAsync<T>(endpoint.ToRequest(credentials), cancellationToken);
+        if (endpoint.Rejection != null)
+        {
+            return Task.FromException<T>(endpoint.Rejection);
+        }
+
+        var request = endpoint.ToRequest(credentials);
+        return endpoint.Project != null
+            ? endpoint.Project(this, request, cancellationToken)
+            : SendAsync<T>(request, cancellationToken);
     }
 
     public async Task<T> SendAsync<T>(BricklinkRequest request, CancellationToken cancellationToken)

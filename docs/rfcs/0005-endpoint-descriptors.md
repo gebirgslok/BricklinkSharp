@@ -70,11 +70,11 @@ Goal: `Endpoint<T>`, `IEndpointSender` and wire body records exist and are cover
 
 ### Phase 2 — Read endpoints
 Goal: all GET endpoints are built by `Endpoints` factories and sent through `IEndpointSender`; the `color_id` and `direction` inconsistencies are fixed.
-- [ ] Task 2.1 `Endpoints` factories for catalog, price guide, supersets, subsets, colors, categories and mappings
-- [ ] Task 2.2 Factories for the remaining GET endpoints (orders, order items with `Project` (add `Project` to `Endpoint<T>` here; Phase 1 left it out as unused), feedback, inventories, coupons, members, notifications)
-- [ ] Task 2.3 Switch the matching `BricklinkClient` methods to one-line calls; unify `color_id`; use `ToDomainString()` for `direction`
-- [ ] Task 2.4 Move URL/query assertions from `BricklinkClientEndpointTests` to pure `EndpointsTests`; keep a few end-to-end stub tests; add missing cases (`GetOrders` and `GetCoupons` status flags, `GetSubsets` flags)
-- [ ] Task 2.5 Changelog entry for any wire change
+- [x] Task 2.1 `Endpoints` factories for catalog, price guide, supersets, subsets, colors, categories and mappings
+- [x] Task 2.2 Factories for the remaining GET endpoints (orders, order items with `Project` (add `Project` to `Endpoint<T>` here; Phase 1 left it out as unused), feedback, inventories, coupons, members, notifications)
+- [x] Task 2.3 Switch the matching `BricklinkClient` methods to one-line calls; unify `color_id`; use `ToDomainString()` for `direction`
+- [x] Task 2.4 Move URL/query assertions from `BricklinkClientEndpointTests` to pure `EndpointsTests`; keep a few end-to-end stub tests; add missing cases (`GetOrders` and `GetCoupons` status flags, `GetSubsets` flags)
+- [x] Task 2.5 Changelog entry for any wire change
 
 ### Phase 3 — Write endpoints and validation
 Goal: all POST/PUT/DELETE endpoints are built by factories with validation inside; anonymous bodies are gone.

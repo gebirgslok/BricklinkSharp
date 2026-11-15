@@ -25,6 +25,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BricklinkSharp.Client;
 
@@ -39,7 +41,8 @@ internal sealed class Endpoint<T>
 
     private Endpoint(ApiResourceType resource, HttpVerb verb, string path,
         IReadOnlyList<KeyValuePair<string, string>> query, object? body, int expectedMetaCode,
-        ResponseShape shape, BricklinkException? rejection)
+        ResponseShape shape, Func<BricklinkRequestExecutor, BricklinkRequest, CancellationToken, Task<T>>? project,
+        BricklinkException? rejection)
     {
         Resource = resource;
         Verb = verb;
@@ -48,6 +51,7 @@ internal sealed class Endpoint<T>
         Body = body;
         ExpectedMetaCode = expectedMetaCode;
         Shape = shape;
+        Project = project;
         Rejection = rejection;
     }
 
@@ -65,6 +69,9 @@ internal sealed class Endpoint<T>
 
     public ResponseShape Shape { get; }
 
+    /// <summary>Reads the response as its wire type and converts it; null when the response is read as <typeparamref name="T"/>.</summary>
+    internal Func<BricklinkRequestExecutor, BricklinkRequest, CancellationToken, Task<T>>? Project { get; }
+
     public BricklinkException? Rejection { get; }
 
     public static Endpoint<T> Get(ApiResourceType resource, string path, ResponseShape? shape = null,
@@ -79,8 +86,18 @@ internal sealed class Endpoint<T>
     public static Endpoint<T> Delete(ApiResourceType resource, string path, ResponseShape? shape = null,
         int? expectedMetaCode = null) => Create(resource, HttpVerb.Delete, path, shape, expectedMetaCode);
 
+    /// <summary>A GET whose response is read as <typeparamref name="TWire"/> and then converted by <paramref name="project"/>.</summary>
+    public static Endpoint<T> GetProjected<TWire>(ApiResourceType resource, string path, Func<TWire, T> project)
+    {
+        var shape = BricklinkResponseParser.ResolveShape<TWire>(null);
+        return new Endpoint<T>(resource, HttpVerb.Get, path, NoQuery, null,
+            BricklinkResponseParser.DefaultExpectedMetaCode(HttpVerb.Get, shape), shape,
+            async (runner, request, cancellationToken) =>
+                project(await runner.SendAsync<TWire>(request, cancellationToken).ConfigureAwait(false)), null);
+    }
+
     public static Endpoint<T> Rejected(BricklinkException rejection) =>
-        new(default, default, string.Empty, NoQuery, null, 0, default, rejection);
+        new(default, default, string.Empty, NoQuery, null, 0, default, null, rejection);
 
     /// <summary>Appends a query parameter; a null value is dropped. Enums must be passed as domain strings.</summary>
     public Endpoint<T> WithQuery(string name, object? value)
@@ -92,11 +109,11 @@ internal sealed class Endpoint<T>
 
         var parameter = new KeyValuePair<string, string>(name, BricklinkRequest.FormatQueryValue(value));
         return new Endpoint<T>(Resource, Verb, Path, Query.Append(parameter).ToArray(), Body, ExpectedMetaCode,
-            Shape, Rejection);
+            Shape, Project, Rejection);
     }
 
     public Endpoint<T> WithBody(object body) =>
-        new(Resource, Verb, Path, Query, body, ExpectedMetaCode, Shape, Rejection);
+        new(Resource, Verb, Path, Query, body, ExpectedMetaCode, Shape, Project, Rejection);
 
     internal BricklinkRequest ToRequest(BricklinkCredentials? credentials)
     {
@@ -119,6 +136,6 @@ internal sealed class Endpoint<T>
     {
         var shape = BricklinkResponseParser.ResolveShape<T>(requestedShape);
         return new Endpoint<T>(resource, verb, path, NoQuery, null,
-            expectedMetaCode ?? BricklinkResponseParser.DefaultExpectedMetaCode(verb, shape), shape, null);
+            expectedMetaCode ?? BricklinkResponseParser.DefaultExpectedMetaCode(verb, shape), shape, null, null);
     }
 }
