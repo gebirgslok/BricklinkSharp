@@ -23,6 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using BricklinkSharp.Client.Extensions;
@@ -44,4 +45,20 @@ internal static partial class Endpoints
 
     public static Endpoint<Inventory> Inventory(int inventoryId) =>
         Endpoint<Inventory>.Get(ApiResourceType.Inventory, $"inventories/{inventoryId}");
+
+    public static Endpoint<Inventory> CreateInventory(NewInventory newInventory) =>
+        RejectingInvalid(() => DtoValidation.Validate(newInventory),
+            () => Endpoint<Inventory>.Post(ApiResourceType.Inventory, "inventories").WithBody(newInventory));
+
+    public static Endpoint<NoData> CreateInventories(NewInventory[] newInventories) =>
+        RejectingInvalid(() => Array.ForEach(newInventories, DtoValidation.Validate),
+            () => Endpoint<NoData>.Post(ApiResourceType.Inventory, "inventories").WithBody(newInventories));
+
+    public static Endpoint<Inventory> UpdateInventory(int inventoryId, UpdateInventory updateInventory) =>
+        RejectingInvalid(() => DtoValidation.Validate(updateInventory),
+            () => Endpoint<Inventory>.Put(ApiResourceType.Inventory, $"inventories/{inventoryId}")
+                .WithBody(updateInventory));
+
+    public static Endpoint<NoData> DeleteInventory(int inventoryId) =>
+        Endpoint<NoData>.Delete(ApiResourceType.Inventory, $"inventories/{inventoryId}");
 }

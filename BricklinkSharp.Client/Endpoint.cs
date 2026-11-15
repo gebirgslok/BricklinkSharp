@@ -42,7 +42,7 @@ internal sealed class Endpoint<T>
     private Endpoint(ApiResourceType resource, HttpVerb verb, string path,
         IReadOnlyList<KeyValuePair<string, string>> query, object? body, int expectedMetaCode,
         ResponseShape shape, Func<BricklinkRequestExecutor, BricklinkRequest, CancellationToken, Task<T>>? project,
-        BricklinkException? rejection)
+        Exception? rejection)
     {
         Resource = resource;
         Verb = verb;
@@ -72,7 +72,7 @@ internal sealed class Endpoint<T>
     /// <summary>Reads the response as its wire type and converts it; null when the response is read as <typeparamref name="T"/>.</summary>
     internal Func<BricklinkRequestExecutor, BricklinkRequest, CancellationToken, Task<T>>? Project { get; }
 
-    public BricklinkException? Rejection { get; }
+    public Exception? Rejection { get; }
 
     public static Endpoint<T> Get(ApiResourceType resource, string path, ResponseShape? shape = null,
         int? expectedMetaCode = null) => Create(resource, HttpVerb.Get, path, shape, expectedMetaCode);
@@ -96,7 +96,7 @@ internal sealed class Endpoint<T>
                 project(await runner.SendAsync<TWire>(request, cancellationToken).ConfigureAwait(false)), null);
     }
 
-    public static Endpoint<T> Rejected(BricklinkException rejection) =>
+    public static Endpoint<T> Rejected(Exception rejection) =>
         new(default, default, string.Empty, NoQuery, null, 0, default, null, rejection);
 
     /// <summary>Appends a query parameter; a null value is dropped. Enums must be passed as domain strings.</summary>

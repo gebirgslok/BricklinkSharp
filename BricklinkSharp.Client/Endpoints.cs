@@ -46,4 +46,19 @@ internal static partial class Endpoints
 
     /// <summary>A zero or negative color id means "any color" and is not sent.</summary>
     private static int? ColorIdOrNull(int colorId) => colorId > 0 ? colorId : null;
+
+    /// <summary>Builds the endpoint only if <paramref name="throwIfInvalid"/> does not throw; otherwise the endpoint is a rejection and nothing is sent.</summary>
+    private static Endpoint<T> RejectingInvalid<T>(Action throwIfInvalid, Func<Endpoint<T>> buildEndpoint)
+    {
+        try
+        {
+            throwIfInvalid();
+        }
+        catch (Exception exception)
+        {
+            return Endpoint<T>.Rejected(exception);
+        }
+
+        return buildEndpoint();
+    }
 }

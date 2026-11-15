@@ -38,4 +38,14 @@ internal static partial class Endpoints
 
     public static Endpoint<MemberRating> MemberRating(string username) =>
         Endpoint<MemberRating>.Get(ApiResourceType.MemberRating, $"members/{username}/ratings");
+
+    public static Endpoint<Feedback> PostFeedback(int orderId, Rating rating, string comment) =>
+        RejectingInvalid(() => DtoValidation.ValidateFeedback(rating, comment),
+            () => Endpoint<Feedback>.Post(ApiResourceType.Feedback, "feedback")
+                .WithBody(new FeedbackPostBody { OrderId = orderId, Rating = rating, Comment = comment }));
+
+    public static Endpoint<NoData> ReplyToFeedback(int feedbackId, string reply) =>
+        RejectingInvalid(() => DtoValidation.ValidateReply(reply),
+            () => Endpoint<NoData>.Post(ApiResourceType.Feedback, $"feedback/{feedbackId}/reply")
+                .WithBody(new ReplyBody { Reply = reply }));
 }

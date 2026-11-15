@@ -38,4 +38,15 @@ internal static partial class Endpoints
 
     public static Endpoint<Coupon> Coupon(int couponId) =>
         Endpoint<Coupon>.Get(ApiResourceType.Coupon, $"coupons/{couponId}");
+
+    public static Endpoint<NoData> DeleteCoupon(int couponId) =>
+        Endpoint<NoData>.Delete(ApiResourceType.Coupon, $"coupons/{couponId}");
+
+    public static Endpoint<Coupon> CreateCoupon(NewCoupon newCoupon) =>
+        RejectingInvalid(() => DtoValidation.Validate(newCoupon),
+            () => Endpoint<Coupon>.Post(ApiResourceType.Coupon, "coupons").WithBody(newCoupon));
+
+    public static Endpoint<Coupon> UpdateCoupon(int couponId, UpdateCoupon updateCoupon) =>
+        RejectingInvalid(() => DtoValidation.Validate(updateCoupon),
+            () => Endpoint<Coupon>.Put(ApiResourceType.Coupon, $"coupons/{couponId}").WithBody(updateCoupon));
 }

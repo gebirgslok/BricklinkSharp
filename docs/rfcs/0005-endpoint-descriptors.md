@@ -78,12 +78,12 @@ Goal: all GET endpoints are built by `Endpoints` factories and sent through `IEn
 
 ### Phase 3 — Write endpoints and validation
 Goal: all POST/PUT/DELETE endpoints are built by factories with validation inside; anonymous bodies are gone.
-- [ ] Task 3.1 Factories for inventory create/update/delete and `CreateInventories` (validates the whole batch before sending)
-- [ ] Task 3.2 Factories for coupons, orders (including `UpdateOrder`), feedback post/reply, order and payment status, drive-thru (expected code 204)
-- [ ] Task 3.3 Add validation for `UpdateOrder` and the feedback bodies
-- [ ] Task 3.4 Switch the matching client methods; add body-JSON tests for every body-carrying endpoint
-- [ ] Task 3.5 Table-driven test: every body-carrying endpoint validates or is on an explicit exempt list; keep `Should_ReturnFaultedTask_When_ValidationFails`
-- [ ] Task 3.6 Changelog entry
+- [x] Task 3.1 Factories for inventory create/update/delete and `CreateInventories` (validates the whole batch before sending)
+- [x] Task 3.2 Factories for coupons, orders (including `UpdateOrder`), feedback post/reply, order and payment status, drive-thru (expected code 204)
+- [x] Task 3.3 Add validation for `UpdateOrder` and the feedback bodies
+- [x] Task 3.4 Switch the matching client methods; add body-JSON tests for every body-carrying endpoint
+- [x] Task 3.5 Table-driven test: every body-carrying endpoint validates or is on an explicit exempt list; keep `Should_ReturnFaultedTask_When_ValidationFails`
+- [x] Task 3.6 Changelog entry
 
 ### Phase 4 — Cleanup and docs
 Goal: no leftover scaffolding; docs reflect the new structure.

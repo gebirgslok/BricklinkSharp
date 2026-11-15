@@ -53,7 +53,6 @@ internal sealed class BricklinkClient : IBricklinkClient
     private const string _instructionThumbnailUrlTemplate = "//img.bricklink.com/I/{0}.jpg";
     private const string _originalBoxThumbnailUrlTemplate = "//img.bricklink.com/ON/{0}.jpg";
 
-    private readonly BricklinkRequestExecutor _executor;
     private readonly IEndpointSender _sender;
     private readonly HttpClient _httpClient;
     private readonly bool _disposeHttpClient;
@@ -62,7 +61,6 @@ internal sealed class BricklinkClient : IBricklinkClient
 
     public BricklinkClient(BricklinkRequestExecutor executor, HttpClient httpClient, bool disposeHttpClient)
     {
-        _executor = executor;
         _sender = executor;
         _httpClient = httpClient;
         _disposeHttpClient = disposeHttpClient;
@@ -310,60 +308,33 @@ internal sealed class BricklinkClient : IBricklinkClient
         return _sender.SendAsync(Endpoints.Inventory(inventoryId), credentials, cancellationToken);
     }
 
-    public async Task<Inventory> CreateInventoryAsync(NewInventory newInventory,
+    public Task<Inventory> CreateInventoryAsync(NewInventory newInventory,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        DtoValidation.Validate(newInventory);
-
-        return await _executor.SendAsync<Inventory>(
-            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Post, "inventories")
-                .WithBody(newInventory)
-                .WithCredentials(credentials),
-            cancellationToken)
-            .ConfigureAwait(false);
+        return _sender.SendAsync(Endpoints.CreateInventory(newInventory), credentials, cancellationToken);
     }
 
-    public async Task CreateInventoriesAsync(NewInventory[] newInventories,
+    public Task CreateInventoriesAsync(NewInventory[] newInventories,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        foreach (var newInventory in newInventories)
-        {
-            DtoValidation.Validate(newInventory);
-        }
-
-        await _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Post, "inventories")
-                .WithBody(newInventories)
-                .WithCredentials(credentials),
-            cancellationToken)
-            .ConfigureAwait(false);
+        return _sender.SendAsync(Endpoints.CreateInventories(newInventories), credentials, cancellationToken);
     }
 
-    public async Task<Inventory> UpdateInventoryAsync(int inventoryId,
+    public Task<Inventory> UpdateInventoryAsync(int inventoryId,
         UpdateInventory updateInventory,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        DtoValidation.Validate(updateInventory);
-
-        return await _executor.SendAsync<Inventory>(
-            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Put, $"inventories/{inventoryId}")
-                .WithBody(updateInventory)
-                .WithCredentials(credentials),
-            cancellationToken)
-            .ConfigureAwait(false);
+        return _sender.SendAsync(Endpoints.UpdateInventory(inventoryId, updateInventory), credentials, cancellationToken);
     }
 
     public Task DeleteInventoryAsync(int inventoryId,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.Inventory, HttpVerb.Delete, $"inventories/{inventoryId}")
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.DeleteInventory(inventoryId), credentials, cancellationToken);
     }
 
     public Task<ItemMapping[]> GetItemMappingsByItemAsync(string itemNumber, int? colorId,
@@ -426,18 +397,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        var body = new FeedbackPostBody
-        {
-            Comment = comment,
-            OrderId = orderId,
-            Rating = rating
-        };
-
-        return _executor.SendAsync<Feedback>(
-            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Post, "feedback")
-                .WithBody(body)
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.PostFeedback(orderId, rating, comment), credentials, cancellationToken);
     }
 
     public Task ReplyToFeedbackAsync(int feedbackId,
@@ -445,11 +405,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.Feedback, HttpVerb.Post, $"feedback/{feedbackId}/reply")
-                .WithBody(new { reply })
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.ReplyToFeedback(feedbackId, reply), credentials, cancellationToken);
     }
 
     public Task<Order[]> GetOrdersAsync(Direction direction = Direction.In,
@@ -495,11 +451,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.OrderStatus, HttpVerb.Put, $"orders/{orderId}/status")
-                .WithBody(new { field = "status", value = status.ToDomainString() })
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.UpdateOrderStatus(orderId, status), credentials, cancellationToken);
     }
 
     public Task UpdatePaymentStatusAsync(int orderId,
@@ -507,12 +459,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.PaymentStatus, HttpVerb.Put,
-                    $"orders/{orderId}/payment_status")
-                .WithBody(new { field = "payment_status", value = status.ToDomainString() })
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.UpdatePaymentStatus(orderId, status), credentials, cancellationToken);
     }
 
     public Task SendDriveThruAsync(int orderId,
@@ -520,12 +467,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.DriveThru, HttpVerb.Post, $"orders/{orderId}/drive_thru")
-                .WithQueryParameter("mail_me", mailCcMe)
-                .WithExpectedMetaCode(204)
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.SendDriveThru(orderId, mailCcMe), credentials, cancellationToken);
     }
 
     public Task<OrderDetails> UpdateOrderAsync(int orderId,
@@ -533,11 +475,7 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<OrderDetails>(
-            new BricklinkRequest(ApiResourceType.Order, HttpVerb.Put, $"orders/{orderId}")
-                .WithBody(updateOrder)
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.UpdateOrder(orderId, updateOrder), credentials, cancellationToken);
     }
 
     public void Dispose()
@@ -566,38 +504,21 @@ internal sealed class BricklinkClient : IBricklinkClient
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        return _executor.SendAsync<NoData>(
-            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Delete, $"coupons/{couponId}")
-                .WithCredentials(credentials),
-            cancellationToken);
+        return _sender.SendAsync(Endpoints.DeleteCoupon(couponId), credentials, cancellationToken);
     }
 
-    public async Task<Coupon> CreateCouponAsync(NewCoupon newCoupon,
+    public Task<Coupon> CreateCouponAsync(NewCoupon newCoupon,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        DtoValidation.Validate(newCoupon);
-
-        return await _executor.SendAsync<Coupon>(
-            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Post, "coupons")
-                .WithBody(newCoupon)
-                .WithCredentials(credentials),
-            cancellationToken)
-            .ConfigureAwait(false);
+        return _sender.SendAsync(Endpoints.CreateCoupon(newCoupon), credentials, cancellationToken);
     }
 
-    public async Task<Coupon> UpdateCouponAsync(int couponId,
+    public Task<Coupon> UpdateCouponAsync(int couponId,
         UpdateCoupon updateCoupon,
         BricklinkCredentials? credentials = null,
         CancellationToken cancellationToken = default)
     {
-        DtoValidation.Validate(updateCoupon);
-
-        return await _executor.SendAsync<Coupon>(
-            new BricklinkRequest(ApiResourceType.Coupon, HttpVerb.Put, $"coupons/{couponId}")
-                .WithBody(updateCoupon)
-                .WithCredentials(credentials),
-            cancellationToken)
-            .ConfigureAwait(false);
+        return _sender.SendAsync(Endpoints.UpdateCoupon(couponId, updateCoupon), credentials, cancellationToken);
     }
 }

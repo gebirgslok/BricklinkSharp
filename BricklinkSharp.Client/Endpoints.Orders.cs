@@ -50,4 +50,20 @@ internal static partial class Endpoints
 
     public static Endpoint<Feedback[]> OrderFeedbacks(int orderId) =>
         Endpoint<Feedback[]>.Get(ApiResourceType.OrderFeedback, $"orders/{orderId}/feedback");
+
+    public static Endpoint<OrderDetails> UpdateOrder(int orderId, UpdateOrder updateOrder) =>
+        RejectingInvalid(() => DtoValidation.Validate(updateOrder),
+            () => Endpoint<OrderDetails>.Put(ApiResourceType.Order, $"orders/{orderId}").WithBody(updateOrder));
+
+    public static Endpoint<NoData> UpdateOrderStatus(int orderId, OrderStatus status) =>
+        Endpoint<NoData>.Put(ApiResourceType.OrderStatus, $"orders/{orderId}/status")
+            .WithBody(new FieldChange { Field = "status", Value = status.ToDomainString() });
+
+    public static Endpoint<NoData> UpdatePaymentStatus(int orderId, PaymentStatus status) =>
+        Endpoint<NoData>.Put(ApiResourceType.PaymentStatus, $"orders/{orderId}/payment_status")
+            .WithBody(new FieldChange { Field = "payment_status", Value = status.ToDomainString() });
+
+    public static Endpoint<NoData> SendDriveThru(int orderId, bool mailCcMe) =>
+        Endpoint<NoData>.Post(ApiResourceType.DriveThru, $"orders/{orderId}/drive_thru", expectedMetaCode: 204)
+            .WithQuery("mail_me", mailCcMe);
 }
