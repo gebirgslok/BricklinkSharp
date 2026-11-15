@@ -106,11 +106,11 @@ Goal: all response policy lives in `EndpointWire`; `BricklinkResponseParser` is 
 
 ### Phase 4 — Cleanup and docs
 Goal: no leftover scaffolding; docs reflect the new structure.
-- [ ] Task 4.1 Delete `OAuthRequest`, `OAuthUtilities.UrlEncodeStrict`/`PercentEncode`/`ConcatenateRequestElements` (folded into the signer), `WebUtils.ParseQueryString`, `WebParameter` and `Endpoint.BuildUrl`; rename any remaining type that no longer matches its job
-- [ ] Task 4.2 Update `CONTEXT.md` (Query, Signer vocabulary if introduced), `CODING.md` if rules change, and add an ADR if the `EndpointWire` seam warrants one
-- [ ] Task 4.3 `CHANGELOG.md` entry under Unreleased: Fixed if any edge-character signature changes; otherwise internal-only note
+- [x] Task 4.1 Delete `OAuthRequest`, `OAuthUtilities.UrlEncodeStrict`/`PercentEncode`/`ConcatenateRequestElements` (folded into the signer), `WebUtils.ParseQueryString`, `WebParameter` and `Endpoint.BuildUrl`; rename any remaining type that no longer matches its job
+- [x] Task 4.2 Update `CONTEXT.md` (Query, Signer vocabulary if introduced), `CODING.md` if rules change, and add an ADR if the `EndpointWire` seam warrants one
+- [x] Task 4.3 `CHANGELOG.md` entry under Unreleased: Fixed if any edge-character signature changes; otherwise internal-only note
 - [ ] Task 4.4 Confirm once against the live API (needs credentials) that a filtered request (`a,b,-c`) and a request with a space or non-ASCII value are accepted; record the result in this RFC
-- [ ] Task 4.5 Final `dotnet format`, build, test
+- [x] Task 4.5 Final `dotnet format`, build, test
 
 ## Risks & alternatives
 

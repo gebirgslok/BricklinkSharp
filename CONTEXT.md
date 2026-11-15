@@ -111,3 +111,11 @@ _Avoid_: Route, call
 **Rejection**:
 The exception an Endpoint carries when its arguments fail validation. Sending a rejected Endpoint faults the task without any I/O.
 _Avoid_: Validation error, precheck
+
+**Query**:
+The name/value pairs of an Endpoint, held raw and encoded once (RFC 3986) for both the URL and the signature.
+_Avoid_: Query string parameters, URL parameters
+
+**Signer**:
+Computes the OAuth1 `Authorization` header for a request from its Query and the Credentials.
+_Avoid_: Authenticator, OAuth request

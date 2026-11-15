@@ -139,20 +139,4 @@ public class OAuth1SignerTests
 
         StringAssert.EndsWith("&q%3D%25C3%25A9%2520%25F0%259F%25A7%25B1", baseString);
     }
-
-    // Remove with OAuthRequest in RFC 0006 phase 4.
-    [TestCase("a,b,-c")]
-    [TestCase("a+b")]
-    [TestCase("a b")]
-    [TestCase("x~y")]
-    [TestCase("a&b=c")]
-    public void Should_MatchLegacySignature_When_ValueIsAsciiWithoutPercent(string value)
-    {
-        var query = default(QueryString).With("status", value);
-        var url = $"{Resource}?{query.Encode()}";
-        var legacy = new OAuthRequest("ck", "cs", "tk", "ts", url, "GET", () => Timestamp, () => "abc123")
-            .GetAuthorizationHeader();
-
-        ClassicAssert.AreEqual(legacy, Header(query));
-    }
 }

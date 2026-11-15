@@ -61,7 +61,7 @@ internal sealed class BricklinkRequestExecutor : IEndpointSender
         }
 
         var signing = new EndpointWire.Signing(credentials, _options.Clock ?? (() => DateTimeOffset.UtcNow),
-            _options.NonceGenerator ?? OAuthUtilities.GetNonce);
+            _options.NonceGenerator ?? OAuthNonce.Generate);
 
         using var message = EndpointWire.ToRequest(endpoint, _options.BaseUri, signing);
         using var response = await _httpClient.SendAsync(message, cancellationToken).ConfigureAwait(false);

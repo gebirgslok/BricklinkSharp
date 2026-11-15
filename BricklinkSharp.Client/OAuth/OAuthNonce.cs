@@ -27,53 +27,23 @@ using System;
 
 namespace BricklinkSharp.Client.OAuth;
 
-internal class WebParameter : IComparable<WebParameter>, IComparable
+internal static class OAuthNonce
 {
-    public string Name { get; }
+    private const string Chars = "abcdefghijklmnopqrstuvwxyz1234567890";
 
-    public string Value { get; }
+    private static readonly object _randomLock = new object();
+    private static readonly Random _random = new Random();
 
-    public WebParameter(string name, string value)
+    internal static string Generate()
     {
-        Name = name;
-        Value = value;
-    }
-
-    public override string ToString()
-    {
-        return $"{Name}={Value}";
-    }
-
-    public int CompareTo(WebParameter? other)
-    {
-        if (ReferenceEquals(this, other))
+        var nonce = new char[16];
+        lock (_randomLock)
         {
-            return 0;
+            for (var i = 0; i < nonce.Length; i++)
+            {
+                nonce[i] = Chars[_random.Next(0, Chars.Length)];
+            }
         }
-
-        if (other is null)
-        {
-            return 1;
-        }
-
-        var nameComparison = string.Compare(Name, other.Name, StringComparison.Ordinal);
-
-        if (nameComparison != 0)
-        {
-            return nameComparison;
-        }
-
-        return string.Compare(Value, other.Value, StringComparison.Ordinal);
-    }
-
-    public int CompareTo(object? obj)
-    {
-        if (obj is WebParameter webParameter)
-        {
-            return CompareTo(webParameter);
-        }
-
-        throw new ArgumentException($"{nameof(obj)} must be of type {typeof(WebParameter)}," +
-                                    $"received {obj?.GetType().ToString() ?? "Null"}.");
+        return new string(nonce);
     }
 }

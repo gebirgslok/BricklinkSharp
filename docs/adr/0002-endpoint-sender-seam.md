@@ -11,5 +11,5 @@ Each API operation is a pure factory in `Endpoints` returning an `Endpoint<T>`. 
 ## Consequences
 - Policy for one endpoint has one home, and a new body-carrying endpoint is caught by the validation table test if it neither validates nor is exempt.
 - Wire contracts are tested with plain asserts, without `HttpClient`.
-- `Endpoint<T>.Project` (a projection from the wire type) exists for the one endpoint whose wire shape differs from its result.
+- `Endpoint<T>.Map` (a pure projection from the wire type, [ADR 0003](0003-endpoint-wire.md)) exists for the one endpoint whose wire shape differs from its result.
 - Rejected: a verb-based gateway (policy stays at call sites) and a fully generic `Endpoint<TIn,TOut>` builder (largest surface, awkward generics).

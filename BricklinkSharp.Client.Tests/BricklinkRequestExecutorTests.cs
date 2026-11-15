@@ -239,10 +239,9 @@ public class BricklinkRequestExecutorTests
     }
 
     private static string ExpectedHeader(BricklinkCredentials credentials, string url, string method) =>
-        new OAuthRequest(credentials.ConsumerKey!, credentials.ConsumerSecret!, credentials.TokenValue!,
-                credentials.TokenSecret!, url, method,
-                () => DateTimeOffset.FromUnixTimeSeconds(1700000000), () => "abc123")
-            .GetAuthorizationHeader();
+        OAuth1Signer.Sign(new HttpMethod(method), new Uri(url), default, credentials,
+                DateTimeOffset.FromUnixTimeSeconds(1700000000), "abc123")
+            .ToString();
 
     private sealed class Widget
     {

@@ -23,23 +23,27 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using BricklinkSharp.Client.OAuth;
+using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
-namespace BricklinkSharp.Client.OAuth;
+namespace BricklinkSharp.Client.Tests.OAuth;
 
-internal static class WebUtils
+public class OAuthNonceTests
 {
-    public static IEnumerable<WebParameter> ParseQueryString(Uri uri)
+    [Test]
+    public void Should_Return16LowercaseAlphanumericChars_When_Generating()
     {
-        var parsedQuery = HttpUtility.ParseQueryString(uri.Query);
+        var nonce = OAuthNonce.Generate();
 
-        var queryStringParameters = parsedQuery
-            .AllKeys
-            .SelectMany(parsedQuery.GetValues!, (key, value) => new { key, value });
+        ClassicAssert.AreEqual(16, nonce.Length);
+        ClassicAssert.IsTrue(nonce.All(c => c is >= 'a' and <= 'z' || c is >= '0' and <= '9'));
+    }
 
-        return queryStringParameters.Select(p => new WebParameter(p.key!, p.value!));
+    [Test]
+    public void Should_ReturnDifferentValues_When_GeneratingTwice()
+    {
+        ClassicAssert.AreNotEqual(OAuthNonce.Generate(), OAuthNonce.Generate());
     }
 }
